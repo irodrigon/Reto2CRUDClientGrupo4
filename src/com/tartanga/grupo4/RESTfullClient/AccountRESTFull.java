@@ -6,8 +6,9 @@
 package com.tartanga.grupo4.RESTfullClient;
 
 import com.tartanga.grupo4.businesslogic.Iaccounts;
-import com.tartanga.grupo4.controller.AccountBean;
 import com.tartanga.grupo4.exception.ReadException;
+import com.tartanga.grupo4.models.Account;
+import com.tartanga.grupo4.models.Customer;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
@@ -44,7 +45,7 @@ public class AccountRESTFull implements Iaccounts {
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
     @Override
-    public List<AccountBean> findBySurname(GenericType<List<AccountBean>> responseType, String surname) throws ClientErrorException, ReadException {
+    public List<Customer> findBySurname(GenericType<List<Customer>> responseType, String surname) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("bySurname/{0}", new Object[]{surname}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -82,19 +83,19 @@ public class AccountRESTFull implements Iaccounts {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
     @Override
-    public List<AccountBean> findByAccount(GenericType<List<AccountBean>> responseType, String accountNumber) throws ClientErrorException, ReadException {
+    public List<Account> findByAccount(GenericType<List<Account>> responseType, String accountNumber) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byAccountNumber/{0}", new Object[]{accountNumber}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
     @Override
-    public List<AccountBean> findByDates(GenericType<List<AccountBean>> responseType, String startDate, String endDate) throws ClientErrorException, ReadException {
+    public List<Account> findByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byDates/{0}/{1}", new Object[]{startDate, endDate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
     @Override
-    public List<AccountBean> findByName(GenericType<List<AccountBean>> responseType, String name) throws ClientErrorException, ReadException {
+    public List<Customer> findByName(GenericType<List<Customer>> responseType, String name) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byName/{0}", new Object[]{name}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -104,7 +105,7 @@ public class AccountRESTFull implements Iaccounts {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
     @Override
-    public List<AccountBean> findAll_XML(GenericType<List<AccountBean>> responseType) throws ClientErrorException, ReadException {
+    public List<Account> findAll_XML(GenericType<List<Account>> responseType) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
@@ -118,7 +119,7 @@ public class AccountRESTFull implements Iaccounts {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
     @Override
-    public List<AccountBean> findByNameSurname(GenericType<List<AccountBean>> responseType, String name, String surname) throws ClientErrorException, ReadException {
+    public List<Customer> findByNameSurname(GenericType<List<Customer>> responseType, String name, String surname) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byNameSurname/{0}/{1}", new Object[]{name, surname}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

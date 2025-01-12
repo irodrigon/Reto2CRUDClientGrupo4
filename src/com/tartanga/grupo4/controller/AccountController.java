@@ -5,7 +5,16 @@
  */
 package com.tartanga.grupo4.controller;
 
+import com.tartanga.grupo4.businesslogic.AccountFactory;
+import com.tartanga.grupo4.businesslogic.CustomerFactory;
+import com.tartanga.grupo4.models.Account;
+import com.tartanga.grupo4.models.AccountBean;
+import com.tartanga.grupo4.models.Customer;
+import com.tartanga.grupo4.models.Product;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -34,6 +43,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javax.ws.rs.core.GenericType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -41,14 +54,17 @@ import javafx.util.StringConverter;
  *
  * COSAS POR HACER: Validacion de datos al editar tabla Al pulsar anadir cuenta
  * meter una nueva linea Menu contextual solo sale en celdas Implementar borrado
- * de lineas
- * Configurar el menu contextual
- * Igual seria mejor hacer una combo para nombre y apellido no sea que meta un nuevo cliente y no tengamos sus datos?
+ * de lineas Configurar el menu contextual Igual seria mejor hacer una combo
+ * para nombre y apellido no sea que meta un nuevo cliente y no tengamos sus
+ * datos?
  */
 public class AccountController implements Initializable {
 
-    private ObservableList<AccountBean> testData;
-
+    private ObservableList<AccountBean> data = FXCollections.observableArrayList();
+    AccountBean tableAccount;
+    SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+    private static final Logger LOGGER = Logger.getLogger("javaClient");
+    
     @FXML
     private MenuItem itemAccountNum;
     @FXML
@@ -65,7 +81,16 @@ public class AccountController implements Initializable {
     private AnchorPane paneCustomer;
     @FXML
     private Label showAll;
+    
+    @FXML
+    private TextField customerName;
 
+    @FXML
+    private TextField customerSurname;
+    
+    @FXML
+    private Button customerSearchButton;
+    
     @FXML
     private TableView<AccountBean> tableAccounts;
 
@@ -84,7 +109,7 @@ public class AccountController implements Initializable {
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
 
-    private static Logger logger = Logger.getLogger(AccountController.class.getName());
+    
     ;
     private Stage stage;
 
@@ -95,10 +120,12 @@ public class AccountController implements Initializable {
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
         itemDate.setOnAction(this::menuButtonDateHandler);
         itemAll.setOnAction(this::menuButtonAllHandler);
+        itemAll.setOnAction(this::buttonSearchAll);
+        customerSearchButton.setOnAction(this::buttonSearchCustomer);
+        
     }
 
     public void initStage(Parent root) {
-        logger.info("Initializing Login stage.");
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Account");
@@ -183,6 +210,19 @@ public class AccountController implements Initializable {
     public void createTableView() {
 
     }
+    //STACKPANE ACTION EVENTS
+    @FXML
+    private void buttonSearchCustomer(ActionEvent event){
+        if(!customerName.getText().equals("") && customerSurname.getText().equals("")){
+            mostrarCuentasNombre(customerName.getText());
+        }
+    }
+    
+    @FXML
+    private void buttonSearchAll(ActionEvent event){
+        mostrarTodasCuentas();
+    }
+    
 
     //MENU CONTEXTUAL
     ContextMenu contextTabla = new ContextMenu();
@@ -204,13 +244,6 @@ public class AccountController implements Initializable {
                 = (TableColumn<AccountBean, String> p) -> new EditingCellTextField(tableAccounts);
 
         //FACTORIA DE CELDAS
-        colAccountNumber.setCellFactory(cellFactory);
-        colAccountNumber.setOnEditCommit(
-                (CellEditEvent<AccountBean, String> t) -> {
-                    ((AccountBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setAccountNumber(t.getNewValue());
-                });
-
         colName.setCellFactory(cellFactory);
         colName.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
@@ -245,17 +278,68 @@ public class AccountController implements Initializable {
             AccountBean account = t.getTableView().getItems().get(t.getTablePosition().getRow());
             account.setBalance(t.getNewValue());
         });
-
-        //DATOS DE PRUEBA
-        testData = FXCollections.observableArrayList(
-                new AccountBean("12343-35678-39101-34567", "John", "Doe", "12-12-1956", 1000.50),
-                new AccountBean("23451-16789-11012-23456", "Jane", "Smith", "23-11-2001", 2000.75),
-                new AccountBean("34561-17890-11123-45432", "Bob", "Johnson", "20-10-2015", 300.25)
-        );
         contextTabla.getItems().addAll(item1, item2, item3);
         tableAccounts.setContextMenu(contextTabla);
-        tableAccounts.setItems(testData); // Set the data in the TableView
+        
+        mostrarTodasCuentas();
 
     }
 
+    //METODOS PARA LLENAR LA TABLA
+    private void mostrarTodasCuentas(){
+         try {
+            LOGGER.log(Level.INFO, "AccountController(mostrarTodasCuentas): Getting Accounts and Customers"); 
+           
+            List<Account> accounts = AccountFactory.getInstance().getIaccounts()
+                    .findAll_XML(new GenericType<List<Account>>() {});
+            List<Customer> customers = CustomerFactory.getInstance().getIcustomer()
+                    .findAll_XML(new GenericType<List<Customer>>() {});
+
+            data = organizarData(accounts, customers);
+            tableAccounts.setItems(data);
+           
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table", error.getMessage());
+        }
+    }
+    
+    private void mostrarCuentasNombre(String name){
+        try {
+            LOGGER.log(Level.INFO, "AccountController(mostrarCuentasNombre): Getting Accounts and Customers lists"); 
+            List<Account> accounts = AccountFactory.getInstance().getIaccounts()
+                    .findAll_XML(new GenericType<List<Account>>() {});
+            List<Customer> customers =AccountFactory.getInstance().getIaccounts()
+                    .findByName(new GenericType<List<Customer>>() {}, name);
+            
+            data = organizarData(accounts, customers);
+            tableAccounts.setItems(data);
+            
+        }catch(Exception error){
+             LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasNomre): "
+                     + "Exception while populating table", error.getMessage());
+        }
+    }
+    
+    private ObservableList<AccountBean> organizarData(List<Account> accounts, List<Customer> customers){
+        LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
+        data.clear();
+        for (Customer customer : customers) {
+                for (Product product : customer.getProducts()) {
+                    for (Account account : accounts) {
+                        if(Objects.equals(product.getIDProduct(), account.getIDProduct())){
+                            tableAccount = new AccountBean(account.getAccountNumber(), 
+                                    customer.getName(), 
+                                    customer.getSurname(), 
+                                    formateador.format(account.getCreationDate()), 
+                                    account.getBalance());
+                            
+                            data.add(tableAccount);
+                        }
+                    }
+                }
+            }
+        
+        return data;
+    }
+    
 }

@@ -5,9 +5,14 @@
  */
 package com.tartanga.grupo4.RESTfullClient;
 
+import com.tartanga.grupo4.businesslogic.Icustomer;
+import com.tartanga.grupo4.exception.ReadException;
+import com.tartanga.grupo4.models.Customer;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:CustomerFacadeREST
@@ -22,7 +27,7 @@ import javax.ws.rs.client.WebTarget;
  *
  * @author 2dami
  */
-public class CustomerRESTfull {
+public class CustomerRESTfull implements Icustomer {
 
     private WebTarget webTarget;
     private Client client;
@@ -79,7 +84,8 @@ public class CustomerRESTfull {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
 
-    public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
+    @Override
+    public List<Customer> findAll_XML(GenericType<List<Customer>> responseType) throws ClientErrorException, ReadException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

@@ -6,6 +6,7 @@
 package com.tartanga.grupo4.controller;
 
 
+import com.tartanga.grupo4.models.AccountBean;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
