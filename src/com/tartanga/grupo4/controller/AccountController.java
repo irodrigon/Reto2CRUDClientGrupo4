@@ -299,7 +299,7 @@ public class AccountController implements Initializable {
             tableAccounts.setItems(data);
            
         } catch (Exception error) {
-            LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table", error.getMessage());
+            LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
         }
     }
     
@@ -316,7 +316,7 @@ public class AccountController implements Initializable {
             
         }catch(Exception error){
              LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasNomre): "
-                     + "Exception while populating table", error.getMessage());
+                     + "Exception while populating table , {0}", error.getMessage());
         }
     }
     
@@ -324,6 +324,7 @@ public class AccountController implements Initializable {
         LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
         data.clear();
         for (Customer customer : customers) {
+            if(customer.getProducts()!=null)
                 for (Product product : customer.getProducts()) {
                     for (Account account : accounts) {
                         if(Objects.equals(product.getIDProduct(), account.getIDProduct())){
