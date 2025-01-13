@@ -10,6 +10,7 @@ import com.tartanga.grupo4.exception.ReadException;
 import com.tartanga.grupo4.models.Customer;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -85,7 +86,7 @@ public class CustomerRESTfull implements Icustomer {
     }
 
     @Override
-    public List<Customer> findAll_XML(GenericType<List<Customer>> responseType) throws ClientErrorException, ReadException {
+    public List<Customer> findAll_XML(GenericType<List<Customer>> responseType) throws WebApplicationException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

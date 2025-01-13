@@ -72,8 +72,8 @@
                                 <AnchorPane fx:id="paneAccount">
                                     <children>
                                         <Label fx:id="labelAccount" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce an account number" /> 
-                                        <TextField layoutX="60.0" layoutY="102.0" />
-                                        <Button layoutX="260.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                        <TextField fx:id="accountNumber" layoutX="60.0" layoutY="102.0" />
+                                        <Button fx:id="accountNumberSearchButton" layoutX="260.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
                                     </children>
                                 </AnchorPane>       
                                 <!-- Pane buscar por customer -->
@@ -91,9 +91,9 @@
                                     <children>
                                         <Label fx:id="labelDateIni" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Choose a starting date" />
                                         <Label fx:id="labelDateFin" layoutX="320.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Choose an end date" />
-                                        <DatePicker layoutX="60.0" layoutY="102.0" />
-                                        <DatePicker layoutX="320.0" layoutY="102.0" />
-                                        <Button layoutX="553.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                        <DatePicker fx:id="startDate" layoutX="60.0" layoutY="102.0" />
+                                        <DatePicker fx:id="endDate" layoutX="320.0" layoutY="102.0" />
+                                        <Button fx:id="dateSearchButton" layoutX="553.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
                                     </children>
                                 </AnchorPane>
                             </children>                 

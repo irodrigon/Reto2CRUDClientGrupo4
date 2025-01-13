@@ -47,6 +47,8 @@ import javax.ws.rs.core.GenericType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.input.KeyCode;
 
 /**
  *
@@ -64,7 +66,9 @@ public class AccountController implements Initializable {
     AccountBean tableAccount;
     SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
     private static final Logger LOGGER = Logger.getLogger("javaClient");
-    
+    List<Customer> customers;
+    List<Account> accounts;
+
     @FXML
     private MenuItem itemAccountNum;
     @FXML
@@ -81,36 +85,35 @@ public class AccountController implements Initializable {
     private AnchorPane paneCustomer;
     @FXML
     private Label showAll;
-    
     @FXML
     private TextField customerName;
-
     @FXML
     private TextField customerSurname;
-    
+    @FXML
+    private TextField accountNumber;
+    @FXML
+    private DatePicker startDate;
+    @FXML
+    private DatePicker endDate;
+    @FXML
+    private Button dateSearchButton;
     @FXML
     private Button customerSearchButton;
-    
+    @FXML
+    private Button accountNumberSearchButton;
     @FXML
     private TableView<AccountBean> tableAccounts;
-
     @FXML
     private TableColumn<AccountBean, String> colAccountNumber;
-
     @FXML
     private TableColumn<AccountBean, String> colName;
-
     @FXML
     private TableColumn<AccountBean, String> colSurname;
-
     @FXML
     private TableColumn<AccountBean, String> colCreationDate;
-
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
-
     
-    ;
     private Stage stage;
 
     @Override
@@ -122,7 +125,10 @@ public class AccountController implements Initializable {
         itemAll.setOnAction(this::menuButtonAllHandler);
         itemAll.setOnAction(this::buttonSearchAll);
         customerSearchButton.setOnAction(this::buttonSearchCustomer);
-        
+        accountNumberSearchButton.setOnAction(this::buttonSearchAccountNumber);
+        dateSearchButton.setOnAction(this::buttonSearchByDates);
+        setEnterKeyOnSearchButtons();
+
     }
 
     public void initStage(Parent root) {
@@ -210,19 +216,27 @@ public class AccountController implements Initializable {
     public void createTableView() {
 
     }
+
     //STACKPANE ACTION EVENTS
     @FXML
-    private void buttonSearchCustomer(ActionEvent event){
-        if(!customerName.getText().equals("") && customerSurname.getText().equals("")){
-            mostrarCuentasNombre(customerName.getText());
-        }
+    private void buttonSearchCustomer(ActionEvent event) {
+        mostrarCuentasNombreApellido(customerName.getText(), customerSurname.getText());
+    }
+
+    @FXML
+    private void buttonSearchAll(ActionEvent event) {
+        mostrarTodasCuentas();
+    }
+
+    @FXML
+    private void buttonSearchAccountNumber(ActionEvent event) {
+        mostrarNumeroCuenta(accountNumber.getText());
     }
     
     @FXML
-    private void buttonSearchAll(ActionEvent event){
-        mostrarTodasCuentas();
-    }
-    
+            private void buttonSearchByDates(ActionEvent event){
+                mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
+            }
 
     //MENU CONTEXTUAL
     ContextMenu contextTabla = new ContextMenu();
@@ -280,67 +294,155 @@ public class AccountController implements Initializable {
         });
         contextTabla.getItems().addAll(item1, item2, item3);
         tableAccounts.setContextMenu(contextTabla);
-        
+
         mostrarTodasCuentas();
 
     }
 
     //METODOS PARA LLENAR LA TABLA
-    private void mostrarTodasCuentas(){
-         try {
-            LOGGER.log(Level.INFO, "AccountController(mostrarTodasCuentas): Getting Accounts and Customers"); 
-           
-            List<Account> accounts = AccountFactory.getInstance().getIaccounts()
-                    .findAll_XML(new GenericType<List<Account>>() {});
-            List<Customer> customers = CustomerFactory.getInstance().getIcustomer()
-                    .findAll_XML(new GenericType<List<Customer>>() {});
+    private void mostrarTodasCuentas() {
+        try {
+            LOGGER.log(Level.INFO, "AccountController(mostrarTodasCuentas): Getting Accounts and Customers");
+
+            accounts = AccountFactory.getInstance().getIaccounts()
+                    .findAll_XML(new GenericType<List<Account>>() {
+                    });
+            customers = CustomerFactory.getInstance().getIcustomer()
+                    .findAll_XML(new GenericType<List<Customer>>() {
+                    });
 
             data = organizarData(accounts, customers);
             tableAccounts.setItems(data);
-           
+
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
         }
     }
     
-    private void mostrarCuentasNombre(String name){
+    private void mostrarCuentasPorFecha (String fechaIni, String fechaFin) {
         try {
-            LOGGER.log(Level.INFO, "AccountController(mostrarCuentasNombre): Getting Accounts and Customers lists"); 
-            List<Account> accounts = AccountFactory.getInstance().getIaccounts()
-                    .findAll_XML(new GenericType<List<Account>>() {});
-            List<Customer> customers =AccountFactory.getInstance().getIaccounts()
-                    .findByName(new GenericType<List<Customer>>() {}, name);
-            
+            LOGGER.log(Level.INFO, "AccountController(mostrarCuentasPorFecha): Getting Accounts and Customers");
+
+            accounts = AccountFactory.getInstance().getIaccounts()
+                    .findByDates(new GenericType<List<Account>>() {
+                    },fechaIni,fechaFin);
+            customers = CustomerFactory.getInstance().getIcustomer()
+                    .findAll_XML(new GenericType<List<Customer>>() {
+                    });
+
             data = organizarData(accounts, customers);
             tableAccounts.setItems(data);
-            
-        }catch(Exception error){
-             LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasNomre): "
-                     + "Exception while populating table , {0}", error.getMessage());
+
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasPorFecha): Exception while populating table, {0}", error.getMessage());
         }
     }
-    
-    private ObservableList<AccountBean> organizarData(List<Account> accounts, List<Customer> customers){
+
+    private void mostrarNumeroCuenta(String accountNumber) {
+        try {
+            LOGGER.log(Level.INFO, "AccountController(mostrarNumeroCuenta): Getting the Account and Customers");
+            accounts.clear();
+            accounts.add(AccountFactory.getInstance().getIaccounts()
+                    .findByAccount(new GenericType<Account>() {
+                    }, accountNumber));
+            customers = CustomerFactory.getInstance().getIcustomer()
+                    .findAll_XML(new GenericType<List<Customer>>() {
+                    });
+
+            data = organizarData(accounts, customers);
+            tableAccounts.setItems(data);
+
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(mostrarNumeroCuenta): Exception while populating table, {0}", error.getMessage());
+        }
+    }
+
+    private void mostrarCuentasNombreApellido(String name, String surname) {
+        try {
+
+            if (!customerName.getText().equals("") && customerSurname.getText().equals("")) {
+                customers = AccountFactory.getInstance().getIaccounts()
+                        .findByName(new GenericType<List<Customer>>() {
+                        }, name);
+            } else if (customerName.getText().equals("") && !customerSurname.getText().equals("")) {
+                customers = AccountFactory.getInstance().getIaccounts()
+                        .findBySurname(new GenericType<List<Customer>>() {
+                        }, surname);
+            } else {
+                customers = AccountFactory.getInstance().getIaccounts()
+                        .findByNameSurname(new GenericType<List<Customer>>() {
+                        }, name, surname);
+            }
+
+            LOGGER.log(Level.INFO, "AccountController(mostrarCuentasNombreApellido): Getting Accounts and Customers lists");
+            accounts = AccountFactory.getInstance().getIaccounts()
+                    .findAll_XML(new GenericType<List<Account>>() {
+                    });
+
+            data = organizarData(accounts, customers);
+            tableAccounts.setItems(data);
+
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasNomreApellido): "
+                    + "Exception while populating table , {0}", error.getMessage());
+        }
+    }
+
+    private ObservableList<AccountBean> organizarData(List<Account> accounts, List<Customer> customers) {
         LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
         data.clear();
         for (Customer customer : customers) {
-            if(customer.getProducts()!=null)
+            if (customer.getProducts() != null) {
                 for (Product product : customer.getProducts()) {
                     for (Account account : accounts) {
-                        if(Objects.equals(product.getIDProduct(), account.getIDProduct())){
-                            tableAccount = new AccountBean(account.getAccountNumber(), 
-                                    customer.getName(), 
-                                    customer.getSurname(), 
-                                    formateador.format(account.getCreationDate()), 
+                        if (Objects.equals(product.getIDProduct(), account.getIDProduct())) {
+                            tableAccount = new AccountBean(
+                                    account.getAccountNumber(),
+                                    customer.getName(),
+                                    customer.getSurname(),
+                                    formateador.format(account.getCreationDate()),
                                     account.getBalance());
-                            
+
                             data.add(tableAccount);
                         }
                     }
                 }
             }
-        
+        }
+
         return data;
     }
-    
+
+    private void setEnterKeyOnSearchButtons() {
+        customerName.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                customerSearchButton.fire();
+            }
+        });
+
+        customerSurname.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                customerSearchButton.fire();
+            }
+        });
+
+        accountNumber.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                accountNumberSearchButton.fire();
+            }
+        });
+
+        startDate.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                dateSearchButton.fire();
+            }
+        });
+        
+        endDate.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                dateSearchButton.fire();
+            }
+        });
+    }
+
 }
