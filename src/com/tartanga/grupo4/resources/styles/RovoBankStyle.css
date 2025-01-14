@@ -1,0 +1,252 @@
+/* Global styles: These styles are applying to all of of the elements in the javafx stages. */
+.root {
+    -fx-font-family: "Arial";
+    /*-fx-font-size: 14px;*/
+}
+
+/* AnchorPane */
+#AnchorPane {
+    -fx-background-color: white;
+    -fx-background-image: url("/com/tartanga/grupo4/resources/images/RovoBankGreenBackground.jpg");
+}
+
+/* VBox */
+.vbox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+/* HBox */
+.hbox {
+    -fx-spacing: 10;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Header specific styles */
+.header {
+    /*-fx-background-image: url("/com/tartanga/grupo4/resources/images/RovoBankGreenBackground.jpg");*/
+    -fx-background-color: #147879;
+    -fx-padding: 10;
+}
+
+.header .label {
+    -fx-text-fill: white;
+    -fx-font-size: 40px;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #006048;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+
+#signInTitleLabel{
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 25px;
+}
+
+#userLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#passwordLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_PasswordSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_EmailSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_CitySignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_StreetSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ZipSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ConfirmSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ActiveSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_NameSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#hl_create {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+.button:hover {
+    -fx-background-color: #147879;
+}
+
+.exit-button {
+    -fx-background-color: #006048;
+    -fx-text-fill: white;
+}
+
+.exit-button:hover {
+    -fx-background-color: #147879;
+}
+
+/* Body styles */
+.body {
+    -fx-background-color: white;
+    -fx-padding: -1;
+    -fx-border-color: white;
+    -fx-border-width: 10;
+    -fx-border-radius: 0;
+}
+
+/* Titles */
+.title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* TableView */
+.table-view {
+    -fx-border-color: #006048;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: #006048;
+    -fx-border-style:solid;
+    -fx-border-color: #ffffff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* MenuBar */
+.menu-bar{
+    -fx-background-color: #006048;
+}
+
+.menu-bar .menu .label{
+    -fx-font-weight: bold;
+    -fx-text-fill:#ffffff;
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: #147879;
+}
+
+.menu-bar .menu .menu-item .label{
+    -fx-text-fill: #006048;
+}
+
+.menu-bar .menu .menu-item:hover{
+    -fx-background-color: #006048;
+}
+
+.menu-bar .menu .menu-item:hover .label{
+    -fx-text-fill: #ffffff;
+}
+
+#lblSearch{
+    -fx-text-fill: #006048;
+}
+
+#lblFrom{
+    -fx-text-fill: #006048;
+}
+
+#lblTo{
+    -fx-text-fill: #006048;
+}
+
+#tableContextMenu .label{
+    -fx-text-fill: #006048;
+}
+
+#tableContextMenu .menu-item:hover{
+    -fx-background-color: #006048;
+}
+
+#tableContextMenu .menu-item:hover .label{
+    -fx-text-fill: #ffffff;
+}
+
+#dtPickerFrom .label{
+    -fx-text-fill: #006048;
+}
+
+#dtPickerTo .label{
+    -fx-text-fill: #006048;
+}
+
+.split-pane .split-pane-divider {
+    -fx-background-color: #006048; 
+}
+
+.table-view .column-header .arrow{
+    -fx-background-color: #ffffff;
+} 
+
+#comboSelectDate{
+    -fx-background-color: #006048;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+#comboSelectDate .arrow{
+    -fx-background-color: #ffffff;
+}
+
+#comboSelectDate .list-cell{
+    -fx-text-fill: #ffffff;
+}
+
+#comboSelectDate .list-view .list-cell{
+    -fx-text-fill: #006048;
+}
+
+#comboSelectDate .list-view .list-cell:hover{
+    -fx-background-color: #006048;
+    -fx-text-fill: #ffffff;
+}
+
+#lblMovements{
+    -fx-text-fill: #006048;
+    -fx-font-size: 20px;
+}
