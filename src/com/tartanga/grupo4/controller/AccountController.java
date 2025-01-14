@@ -13,6 +13,7 @@ import com.tartanga.grupo4.models.Customer;
 import com.tartanga.grupo4.models.Product;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -47,6 +48,7 @@ import javax.ws.rs.core.GenericType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.KeyCode;
 
@@ -113,7 +115,7 @@ public class AccountController implements Initializable {
     private TableColumn<AccountBean, String> colCreationDate;
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
-    
+
     private Stage stage;
 
     @Override
@@ -122,7 +124,6 @@ public class AccountController implements Initializable {
         itemAccountNum.setOnAction(this::menuButtonAccountHandler);
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
         itemDate.setOnAction(this::menuButtonDateHandler);
-        itemAll.setOnAction(this::menuButtonAllHandler);
         itemAll.setOnAction(this::buttonSearchAll);
         customerSearchButton.setOnAction(this::buttonSearchCustomer);
         accountNumberSearchButton.setOnAction(this::buttonSearchAccountNumber);
@@ -140,6 +141,7 @@ public class AccountController implements Initializable {
         paneAccount.setVisible(false);
         paneCustomer.setVisible(false);
         showAll.setText("Showing all the accounts");
+        customizeDatePickers();
         iniTabla();
         stage.show();
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
@@ -205,14 +207,6 @@ public class AccountController implements Initializable {
         showAll.setText("");
     }
 
-    @FXML
-    private void menuButtonAllHandler(ActionEvent event) {
-        paneAccount.setVisible(false);
-        paneCustomer.setVisible(false);
-        paneDate.setVisible(false);
-        showAll.setText("Showing all the accounts");
-    }
-
     public void createTableView() {
 
     }
@@ -225,6 +219,10 @@ public class AccountController implements Initializable {
 
     @FXML
     private void buttonSearchAll(ActionEvent event) {
+        paneAccount.setVisible(false);
+        paneCustomer.setVisible(false);
+        paneDate.setVisible(false);
+        showAll.setText("Showing all the accounts");
         mostrarTodasCuentas();
     }
 
@@ -232,11 +230,11 @@ public class AccountController implements Initializable {
     private void buttonSearchAccountNumber(ActionEvent event) {
         mostrarNumeroCuenta(accountNumber.getText());
     }
-    
+
     @FXML
-            private void buttonSearchByDates(ActionEvent event){
-                mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
-            }
+    private void buttonSearchByDates(ActionEvent event) {
+        mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
+    }
 
     //MENU CONTEXTUAL
     ContextMenu contextTabla = new ContextMenu();
@@ -305,7 +303,7 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.INFO, "AccountController(mostrarTodasCuentas): Getting Accounts and Customers");
 
             accounts = AccountFactory.getInstance().getIaccounts()
-                    .findAll_XML(new GenericType<List<Account>>() {
+                    .getAllAccounts(new GenericType<List<Account>>() {
                     });
             customers = CustomerFactory.getInstance().getIcustomer()
                     .findAll_XML(new GenericType<List<Customer>>() {
@@ -318,14 +316,14 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
         }
     }
-    
-    private void mostrarCuentasPorFecha (String fechaIni, String fechaFin) {
+
+    private void mostrarCuentasPorFecha(String fechaIni, String fechaFin) {
         try {
             LOGGER.log(Level.INFO, "AccountController(mostrarCuentasPorFecha): Getting Accounts and Customers");
 
             accounts = AccountFactory.getInstance().getIaccounts()
                     .findByDates(new GenericType<List<Account>>() {
-                    },fechaIni,fechaFin);
+                    }, fechaIni, fechaFin);
             customers = CustomerFactory.getInstance().getIcustomer()
                     .findAll_XML(new GenericType<List<Customer>>() {
                     });
@@ -376,7 +374,7 @@ public class AccountController implements Initializable {
 
             LOGGER.log(Level.INFO, "AccountController(mostrarCuentasNombreApellido): Getting Accounts and Customers lists");
             accounts = AccountFactory.getInstance().getIaccounts()
-                    .findAll_XML(new GenericType<List<Account>>() {
+                    .getAllAccounts(new GenericType<List<Account>>() {
                     });
 
             data = organizarData(accounts, customers);
@@ -412,6 +410,41 @@ public class AccountController implements Initializable {
 
         return data;
     }
+    //METODOS DE MODIFICAR ELEMENTOS
+
+    private void customizeDatePickers() {
+
+        final Callback<DatePicker, DateCell> dayCellFactory
+                = new Callback<DatePicker, DateCell>() {
+            @Override
+            public DateCell call(final DatePicker datePicker) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item.isAfter(
+                                LocalDate.now())) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+
+                        }
+
+                        if (datePicker == endDate && item.isBefore(
+                                startDate.getValue())) {//Esto da NullPointer si no se a elegido valor en startDate
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            //endDate.setValue(startDate.getValue().plusDays(1));
+                        }
+                    }
+                };
+            }
+        };
+        endDate.setDayCellFactory(dayCellFactory);
+        startDate.setDayCellFactory(dayCellFactory);
+        startDate.setPromptText("dd/mm/yyyy");
+        endDate.setPromptText("dd/mm/yyyy");
+    }
 
     private void setEnterKeyOnSearchButtons() {
         customerName.setOnKeyPressed(event -> {
@@ -437,7 +470,7 @@ public class AccountController implements Initializable {
                 dateSearchButton.fire();
             }
         });
-        
+
         endDate.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 dateSearchButton.fire();

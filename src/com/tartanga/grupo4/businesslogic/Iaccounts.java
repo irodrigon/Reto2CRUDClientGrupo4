@@ -19,7 +19,7 @@ import javax.ws.rs.core.GenericType;
  * @author 2dami
  */
 public interface Iaccounts {
-    public List<Account> findAll_XML(GenericType<List<Account>> responseType) throws WebApplicationException;
+    public List<Account> getAllAccounts(GenericType<List<Account>> responseType) throws WebApplicationException;
     public List<Customer> findByName(GenericType<List<Customer>> responseType, String name) throws WebApplicationException; 
     public List<Customer> findByNameSurname(GenericType<List<Customer>> responseType, String name, String surname) throws WebApplicationException; 
     public List<Customer> findBySurname(GenericType<List<Customer>> responseType, String surname) throws WebApplicationException; 

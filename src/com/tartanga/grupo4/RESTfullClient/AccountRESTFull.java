@@ -92,7 +92,7 @@ public class AccountRESTFull implements Iaccounts {
     }
     
     @Override
-    public List<Account> findAll_XML(GenericType<List<Account>> responseType) throws WebApplicationException {
+    public List<Account> getAllAccounts(GenericType<List<Account>> responseType) throws WebApplicationException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
