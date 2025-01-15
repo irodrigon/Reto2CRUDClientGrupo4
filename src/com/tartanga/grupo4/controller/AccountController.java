@@ -51,6 +51,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.KeyCode;
+import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
 
 /**
  *
@@ -142,6 +143,7 @@ public class AccountController implements Initializable {
         paneCustomer.setVisible(false);
         showAll.setText("Showing all the accounts");
         customizeDatePickers();
+        formatAccountNumber();
         iniTabla();
         stage.show();
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
@@ -252,22 +254,32 @@ public class AccountController implements Initializable {
         colCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
         colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
 
-        Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactory
+        Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryTextField
                 = (TableColumn<AccountBean, String> p) -> new EditingCellTextField(tableAccounts);
+        
+        Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryDatePicker
+                = (TableColumn<AccountBean, String> p) -> new EditingCellDatePicker(tableAccounts);
 
         //FACTORIA DE CELDAS
-        colName.setCellFactory(cellFactory);
+        colName.setCellFactory(cellFactoryTextField);
         colName.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setName(t.getNewValue());
                 });
 
-        colSurname.setCellFactory(cellFactory);
+        colSurname.setCellFactory(cellFactoryTextField);
         colSurname.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setSurname(t.getNewValue());
+                });
+        
+        colCreationDate.setCellFactory(cellFactoryDatePicker);
+        colCreationDate.setOnEditCommit(
+                (CellEditEvent<AccountBean, String> t) -> {
+                    ((AccountBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
                 });
 
         colBalance.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>() {
@@ -411,7 +423,26 @@ public class AccountController implements Initializable {
         return data;
     }
     //METODOS DE MODIFICAR ELEMENTOS
+    
+    private void formatAccountNumber(){
+    accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
 
+    String accountNumberF = newValue.replaceAll("[^\\d]", "");
+
+
+    StringBuilder formatted = new StringBuilder();
+    for (int i = 0; i < accountNumberF.length(); i++) {
+        if (i > 0 && i % 4 == 0) {
+            formatted.append("-");
+        }
+        formatted.append(accountNumberF.charAt(i));
+    }
+    accountNumber.setText(formatted.toString());
+
+    accountNumber.positionCaret(formatted.length());
+});
+    }
+    
     private void customizeDatePickers() {
 
         final Callback<DatePicker, DateCell> dayCellFactory
@@ -431,7 +462,7 @@ public class AccountController implements Initializable {
                         }
 
                         if (datePicker == endDate && item.isBefore(
-                                startDate.getValue())) {//Esto da NullPointer si no se a elegido valor en startDate
+                                startDate.getValue())) {//Esto da NullPointer si no se a elegido valor en startDate previamente
                             setDisable(true);
                             setStyle("-fx-background-color: #ffc0cb;");
                             //endDate.setValue(startDate.getValue().plusDays(1));

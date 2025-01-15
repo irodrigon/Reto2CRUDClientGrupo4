@@ -14,13 +14,13 @@ import java.time.LocalDate;
  */
 public class AccountBean {
     
-        private Long accountNumber;
+        private String accountNumber;
         private String name;
         private String surname;
         private String creationDate;
         private Double balance;
 
-        public AccountBean(Long accountNumber, String name, String surname, String creationDate, Double balance) {
+        public AccountBean(String accountNumber, String name, String surname, String creationDate, Double balance) {
             
             this.accountNumber = accountNumber;
             this.name =name;
@@ -29,11 +29,11 @@ public class AccountBean {
             this.balance = balance;
         }
 
-    public Long getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 

@@ -24,7 +24,7 @@ public class Account extends Product implements Serializable {
     private static final long serialVersionUID = 1L;
     
 
-    private Long accountNumber;
+    private String accountNumber;
     
     private Double balance;
     
@@ -42,11 +42,11 @@ public class Account extends Product implements Serializable {
         this.creationDate = super.creationDate;
     }
 
-    public Long getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -110,7 +110,7 @@ public class Account extends Product implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (accountNumber != null ? accountNumber.hashCode() : 0);
+        hash += (IDProduct != null ? IDProduct.hashCode() : 0);
         return hash;
     }
 
@@ -121,7 +121,7 @@ public class Account extends Product implements Serializable {
             return false;
         }
         Account other = (Account) object;
-        if ((this.accountNumber == null && other.accountNumber != null) || (this.accountNumber != null && !this.accountNumber.equals(other.accountNumber))) {
+        if ((this.IDProduct == null && other.IDProduct != null) || (this.IDProduct != null && !this.IDProduct.equals(other.IDProduct))) {
             return false;
         }
         return true;
@@ -129,7 +129,7 @@ public class Account extends Product implements Serializable {
 
     @Override
     public String toString() {
-        return "com.tartanga.grupo4.accounts.Accounts[ id=" + accountNumber + " ]";
+        return "com.tartanga.grupo4.accounts.Accounts[ id=" + IDProduct + " ]";
     }
     
 }
