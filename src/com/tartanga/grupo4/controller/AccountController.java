@@ -254,13 +254,16 @@ public class AccountController implements Initializable {
         colCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
         colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
 
+        //FACTORIA DE CELDAS EDICION
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryTextField
                 = (TableColumn<AccountBean, String> p) -> new EditingCellTextField(tableAccounts);
         
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryDatePicker
                 = (TableColumn<AccountBean, String> p) -> new EditingCellDatePicker(tableAccounts);
+        
+        Callback<TableColumn<AccountBean, Double>, TableCell<AccountBean, Double>> cellFactoryDouble
+                = (TableColumn<AccountBean, Double> p) -> new EditingCellDouble(tableAccounts);
 
-        //FACTORIA DE CELDAS
         colName.setCellFactory(cellFactoryTextField);
         colName.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
@@ -282,22 +285,7 @@ public class AccountController implements Initializable {
                             t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
                 });
 
-        colBalance.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>() {
-            @Override
-            public String toString(Double balance) {
-                return balance == null ? "" : balance.toString();
-            }
-
-            @Override
-            public Double fromString(String balance) {
-                try {
-                    return Double.parseDouble(balance);
-                } catch (NumberFormatException error) {
-                    return 0.0;
-                }
-            }
-        }));
-
+        colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
             AccountBean account = t.getTableView().getItems().get(t.getTablePosition().getRow());
             account.setBalance(t.getNewValue());
@@ -423,7 +411,6 @@ public class AccountController implements Initializable {
         return data;
     }
     //METODOS DE MODIFICAR ELEMENTOS
-    
     private void formatAccountNumber(){
     accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
 
