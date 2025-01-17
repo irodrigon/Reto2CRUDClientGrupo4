@@ -26,7 +26,7 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
          setStyle("-fx-alignment: CENTER-RIGHT;");
     }
 
-    @Override
+    @Override//se llama cuando
     public void startEdit() {
         if (!isEmpty()) {
             super.startEdit();

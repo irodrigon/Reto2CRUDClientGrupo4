@@ -268,7 +268,9 @@ public class AccountController implements Initializable {
         colName.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setName(t.getNewValue());
+                            t.getTablePosition().getRow())).setName(t.getNewValue());//cambiarlo de lambda y aqui
+                    //es donde yo valido datos y errores, excepciones y lo actualizo en la base de datos
+                    
                 });
 
         colSurname.setCellFactory(cellFactoryTextField);

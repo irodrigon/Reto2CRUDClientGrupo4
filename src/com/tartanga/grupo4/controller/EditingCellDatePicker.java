@@ -23,7 +23,7 @@ public class EditingCellDatePicker extends TableCell<AccountBean, String> {
 
     private DatePicker datePicker;
     private TableView<AccountBean> tableAccounts;
-    private static final DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");//Usar en el zrchivo properties
 
     public EditingCellDatePicker(TableView<AccountBean> tableAccounts) {
         this.tableAccounts = tableAccounts;
