@@ -19,15 +19,25 @@ public class AccountBean {
         private String surname;
         private String creationDate;
         private Double balance;
+        private Integer Id;
 
-        public AccountBean(String accountNumber, String name, String surname, String creationDate, Double balance) {
+        public AccountBean(String accountNumber, String name, String surname, String creationDate, Double balance, Integer Id) {
             
             this.accountNumber = accountNumber;
             this.name =name;
             this.surname =surname;
             this.creationDate = creationDate;
             this.balance = balance;
+            this.Id = Id;
         }
+
+    public Integer getId() {
+        return Id;
+    }
+
+    public void setId(Integer Id) {
+        this.Id = Id;
+    }
 
     public String getAccountNumber() {
         return accountNumber;

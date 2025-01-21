@@ -30,27 +30,27 @@ public class EditingCellDatePicker extends TableCell<AccountBean, String> {
     }
 
     @Override
-    public void startEdit() {
+    public void startEdit() {//Se llama cuando el usuario da la orden de editar
         if (!isEmpty()) {
-            super.startEdit();
-            createDatePicker();
-            setText(null);
-            setGraphic(datePicker);
+            super.startEdit();//IMPORTANTE llamar a super
+            createDatePicker();//Crea el Datepicker
+            setText(null); //El texto que vemos en la tabla se pone a nulo para quitarlo
+            setGraphic(datePicker); //Se ensena el Datepicker
             // datePicker.selectAll();
         }
     }
 
     @Override
-    public void cancelEdit() {
-        super.cancelEdit();
+    public void cancelEdit() {//Cuando se cancela el modo edicion
+        super.cancelEdit();//IMPORTANTE llamar a super
 
-        setText((String) getItem());
-        setGraphic(null);
+        setText((String) getItem());//Se pone el texto de la celda de vuelta
+        setGraphic(null);//El Datepicker se quita de la celda
     }
 
     @Override
-    public void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
+    public void updateItem(String item, boolean empty) {//A esto se llama siempre que hay algun cambio
+        super.updateItem(item, empty);//IMPORTANTE llamar a super
 
         if (empty) {
             setText(null);

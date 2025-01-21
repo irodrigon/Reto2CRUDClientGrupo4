@@ -12,6 +12,8 @@ import com.tartanga.grupo4.models.AccountBean;
 import com.tartanga.grupo4.models.Customer;
 import com.tartanga.grupo4.models.Product;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import java.util.Date;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -66,11 +69,11 @@ import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
 public class AccountController implements Initializable {
 
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
-    AccountBean tableAccount;
-    SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+    private AccountBean tableAccount;
+    private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
     private static final Logger LOGGER = Logger.getLogger("javaClient");
-    List<Customer> customers;
-    List<Account> accounts;
+    private List<Customer> customers;
+    private List<Account> accounts;
 
     @FXML
     private MenuItem itemAccountNum;
@@ -257,10 +260,10 @@ public class AccountController implements Initializable {
         //FACTORIA DE CELDAS EDICION
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryTextField
                 = (TableColumn<AccountBean, String> p) -> new EditingCellTextField(tableAccounts);
-        
+
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryDatePicker
                 = (TableColumn<AccountBean, String> p) -> new EditingCellDatePicker(tableAccounts);
-        
+
         Callback<TableColumn<AccountBean, Double>, TableCell<AccountBean, Double>> cellFactoryDouble
                 = (TableColumn<AccountBean, Double> p) -> new EditingCellDouble(tableAccounts);
 
@@ -270,7 +273,7 @@ public class AccountController implements Initializable {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setName(t.getNewValue());//cambiarlo de lambda y aqui
                     //es donde yo valido datos y errores, excepciones y lo actualizo en la base de datos
-                    
+
                 });
 
         colSurname.setCellFactory(cellFactoryTextField);
@@ -279,24 +282,32 @@ public class AccountController implements Initializable {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setSurname(t.getNewValue());
                 });
-        
+
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
                 });
-
+        
         colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
-            AccountBean account = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            account.setBalance(t.getNewValue());
+            try {
+                AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                Account account = new Account(accountBean.getAccountNumber(),
+                        t.getNewValue(),
+                        formateador.parse(accountBean.getCreationDate()));
+                AccountFactory.getInstance().getIaccounts().edit_XML(account, accountBean.getId().toString());
+                accountBean.setBalance(t.getNewValue());
+            } catch (ParseException error) {
+                LOGGER.log(Level.SEVERE, "AccountController: Exception parsing to Date.{0}", error.getMessage());
+            }
         });
+
         contextTabla.getItems().addAll(item1, item2, item3);
         tableAccounts.setContextMenu(contextTabla);
 
         mostrarTodasCuentas();
-
     }
 
     //METODOS PARA LLENAR LA TABLA
@@ -401,7 +412,8 @@ public class AccountController implements Initializable {
                                     customer.getName(),
                                     customer.getSurname(),
                                     formateador.format(account.getCreationDate()),
-                                    account.getBalance());
+                                    account.getBalance(),
+                                    account.getIDProduct());
 
                             data.add(tableAccount);
                         }
@@ -412,26 +424,26 @@ public class AccountController implements Initializable {
 
         return data;
     }
+
     //METODOS DE MODIFICAR ELEMENTOS
-    private void formatAccountNumber(){
-    accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+    private void formatAccountNumber() {
+        accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
 
-    String accountNumberF = newValue.replaceAll("[^\\d]", "");
+            String accountNumberF = newValue.replaceAll("[^\\d]", "");
 
+            StringBuilder formatted = new StringBuilder();
+            for (int i = 0; i < accountNumberF.length(); i++) {
+                if (i > 0 && i % 4 == 0) {
+                    formatted.append("-");
+                }
+                formatted.append(accountNumberF.charAt(i));
+            }
+            accountNumber.setText(formatted.toString());
 
-    StringBuilder formatted = new StringBuilder();
-    for (int i = 0; i < accountNumberF.length(); i++) {
-        if (i > 0 && i % 4 == 0) {
-            formatted.append("-");
-        }
-        formatted.append(accountNumberF.charAt(i));
+            accountNumber.positionCaret(formatted.length());
+        });
     }
-    accountNumber.setText(formatted.toString());
 
-    accountNumber.positionCaret(formatted.length());
-});
-    }
-    
     private void customizeDatePickers() {
 
         final Callback<DatePicker, DateCell> dayCellFactory
