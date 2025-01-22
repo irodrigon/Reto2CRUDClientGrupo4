@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Account extends Product implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private Long accountNumber;
+    private String accountNumber;
     
     private Double balance;
     
@@ -37,11 +37,11 @@ public class Account extends Product implements Serializable {
         this.creationDate = super.creationDate;
     }
 
-    public Long getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 

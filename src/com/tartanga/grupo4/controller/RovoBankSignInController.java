@@ -25,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.GenericType;
 
 /**
@@ -170,7 +171,7 @@ public class RovoBankSignInController {
     @FXML
     private void handleLogin(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-    
+
         alert.setHeaderText(null);
         ButtonType oKButton = new ButtonType("OK");
         alert.getButtonTypes().setAll(oKButton);
@@ -203,7 +204,10 @@ public class RovoBankSignInController {
                 RovoBankMainController controller = (RovoBankMainController) FXMLLoader.getController();
                 controller.setStage(stage);
                 controller.initStage(root);
-
+            } catch (NotAuthorizedException e) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Incorrect User/Password.");
+                alert.showAndWait();
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
             }

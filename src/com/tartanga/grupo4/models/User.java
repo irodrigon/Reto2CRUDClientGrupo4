@@ -16,13 +16,13 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    private String logIn;
+    protected String logIn;
 
-    private String name;
-    private String surname;
-    private String street;
-    private String city;
-    private Integer zip;
+    protected String name;
+    protected String surname;
+    protected String street;
+    protected String city;
+    protected Integer zip;
 
     public String getLogIn() {
         return logIn;

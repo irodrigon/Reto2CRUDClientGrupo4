@@ -37,7 +37,7 @@
                 <Font size="12.0" />
             </font>
         </Label>
-        <Label fx:id="lbl_NameSignUp" layoutX="242.0" layoutY="513.0" prefHeight="43.0" prefWidth="62.0" text="Name:">
+        <Label fx:id="lbl_SurnameSignUp" layoutX="179.0" layoutY="591.0" prefHeight="43.0" prefWidth="77.0" text="Surname:">
             <font>
                 <Font size="12.0" />
             </font>
@@ -84,7 +84,13 @@
         <Label fx:id="lbl_error_Password" layoutX="304.0" layoutY="376.0" prefHeight="59.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
         <Label fx:id="lbl_error_Confirm" layoutX="304.0" layoutY="471.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
         <Label fx:id="lbl_error_Name" layoutX="304.0" layoutY="560.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
-        <Label fx:id="lbl_error_Zip" layoutX="940.0" layoutY="296.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
-        <Label fx:id="lbl_error_City" layoutX="940.0" layoutY="396.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
-        <Label fx:id="lbl_error_Street" layoutX="940.0" layoutY="471.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
+        <Label fx:id="lbl_error_Zip" layoutX="897.0" layoutY="296.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
+        <Label fx:id="lbl_error_City" layoutX="897.0" layoutY="397.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" />
+        <Label fx:id="lbl_error_Street" layoutX="897.0" layoutY="471.0" prefHeight="18.0" prefWidth="211.0" style="-fx-text-fill: #C40C0C;" text="" />
+   <TextField fx:id="fld_Surname" layoutX="304.0" layoutY="600.0" prefHeight="20.0" prefWidth="211.0" promptText="Surname" />
+   <Label fx:id="lbl_NameSignUp" layoutX="211.0" layoutY="514.0" prefHeight="43.0" prefWidth="62.0" text="Name:">
+      <font>
+         <Font size="12.0" />
+      </font>
+   </Label>
 </AnchorPane>

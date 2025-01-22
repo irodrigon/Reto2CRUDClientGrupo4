@@ -18,4 +18,6 @@ public interface AdminLogicController {
     
     public Admin countAdminByLogIn(GenericType<Admin> responseType, String logIn);
     
+    public void createAdmin(Admin requestEntity);
+    
 }

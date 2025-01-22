@@ -6,34 +6,49 @@
 package com.tartanga.grupo4.businesslogic;
 
 import com.tartanga.grupo4.models.Admin;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import com.tartanga.grupo4.models.CreditCard;
 
 /**
- * Jersey REST client generated for REST resource:AdminFacadeREST
- * [com.tartanga.grupo4.customers.admin]<br>
+ * Jersey REST client generated for REST resource:CreditCardFacadeREST
+ * [com.tartanga.grupo4.creditcards.creditcard]<br>
  * USAGE:
  * <pre>
- *        AdminClient client = new AdminClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
+        CreditCardClient client = new CreditCardClient();
+        Object response = client.XXX(...);
+        // do whatever with response
+        client.close();
+ </pre>
  *
  * @author Iñi
  */
-public class AdminClient implements AdminLogicController{
+public class CreditCardClient implements CreditCardLogicController{
 
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
 
-    public AdminClient() {
+    public CreditCardClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
-        webTarget = client.target(BASE_URI).path("com.tartanga.grupo4.customers.admin");
+        webTarget = client.target(BASE_URI).path("com.tartanga.grupo4.creditcards.creditcard");
+    }
+
+    public <T> T findCreditCardByexpirationDate_XML(Class<T> responseType, String startDate, String endDate) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("expirationDates/{0}/{1}", new Object[]{startDate, endDate}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findCreditCardByexpirationDate_JSON(Class<T> responseType, String startDate, String endDate) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("expirationDates/{0}/{1}", new Object[]{startDate, endDate}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
     public String countREST() throws ClientErrorException {
@@ -48,18 +63,6 @@ public class AdminClient implements AdminLogicController{
 
     public void edit_JSON(Object requestEntity, String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
-    }
-
-    public <T> T findAdminByCredentials_XML(Class<T> responseType, String logIn, String password) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}/{1}", new Object[]{logIn, password}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    public <T> T findAdminByCredentials_JSON(Class<T> responseType, String logIn, String password) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}/{1}", new Object[]{logIn, password}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
     public <T> T find_XML(Class<T> responseType, String id) throws ClientErrorException {
@@ -86,24 +89,24 @@ public class AdminClient implements AdminLogicController{
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
-    public <T> T countAdminByLogin_XML(Class<T> responseType, String logIn) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}", new Object[]{logIn}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    public <T> T countAdminByLogin_JSON(Class<T> responseType, String logIn) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}", new Object[]{logIn}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
-    }
-
     public void create_XML(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
     public void create_JSON(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
+    }
+
+    public <T> T findCreditCardByCreationDate_XML(Class<T> responseType, String startDate, String endDate) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("creationDates/{0}/{1}", new Object[]{startDate, endDate}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findCreditCardByCreationDate_JSON(Class<T> responseType, String startDate, String endDate) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("creationDates/{0}/{1}", new Object[]{startDate, endDate}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
     public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
@@ -120,27 +123,32 @@ public class AdminClient implements AdminLogicController{
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
+    public <T> T findCreditCardByCreditCardNumber_XML(Class<T> responseType, String creditCardNumber) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("creditCardNumber/{0}", new Object[]{creditCardNumber}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findCreditCardByCreditCardNumber_JSON(Class<T> responseType, String creditCardNumber) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("creditCardNumber/{0}", new Object[]{creditCardNumber}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+    
+    @Override
+    public List<CreditCard> findAllCreditCards(GenericType<List<CreditCard>> responseType) {
+        WebTarget resource = webTarget;
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+    
+    @Override
+    public void deleteCreditCardByCardNumber(String creditCardNumber) {
+        webTarget.path(java.text.MessageFormat.format("byNumber/{0}", new Object[]{creditCardNumber})).request().delete();
+    }
+
     public void close() {
         client.close();
     }
 
-    @Override
-    public Admin findAdminByCredentials(GenericType<Admin> responseType, String logIn, String password) throws WebApplicationException{
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}/{1}", new Object[]{logIn, password}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    @Override
-    public Admin countAdminByLogIn(GenericType<Admin> responseType, String logIn) throws WebApplicationException{
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("credentials/{0}", new Object[]{logIn}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    @Override
-    public void createAdmin(Admin requestEntity) throws WebApplicationException{
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
-    }
     
 }

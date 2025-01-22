@@ -19,6 +19,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -43,9 +44,13 @@ public class RovoBankMainController {
     public Stage getStage() {
         return stage;
     }
+    
+    @FXML
+    private MenuItem menuItemCredit;
 
     @FXML
     private void initialize() {
+        menuItemCredit.setOnAction(this::handleCreditCard);
     }
 
     public void initStage(Parent root) {
@@ -57,15 +62,15 @@ public class RovoBankMainController {
         stage.show();
 
     }
-
+    
     @FXML
-    private void handleCreateUser(ActionEvent event) {
+    private void handleCreditCard(ActionEvent event) {
         try {
-            FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankSignUpView.fxml"));
+            FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankCreditCardView.fxml"));
 
             Parent root = (Parent) FXMLLoader.load();
 
-            RovoBankSignUpController controller = (RovoBankSignUpController) FXMLLoader.getController();
+            RovoBankCreditCardController controller = (RovoBankCreditCardController) FXMLLoader.getController();
             controller.setStage(stage);
             controller.initStage(root);
 
