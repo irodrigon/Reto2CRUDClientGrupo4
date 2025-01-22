@@ -53,6 +53,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
 import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
 
@@ -74,7 +75,8 @@ public class AccountController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger("javaClient");
     private List<Customer> customers;
     private List<Account> accounts;
-
+    private Stage stage;
+    private Account account = new Account();
     @FXML
     private MenuItem itemAccountNum;
     @FXML
@@ -108,6 +110,10 @@ public class AccountController implements Initializable {
     @FXML
     private Button accountNumberSearchButton;
     @FXML
+    private Button addButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
     private TableView<AccountBean> tableAccounts;
     @FXML
     private TableColumn<AccountBean, String> colAccountNumber;
@@ -120,7 +126,7 @@ public class AccountController implements Initializable {
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
 
-    private Stage stage;
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -132,6 +138,7 @@ public class AccountController implements Initializable {
         customerSearchButton.setOnAction(this::buttonSearchCustomer);
         accountNumberSearchButton.setOnAction(this::buttonSearchAccountNumber);
         dateSearchButton.setOnAction(this::buttonSearchByDates);
+        deleteButton.setOnAction(this::handleAccountDelete);
         setEnterKeyOnSearchButtons();
 
     }
@@ -148,8 +155,16 @@ public class AccountController implements Initializable {
         customizeDatePickers();
         formatAccountNumber();
         iniTabla();
+        deleteButton.setDisable(true);
+
         stage.show();
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
+
+        //Quitarlo cuando implemente busqueda por customer
+        itemOwner.setVisible(false);
+        colSurname.setVisible(false);
+        colName.setVisible(false);
+
     }
 
     public Stage getStage() {
@@ -289,24 +304,20 @@ public class AccountController implements Initializable {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
                 });
-        
+
         colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
-            try {
-                AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
-                Account account = new Account(accountBean.getAccountNumber(),
-                        t.getNewValue(),
-                        formateador.parse(accountBean.getCreationDate()));
-                AccountFactory.getInstance().getIaccounts().edit_XML(account, accountBean.getId().toString());
-                accountBean.setBalance(t.getNewValue());
-            } catch (ParseException error) {
-                LOGGER.log(Level.SEVERE, "AccountController: Exception parsing to Date.{0}", error.getMessage());
-            }
+            AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            accountBean.setBalance(t.getNewValue());
         });
-
+        item2.setDisable(true);
+        item3.setDisable(true);
         contextTabla.getItems().addAll(item1, item2, item3);
         tableAccounts.setContextMenu(contextTabla);
 
+        tableAccounts.getSelectionModel().selectedItemProperty().addListener(this::handleAccountSelection);
+       //tableAccounts.focusedProperty().addListener(this::handleButtonDeselection);
+        tableAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mostrarTodasCuentas();
     }
 
@@ -322,7 +333,7 @@ public class AccountController implements Initializable {
                     .findAll_XML(new GenericType<List<Customer>>() {
                     });
 
-            data = organizarData(accounts, customers);
+            data = organizarData(accounts);
             tableAccounts.setItems(data);
 
         } catch (Exception error) {
@@ -341,7 +352,7 @@ public class AccountController implements Initializable {
                     .findAll_XML(new GenericType<List<Customer>>() {
                     });
 
-            data = organizarData(accounts, customers);
+            data = organizarData(accounts);
             tableAccounts.setItems(data);
 
         } catch (Exception error) {
@@ -360,7 +371,7 @@ public class AccountController implements Initializable {
                     .findAll_XML(new GenericType<List<Customer>>() {
                     });
 
-            data = organizarData(accounts, customers);
+            data = organizarData(accounts);
             tableAccounts.setItems(data);
 
         } catch (Exception error) {
@@ -390,7 +401,7 @@ public class AccountController implements Initializable {
                     .getAllAccounts(new GenericType<List<Account>>() {
                     });
 
-            data = organizarData(accounts, customers);
+            data = organizarData(accounts);
             tableAccounts.setItems(data);
 
         } catch (Exception error) {
@@ -399,33 +410,57 @@ public class AccountController implements Initializable {
         }
     }
 
-    private ObservableList<AccountBean> organizarData(List<Account> accounts, List<Customer> customers) {
+    private ObservableList<AccountBean> organizarData(List<Account> accounts) {
         LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
         data.clear();
-        for (Customer customer : customers) {
-            if (customer.getProducts() != null) {
-                for (Product product : customer.getProducts()) {
-                    for (Account account : accounts) {
-                        if (Objects.equals(product.getIDProduct(), account.getIDProduct())) {
-                            tableAccount = new AccountBean(
-                                    account.getAccountNumber(),
-                                    customer.getName(),
-                                    customer.getSurname(),
-                                    formateador.format(account.getCreationDate()),
-                                    account.getBalance(),
-                                    account.getIDProduct());
 
-                            data.add(tableAccount);
-                        }
-                    }
-                }
-            }
+        for (Account account : accounts) {
+
+            tableAccount = new AccountBean(
+                    account.getAccountNumber(),
+                    formateador.format(account.getCreationDate()),
+                    account.getBalance(),
+                    account.getIDProduct());
+
+            data.add(tableAccount);
         }
 
         return data;
     }
 
+    //METODO ELIMINAR
+    private void handleAccountDelete(ActionEvent event) {
+        LOGGER.log(Level.INFO, "AccountController(handleAccountDelete): Deleting the selected items from the table");
+        data = tableAccounts.getSelectionModel().getSelectedItems();
+
+        if (!data.isEmpty()) {
+            for (AccountBean bean : data) {
+                account.setIDProduct(bean.getId());
+                AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
+                tableAccounts.getItems().remove(bean);
+            }
+        }
+    }
+
     //METODOS DE MODIFICAR ELEMENTOS
+    private void handleAccountSelection(ObservableValue observable, Object oldValue, Object newValue) {
+        if (newValue != null) {
+            deleteButton.setDisable(false);
+            item2.setDisable(false);
+            item3.setDisable(false);
+        }
+    }
+
+    private void handleButtonDeselection(ObservableValue observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            deleteButton.setDisable(true);
+            item2.setDisable(true);
+            item3.setDisable(true);
+            //tableAccounts.getSelectionModel().clearSelection();esta pensado para que quite el select de la tabla
+            //cuando pierde focus pero hace conflicto con el oncomit del FactoryCell 
+        }
+    }
+
     private void formatAccountNumber() {
         accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
 

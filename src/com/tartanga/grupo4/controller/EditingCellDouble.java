@@ -68,6 +68,7 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
 
     private void createTextField() {
         textField = new TextField(getString());
+        textField.setStyle("-fx-text-alignment: right; -fx-alignment: center-right;");
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.focusedProperty().addListener(
                 (ObservableValue<? extends Boolean> arg0,

@@ -104,19 +104,19 @@
                 <TableView fx:id="tableAccounts" layoutX="34.0" layoutY="154.0" prefHeight="314.0" prefWidth="1266.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                     <columns>
                        
-                        <TableColumn fx:id="colAccountNumber" prefWidth="243.0" text="Account Number" />
+                        <TableColumn fx:id="colAccountNumber" prefWidth="422.0" text="Account Number" /><!-- prefWidth="243.0" original -->
                         <TableColumn text="Customer">
                             <columns>
-                                <TableColumn fx:id="colName" prefWidth="171.0" text="Name" />
-                                <TableColumn fx:id="colSurname" prefWidth="180.0" text="Surname" />
+                                <TableColumn fx:id="colName" prefWidth="171.0" text="Name" /><!-- desabilatado en controlador-->
+                                <TableColumn fx:id="colSurname" prefWidth="180.0" text="Surname" /><!-- desabilitado en controllador -->
                             </columns>
                         </TableColumn>
-                        <TableColumn fx:id="colCreationDate" prefWidth="165.0" text="Creation date" />
-                        <TableColumn fx:id="colBalance" prefWidth="505.0" text="Balance" />
+                        <TableColumn fx:id="colCreationDate" prefWidth="422.0" text="Creation date" /><!-- prefWidth="165.0" original-->
+                        <TableColumn fx:id="colBalance" prefWidth="418.0" text="Balance" /><!-- prefWidth="505.0" original-->
                     </columns>
                 </TableView>
-                <Button layoutX="1151.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Delete Account(s)" />
-                <Button layoutX="975.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Add Account" />
+                <Button fx:id="deleteButton" layoutX="1151.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Delete Account(s)" />
+                <Button fx:id="addButton" layoutX="975.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Add Account" />
             </children>
         </AnchorPane>
     </children>

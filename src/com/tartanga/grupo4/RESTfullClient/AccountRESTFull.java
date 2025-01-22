@@ -97,7 +97,7 @@ public class AccountRESTFull implements Iaccounts {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
-
+    @Override
     public void remove(String id) throws WebApplicationException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete(Account.class);
     }

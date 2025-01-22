@@ -26,5 +26,5 @@ public interface Iaccounts {
     public List<Account> findByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException; 
     public Account findByAccount(GenericType<Account> responseType, String accountNumber) throws WebApplicationException; 
     public void edit_XML(Object requestEntity, String id) throws WebApplicationException;
-
+    public void remove(String id) throws WebApplicationException;
 }

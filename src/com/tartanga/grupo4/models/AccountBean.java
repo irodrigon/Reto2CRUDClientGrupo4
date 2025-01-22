@@ -21,11 +21,9 @@ public class AccountBean {
         private Double balance;
         private Integer Id;
 
-        public AccountBean(String accountNumber, String name, String surname, String creationDate, Double balance, Integer Id) {
+        public AccountBean(String accountNumber, String creationDate, Double balance, Integer Id) {
             
             this.accountNumber = accountNumber;
-            this.name =name;
-            this.surname =surname;
             this.creationDate = creationDate;
             this.balance = balance;
             this.Id = Id;
