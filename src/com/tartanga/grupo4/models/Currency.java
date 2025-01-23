@@ -10,9 +10,20 @@ package com.tartanga.grupo4.models;
  * @author Iñi
  */
 public enum Currency {
-    DOLLAR,
-    EURO,
-    YEN,
-    SWISSFRANC,
-    POUND;
+    EURO(1.0),
+    DOLLAR(1.05),
+    YEN(160.0),
+    SWISSFRANC(0.95),
+    POUND(0.85),
+    LEI(5.0);
+    
+    private final double exchangeRate;
+
+    Currency(double exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
+    public double getExchangeRate() {
+        return exchangeRate;
+    }
 }

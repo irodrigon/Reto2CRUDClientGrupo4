@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/style.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.TransferController">
+
+     <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0">
+      <children>
+      
+          <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1324.0" spacing="10" styleClass="header">
+            <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+              <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+              <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+            <ImageView fitHeight="87.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/Out.png" />
+               </image>
+            </ImageView>
+          </HBox>
+         <HBox prefHeight="29.0" prefWidth="1366.0">
+            <children>
+                <!-- MenuBar -->
+                <fx:include fx:id="hBoxMenuBar" source="MenuBar.fxml" />
+            </children>
+         </HBox>
+      </children>
+   </VBox>
+    <!-- Body -->
+    <VBox fx:id="vBoxBody" alignment="TOP_LEFT" layoutY="171.0" prefHeight="575.0" prefWidth="1346.0" spacing="20" styleClass="body" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="171.0">
+      <HBox prefHeight="500.0" prefWidth="1000.0">
+         <children>
+              <TableView fx:id="tbTransfer" prefHeight="500" prefWidth="1000.0" styleClass="table-view">
+                  <columns>
+                      <TableColumn fx:id="tbcTransferId" prefWidth="200.0" text="Transfer Id" />
+                      <TableColumn fx:id="tbcSender" prefWidth="200.0" text="Sender" />
+                      <TableColumn fx:id="tbcReciever" prefWidth="200.0" text="reciever" />
+                      <TableColumn fx:id="tbcDate" prefWidth="200.0" text="Date" />
+                      <TableColumn fx:id="tbcAmount" prefWidth="200.0" text="Amount" />
+                  </columns>
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                        <MenuItem fx:id="cmnNew" mnemonicParsing="false" text="New Transfer" />
+                        <MenuItem fx:id="cnmDelete" mnemonicParsing="false" text="Delete Transfer" />
+                      <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Reset Data" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+              </TableView>
+            <AnchorPane prefHeight="578.0" prefWidth="357.0">
+               <children>
+                  <Button fx:id="btnNew" layoutX="52.0" layoutY="172.0" mnemonicParsing="false" text="New Transfer" />
+                  <Button fx:id="btnDelete" layoutX="228.0" layoutY="172.0" mnemonicParsing="false" text="Delete Transfer" />
+                  <ComboBox fx:id="cmbMoney" layoutX="20.0" layoutY="224.0" prefWidth="150.0" promptText="Money Type" />
+                  <Label fx:id="lblFind" layoutX="24.0" layoutY="284.0" text="Find between Dates" />
+                  <DatePicker fx:id="dtpFirst" layoutX="24.0" layoutY="350.0" promptText="dd/mm/aaaa" />
+                  <DatePicker fx:id="dtpLast" layoutX="24.0" layoutY="432.0" promptText="dd/mm/aaaa" />
+                  <Label fx:id="lblFirst" layoutX="23.0" layoutY="316.0" text="Pick the first Date" />
+                  <Label fx:id="lblLast" layoutX="23.0" layoutY="404.0" text="Pick the last Date" />
+                  <Button fx:id="btnFindDate" layoutX="257.0" layoutY="392.0" mnemonicParsing="false" text="Find" />
+                  <TextField fx:id="fldAccount" layoutX="183.0" layoutY="58.0" />
+                  <Button fx:id="btnFindAccount" layoutX="129.0" layoutY="112.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="85.0" text="Find" />
+                  <ComboBox fx:id="cmbAccount" layoutX="20.0" layoutY="58.0" prefWidth="150.0" promptText="Sender" />
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+
+    </VBox>
+  
+
+</AnchorPane>
