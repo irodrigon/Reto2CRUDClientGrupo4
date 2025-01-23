@@ -91,6 +91,10 @@ public class AccountRESTFull implements Iaccounts {
     public void createAccount(Object requestEntity) throws WebApplicationException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), Account.class);
     }
+    @Override
+    public void removeById(String id) throws WebApplicationException {
+        webTarget.path(java.text.MessageFormat.format("delete/{0}", new Object[]{id})).request().delete();
+    }
     
     @Override
     public List<Account> getAllAccounts(GenericType<List<Account>> responseType) throws WebApplicationException {

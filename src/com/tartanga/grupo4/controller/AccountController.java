@@ -139,8 +139,9 @@ public class AccountController implements Initializable {
         accountNumberSearchButton.setOnAction(this::buttonSearchAccountNumber);
         dateSearchButton.setOnAction(this::buttonSearchByDates);
         deleteButton.setOnAction(this::handleAccountDelete);
+        //item2.setOnAction(this::handleAccountDelete);
         setEnterKeyOnSearchButtons();
-
+        
     }
 
     public void initStage(Parent root) {
@@ -329,9 +330,6 @@ public class AccountController implements Initializable {
             accounts = AccountFactory.getInstance().getIaccounts()
                     .getAllAccounts(new GenericType<List<Account>>() {
                     });
-            customers = CustomerFactory.getInstance().getIcustomer()
-                    .findAll_XML(new GenericType<List<Customer>>() {
-                    });
 
             data = organizarData(accounts);
             tableAccounts.setItems(data);
@@ -348,9 +346,7 @@ public class AccountController implements Initializable {
             accounts = AccountFactory.getInstance().getIaccounts()
                     .findByDates(new GenericType<List<Account>>() {
                     }, fechaIni, fechaFin);
-            customers = CustomerFactory.getInstance().getIcustomer()
-                    .findAll_XML(new GenericType<List<Customer>>() {
-                    });
+
 
             data = organizarData(accounts);
             tableAccounts.setItems(data);
@@ -367,9 +363,7 @@ public class AccountController implements Initializable {
             accounts.add(AccountFactory.getInstance().getIaccounts()
                     .findByAccount(new GenericType<Account>() {
                     }, accountNumber));
-            customers = CustomerFactory.getInstance().getIcustomer()
-                    .findAll_XML(new GenericType<List<Customer>>() {
-                    });
+
 
             data = organizarData(accounts);
             tableAccounts.setItems(data);
@@ -378,7 +372,7 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarNumeroCuenta): Exception while populating table, {0}", error.getMessage());
         }
     }
-
+    //No se usa de por el momento
     private void mostrarCuentasNombreApellido(String name, String surname) {
         try {
 
@@ -423,6 +417,7 @@ public class AccountController implements Initializable {
                     account.getIDProduct());
 
             data.add(tableAccount);
+            
         }
 
         return data;
@@ -431,15 +426,23 @@ public class AccountController implements Initializable {
     //METODO ELIMINAR
     private void handleAccountDelete(ActionEvent event) {
         LOGGER.log(Level.INFO, "AccountController(handleAccountDelete): Deleting the selected items from the table");
-        data = tableAccounts.getSelectionModel().getSelectedItems();
+        ObservableList<AccountBean> dataToErase;
+        dataToErase = tableAccounts.getSelectionModel().getSelectedItems();
 
-        if (!data.isEmpty()) {
-            for (AccountBean bean : data) {
+        if (!dataToErase.isEmpty()) {
+            for (AccountBean bean : dataToErase) {
                 account.setIDProduct(bean.getId());
                 AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
                 tableAccounts.getItems().remove(bean);
+                tableAccounts.refresh();
             }
         }
+        
+    }
+    //METODO MODIFICAR
+    private void handleAccountUpdate(ActionEvent event){
+        LOGGER.log(Level.INFO, "AccountController(handleAccountUpdate): Updating the selected item from the table");
+        
     }
 
     //METODOS DE MODIFICAR ELEMENTOS
@@ -448,6 +451,7 @@ public class AccountController implements Initializable {
             deleteButton.setDisable(false);
             item2.setDisable(false);
             item3.setDisable(false);
+            
         }
     }
 
