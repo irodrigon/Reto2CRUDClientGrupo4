@@ -9,6 +9,7 @@ import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.exception.ReadException;
 import com.tartanga.grupo4.models.Admin;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -28,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.GenericType;
+import security.Hash;
 
 /**
  *
@@ -121,7 +123,8 @@ public class RovoBankSignUpController {
     public Stage getStage() {
         return stage;
     }
-
+    private Hash security = new Hash();
+    private static final Logger LOGGER = Logger.getLogger("javaClient");
     @FXML
     private void initialize() {
         btn_Back.setOnAction(this::handleGoBack);
@@ -307,7 +310,7 @@ public class RovoBankSignUpController {
         boolean hasError = false;
 
         // Validate email
-        if (email.isEmpty()) {
+     /*   if (email.isEmpty()) {
             lbl_error_Email.setText("Email is required.");
             hasError = true;
         } else if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -340,7 +343,7 @@ public class RovoBankSignUpController {
             hasError = true;
         } else {
             lbl_error_Confirm.setText("");
-        }
+        }*/
 
         // Validate name
         if (name.isEmpty()) {
@@ -385,14 +388,21 @@ public class RovoBankSignUpController {
         } else {
             lbl_error_Zip.setText("");
         }
-
+        admin = new Admin();
+        //Create password Hash
+        try {    
+            String hash = security.passwordToHash(fld_Password.getText());
+            admin.setPassword(hash);
+        } catch (NoSuchAlgorithmException error) {
+           LOGGER.log(Level.SEVERE, "RovoBankSignUpController: Exception while creating Hash, {0}", error.getMessage());
+           hasError=true;
+        }
+        
         // Proceed with registration if no errors
         if (!hasError) {
-
-            admin = new Admin();
-
+            
+            
             admin.setLogIn(fld_Email.getText());
-            admin.setPassword(fld_Password.getText());
             admin.setName(fld_Name.getText());
             admin.setSurname(fld_Surname.getText());
             admin.setCity(fld_City.getText());
@@ -419,7 +429,7 @@ public class RovoBankSignUpController {
                 alert2.setContentText("Go back to sign in to your account.");
                 alert2.showAndWait();
                 clearFields();
-                logger.info("User created correctly.");
+//                logger.info("User created correctly.");
             }
 
         }

@@ -8,6 +8,7 @@ package com.tartanga.grupo4.controller;
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.models.Admin;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -27,13 +28,15 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.GenericType;
+import security.Hash;
 
 /**
  *
  * @author Iñi
  */
 public class RovoBankSignInController {
-
+    private Hash security = new Hash();
+    
     private static Logger logger;
 
     private Admin admin;
@@ -181,7 +184,7 @@ public class RovoBankSignInController {
             passwordField.setText(hiddenField.getText());
         }
 
-        if (userField.getText().equals("") && passwordField.getText().equals("")) {
+       /* if (userField.getText().equals("") && passwordField.getText().equals("")) {
             alert.setTitle("Empty user fields");
             alert.setContentText("Please fill up the required fields.");
             alert.showAndWait();
@@ -193,10 +196,11 @@ public class RovoBankSignInController {
             alert.setTitle("Invalid Password");
             alert.setContentText("The password must be at least 6 characters long and contain a capital letter and a number.");
             alert.showAndWait();
-        } else {
+        } else */{
             try {
+                String hash = security.passwordToHash(passwordField.getText());
                 admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
-                }, userField.getText(), passwordField.getText());
+                }, userField.getText(), hash);
                 FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMainView.fxml"));
 
                 Parent root = (Parent) FXMLLoader.load();
@@ -204,6 +208,8 @@ public class RovoBankSignInController {
                 RovoBankMainController controller = (RovoBankMainController) FXMLLoader.getController();
                 controller.setStage(stage);
                 controller.initStage(root);
+            }catch (NoSuchAlgorithmException error){
+                logger.log(Level.SEVERE, "Something went wrong with the verification.", error.getMessage());
             } catch (NotAuthorizedException e) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Incorrect User/Password.");
