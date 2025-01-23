@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -139,7 +140,7 @@ public class AccountController implements Initializable {
         accountNumberSearchButton.setOnAction(this::buttonSearchAccountNumber);
         dateSearchButton.setOnAction(this::buttonSearchByDates);
         deleteButton.setOnAction(this::handleAccountDelete);
-        //item2.setOnAction(this::handleAccountDelete);
+        item2.setOnAction(this::handleAccountDelete);
         setEnterKeyOnSearchButtons();
         
     }
@@ -426,17 +427,18 @@ public class AccountController implements Initializable {
     //METODO ELIMINAR
     private void handleAccountDelete(ActionEvent event) {
         LOGGER.log(Level.INFO, "AccountController(handleAccountDelete): Deleting the selected items from the table");
-        ObservableList<AccountBean> dataToErase;
-        dataToErase = tableAccounts.getSelectionModel().getSelectedItems();
-
-        if (!dataToErase.isEmpty()) {
-            for (AccountBean bean : dataToErase) {
-                account.setIDProduct(bean.getId());
+        ObservableList<AccountBean> items;
+        items = tableAccounts.getSelectionModel().getSelectedItems();
+        List<AccountBean> itemsErase = new ArrayList(items);
+        
+        if (!itemsErase.isEmpty()) {
+            for (AccountBean bean : itemsErase) {
                 AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
                 tableAccounts.getItems().remove(bean);
-                tableAccounts.refresh();
+                
             }
         }
+        tableAccounts.refresh();
         
     }
     //METODO MODIFICAR
