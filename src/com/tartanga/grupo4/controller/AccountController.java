@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import java.util.Date;
+import java.util.Random;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -127,8 +128,6 @@ public class AccountController implements Initializable {
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
 
-    
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -141,8 +140,10 @@ public class AccountController implements Initializable {
         dateSearchButton.setOnAction(this::buttonSearchByDates);
         deleteButton.setOnAction(this::handleAccountDelete);
         item2.setOnAction(this::handleAccountDelete);
+        addButton.setOnAction(this::handleAccountCreation);
+        item1.setOnAction(this::handleAccountCreation);
         setEnterKeyOnSearchButtons();
-        
+
     }
 
     public void initStage(Parent root) {
@@ -211,6 +212,9 @@ public class AccountController implements Initializable {
         paneCustomer.setVisible(false);
         paneAccount.setVisible(true);
         showAll.setText("");
+        accountNumber.clear();
+        startDate.setValue(null);
+        endDate.setValue(null);
     }
 
     @FXML
@@ -227,16 +231,13 @@ public class AccountController implements Initializable {
         paneCustomer.setVisible(false);
         paneDate.setVisible(true);
         showAll.setText("");
+        accountNumber.clear();
+        startDate.setValue(null);
+        endDate.setValue(null);
     }
 
     public void createTableView() {
 
-    }
-
-    //STACKPANE ACTION EVENTS
-    @FXML
-    private void buttonSearchCustomer(ActionEvent event) {
-        mostrarCuentasNombreApellido(customerName.getText(), customerSurname.getText());
     }
 
     @FXML
@@ -246,6 +247,15 @@ public class AccountController implements Initializable {
         paneDate.setVisible(false);
         showAll.setText("Showing all the accounts");
         mostrarTodasCuentas();
+        accountNumber.clear();
+        startDate.setValue(null);
+        endDate.setValue(null);
+    }
+
+    //STACKPANE ACTION EVENTS
+    @FXML
+    private void buttonSearchCustomer(ActionEvent event) {
+        mostrarCuentasNombreApellido(customerName.getText(), customerSurname.getText());
     }
 
     @FXML
@@ -303,12 +313,25 @@ public class AccountController implements Initializable {
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
+                    LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
+                            t.getRowValue().getAccountNumber());
+                    Account accountD = toAccount(t.getRowValue(), t.getNewValue());
+                    AccountFactory.getInstance().getIaccounts().edit_XML(
+                            accountD,
+                            t.getRowValue().getId().toString());
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
                 });
 
         colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
+            LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the balance from account {0}",
+                    t.getRowValue().getAccountNumber());
+            Account accountB = toAccount(t.getRowValue(), null);
+            accountB.setBalance(t.getNewValue());
+            AccountFactory.getInstance().getIaccounts().edit_XML(
+                    accountB,
+                    t.getRowValue().getId().toString());
             AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
             accountBean.setBalance(t.getNewValue());
         });
@@ -318,7 +341,7 @@ public class AccountController implements Initializable {
         tableAccounts.setContextMenu(contextTabla);
 
         tableAccounts.getSelectionModel().selectedItemProperty().addListener(this::handleAccountSelection);
-       //tableAccounts.focusedProperty().addListener(this::handleButtonDeselection);
+        //tableAccounts.focusedProperty().addListener(this::handleButtonDeselection);
         tableAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mostrarTodasCuentas();
     }
@@ -348,7 +371,6 @@ public class AccountController implements Initializable {
                     .findByDates(new GenericType<List<Account>>() {
                     }, fechaIni, fechaFin);
 
-
             data = organizarData(accounts);
             tableAccounts.setItems(data);
 
@@ -365,7 +387,6 @@ public class AccountController implements Initializable {
                     .findByAccount(new GenericType<Account>() {
                     }, accountNumber));
 
-
             data = organizarData(accounts);
             tableAccounts.setItems(data);
 
@@ -373,6 +394,7 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarNumeroCuenta): Exception while populating table, {0}", error.getMessage());
         }
     }
+
     //No se usa de por el momento
     private void mostrarCuentasNombreApellido(String name, String surname) {
         try {
@@ -418,7 +440,7 @@ public class AccountController implements Initializable {
                     account.getIDProduct());
 
             data.add(tableAccount);
-            
+
         }
 
         return data;
@@ -430,21 +452,61 @@ public class AccountController implements Initializable {
         ObservableList<AccountBean> items;
         items = tableAccounts.getSelectionModel().getSelectedItems();
         List<AccountBean> itemsErase = new ArrayList(items);
-        
+
         if (!itemsErase.isEmpty()) {
             for (AccountBean bean : itemsErase) {
                 AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
                 tableAccounts.getItems().remove(bean);
-                
+
             }
         }
         tableAccounts.refresh();
-        
+
     }
+
     //METODO MODIFICAR
-    private void handleAccountUpdate(ActionEvent event){
-        LOGGER.log(Level.INFO, "AccountController(handleAccountUpdate): Updating the selected item from the table");
-        
+    private Account toAccount(AccountBean accountBean, String date) {
+        Account accountT = null;
+        Date dateC = new Date();
+        try {
+            if (date != null) {
+                dateC = formateador.parse(date);
+            } else {
+                dateC = formateador.parse(accountBean.getCreationDate());
+            }
+            accountT = new Account(accountBean.getAccountNumber(),
+                    accountBean.getBalance(),
+                    dateC,
+                    accountBean.getId());
+        } catch (ParseException error) {
+            LOGGER.log(Level.INFO, "AccountController(toAccount): Exception while parsing to Date");
+        }
+
+        return accountT;
+    }
+
+    //METODO CREAR CUENTA
+    private void handleAccountCreation(ActionEvent event) {
+        Account accountC;
+        Date today = new Date();
+
+        //Generador de cuenta
+        LOGGER.log(Level.INFO, "AccountController(handleAccountCreation): Creating a new account");
+        Random random = new Random();
+
+        StringBuilder accountNumberC = new StringBuilder();
+
+        for (int i = 0; i < 20; i++) {
+            int digit = random.nextInt(10);
+            accountNumberC.append(digit);
+
+            if ((i + 1) % 4 == 0 && i != 19) {
+                accountNumberC.append("-");
+            }
+        }
+        accountC = new Account(accountNumberC.toString(), 0.0, today, null);
+        AccountFactory.getInstance().getIaccounts().createAccount(accountC);
+        mostrarTodasCuentas();
     }
 
     //METODOS DE MODIFICAR ELEMENTOS
@@ -453,7 +515,7 @@ public class AccountController implements Initializable {
             deleteButton.setDisable(false);
             item2.setDisable(false);
             item3.setDisable(false);
-            
+
         }
     }
 

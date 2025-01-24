@@ -87,11 +87,11 @@ public class AccountRESTFull implements Iaccounts {
         resource = resource.path(java.text.MessageFormat.format("byName/{0}", new Object[]{name}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
-    
+    @Override
     public void createAccount(Object requestEntity) throws WebApplicationException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), Account.class);
     }
-    @Override
+
     public void removeById(String id) throws WebApplicationException {
         webTarget.path(java.text.MessageFormat.format("delete/{0}", new Object[]{id})).request().delete();
     }

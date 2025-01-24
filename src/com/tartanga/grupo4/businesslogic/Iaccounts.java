@@ -27,5 +27,5 @@ public interface Iaccounts {
     public Account findByAccount(GenericType<Account> responseType, String accountNumber) throws WebApplicationException; 
     public void edit_XML(Object requestEntity, String id) throws WebApplicationException;
     public void remove(String id) throws WebApplicationException;
-    public void removeById(String id) throws WebApplicationException;
+    public void createAccount(Object requestEntity) throws WebApplicationException;
 }

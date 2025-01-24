@@ -41,10 +41,11 @@ public class Account extends Product implements Serializable {
     public Account() {
         this.creationDate = super.creationDate;
     }
-    public Account(String accountNumber, Double balance, Date creationDate){
+    public Account(String accountNumber, Double balance, Date creationDate, Integer IDProduct){
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.creationDate = creationDate;
+        this.IDProduct = IDProduct;
     }
 
     public String getAccountNumber() {
