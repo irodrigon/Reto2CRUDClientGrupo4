@@ -388,21 +388,15 @@ public class RovoBankSignUpController {
         } else {
             lbl_error_Zip.setText("");
         }
-        admin = new Admin();
-        //Create password Hash
-        try {    
-            String hash = security.passwordToHash(fld_Password.getText());
-            admin.setPassword(hash);
-        } catch (NoSuchAlgorithmException error) {
-           LOGGER.log(Level.SEVERE, "RovoBankSignUpController: Exception while creating Hash, {0}", error.getMessage());
-           hasError=true;
-        }
+        
+        
         
         // Proceed with registration if no errors
         if (!hasError) {
             
-            
+            admin = new Admin();
             admin.setLogIn(fld_Email.getText());
+            admin.setPassword(fld_Password.getText());
             admin.setName(fld_Name.getText());
             admin.setSurname(fld_Surname.getText());
             admin.setCity(fld_City.getText());
