@@ -23,8 +23,8 @@ public interface Iaccounts {
     public List<Customer> findByName(GenericType<List<Customer>> responseType, String name) throws WebApplicationException; 
     public List<Customer> findByNameSurname(GenericType<List<Customer>> responseType, String name, String surname) throws WebApplicationException; 
     public List<Customer> findBySurname(GenericType<List<Customer>> responseType, String surname) throws WebApplicationException; 
-    public List<Account> findByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException; 
-    public Account findByAccount(GenericType<Account> responseType, String accountNumber) throws WebApplicationException; 
+    public List<Account> getAccountsByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException; 
+    public Account getAccountByAccountNumber(GenericType<Account> responseType, String accountNumber) throws WebApplicationException; 
     public void edit_XML(Object requestEntity, String id) throws WebApplicationException;
     public void remove(String id) throws WebApplicationException;
     public void createAccount(Object requestEntity) throws WebApplicationException;

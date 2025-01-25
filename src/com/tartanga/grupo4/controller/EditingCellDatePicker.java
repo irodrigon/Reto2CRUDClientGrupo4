@@ -9,10 +9,13 @@ import com.tartanga.grupo4.models.AccountBean;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import javafx.util.Callback;
 
 /**
@@ -20,7 +23,7 @@ import javafx.util.Callback;
  * @author rabio
  */
 public class EditingCellDatePicker extends TableCell<AccountBean, String> {
-
+    LocalDate today = LocalDate.now();
     private DatePicker datePicker;
     private TableView<AccountBean> tableAccounts;
     private static final DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");//Usar en el zrchivo properties
@@ -87,7 +90,7 @@ public class EditingCellDatePicker extends TableCell<AccountBean, String> {
                                 LocalDate.now())) {
                             setDisable(true);
                             setStyle("-fx-background-color: #ffc0cb;");
-
+                            
                         }
 
                         
@@ -103,15 +106,22 @@ public class EditingCellDatePicker extends TableCell<AccountBean, String> {
                 (ObservableValue<? extends Boolean> arg0,
                         Boolean arg1, Boolean arg2) -> {
                     if (!arg2) {
+                        if(datePicker.getValue()!=null&&datePicker.getValue().isAfter(today)){
+                            datePicker.setValue(today);
+                           
+                        }
                         commitEdit(getFormattedDate(datePicker.getValue()));
                     }
                 });
-
+        
         datePicker.setOnAction(e -> commitEdit(getFormattedDate(datePicker.getValue())));
         //HACE COMMIT SI SE PINCHA DENTRO DE LA TABLA PERO FUERA DEL DATEPICKER
         tableAccounts.getSelectionModel().selectedIndexProperty().addListener(
                 (ObservableValue<? extends Number> observable, Number oldSelection, Number newSelection) -> {
                     if (isEditing() && oldSelection != null && !oldSelection.equals(newSelection)) {
+                        if(datePicker.getValue()!=null&&datePicker.getValue().isAfter(today)){
+                            datePicker.setValue(today);
+                        }
                         commitEdit(getFormattedDate(datePicker.getValue()));
                     }
                 }

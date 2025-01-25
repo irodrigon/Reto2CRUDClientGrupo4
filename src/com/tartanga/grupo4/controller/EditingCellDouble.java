@@ -87,6 +87,11 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
                     }
                 }
         );
+        textField.textProperty().addListener((observable, oldValue, newValue)->{
+         String balance = newValue.replaceAll("(?!^-)[^\\d]|(?<=^-)\\D", "");
+         textField.setText(balance);
+        });
+        
     }
        private void commitDouble(String text) {
         try {

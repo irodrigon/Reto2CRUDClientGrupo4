@@ -70,13 +70,13 @@ public class AccountRESTFull implements Iaccounts {
     }
 
     @Override
-    public Account findByAccount(GenericType<Account> responseType, String accountNumber) throws WebApplicationException {
+    public Account getAccountByAccountNumber(GenericType<Account> responseType, String accountNumber) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byAccountNumber/{0}", new Object[]{accountNumber}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
     @Override
-    public List<Account> findByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException {
+    public List<Account> getAccountsByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byDates/{0}/{1}", new Object[]{startDate, endDate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

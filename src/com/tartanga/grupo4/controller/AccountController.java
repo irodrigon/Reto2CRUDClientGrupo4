@@ -7,6 +7,7 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AccountFactory;
 import com.tartanga.grupo4.businesslogic.CustomerFactory;
+import com.tartanga.grupo4.exception.AccountDoesNotExistException;
 import com.tartanga.grupo4.models.Account;
 import com.tartanga.grupo4.models.AccountBean;
 import com.tartanga.grupo4.models.Customer;
@@ -57,6 +58,7 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
+import javax.ws.rs.WebApplicationException;
 import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
 
 /**
@@ -143,6 +145,8 @@ public class AccountController implements Initializable {
         addButton.setOnAction(this::handleAccountCreation);
         item1.setOnAction(this::handleAccountCreation);
         setEnterKeyOnSearchButtons();
+        accountNumberListener();
+        datePickerListerners();
 
     }
 
@@ -159,7 +163,8 @@ public class AccountController implements Initializable {
         formatAccountNumber();
         iniTabla();
         deleteButton.setDisable(true);
-
+        dateSearchButton.setDisable(true);
+        accountNumberSearchButton.setDisable(true);
         stage.show();
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
 
@@ -185,18 +190,12 @@ public class AccountController implements Initializable {
 
     @FXML
     private void onCloseRequestWindowEvent(Event event) {
-        //Image icon = new Image("/com/tartanga/grupo4/resources/images/servericon.png");
-        //ImageView iconView = new ImageView(icon);
-        // iconView.setFitWidth(32);
-        // iconView.setFitHeight(32);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to close the application?");
         ButtonType yesButton = new ButtonType("Yes");
         ButtonType noButton = new ButtonType("No");
         alert.getButtonTypes().setAll(yesButton, noButton);
         alert.setTitle("Closing Application");
         alert.setHeaderText(null);
-        // Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-        // alertStage.getIcons().add(icon);
         alert.showAndWait();
         if (alert.resultProperty().get().equals(yesButton)) {
             Platform.exit();
@@ -260,19 +259,29 @@ public class AccountController implements Initializable {
 
     @FXML
     private void buttonSearchAccountNumber(ActionEvent event) {
-        mostrarNumeroCuenta(accountNumber.getText());
+        if (accountNumber.getText().length() != 24) {
+            alertUser("Bank accounts consists of 20 numbers", 0);
+        } else {
+            mostrarNumeroCuenta(accountNumber.getText());
+        }
+
     }
 
     @FXML
     private void buttonSearchByDates(ActionEvent event) {
-        mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
+        if (startDate.getValue().isAfter(endDate.getValue())) {
+            alertUser("The starting date can not be posterior to the ending date", 0);
+        } else {
+            mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
+        }
+
     }
 
     //MENU CONTEXTUAL
     ContextMenu contextTabla = new ContextMenu();
-    MenuItem item1 = new MenuItem("Create account");
-    MenuItem item2 = new MenuItem("Delete account");
-    MenuItem item3 = new MenuItem("Modify data");
+    MenuItem item1 = new MenuItem("Create");
+    MenuItem item2 = new MenuItem("Delete");
+    MenuItem item3 = new MenuItem("Update");
 
     //TABLA DE CUENTAS
     @FXML
@@ -356,10 +365,17 @@ public class AccountController implements Initializable {
                     });
 
             data = organizarData(accounts);
+            if (data.isEmpty()) {
+                throw new AccountDoesNotExistException();
+            }
             tableAccounts.setItems(data);
 
+        } catch (AccountDoesNotExistException error) {
+            alertUser("Account(s) not found", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
+            alertUser(error.getMessage(), 0);
+
         }
     }
 
@@ -368,14 +384,19 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.INFO, "AccountController(mostrarCuentasPorFecha): Getting Accounts and Customers");
 
             accounts = AccountFactory.getInstance().getIaccounts()
-                    .findByDates(new GenericType<List<Account>>() {
+                    .getAccountsByDates(new GenericType<List<Account>>() {
                     }, fechaIni, fechaFin);
 
             data = organizarData(accounts);
+            if (data.isEmpty()) {
+                throw new AccountDoesNotExistException();
+            }
             tableAccounts.setItems(data);
-
+        } catch (AccountDoesNotExistException error) {
+            alertUser("Account(s) not found", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasPorFecha): Exception while populating table, {0}", error.getMessage());
+            alertUser(error.getMessage(), 0);
         }
     }
 
@@ -384,14 +405,17 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.INFO, "AccountController(mostrarNumeroCuenta): Getting the Account and Customers");
             accounts.clear();
             accounts.add(AccountFactory.getInstance().getIaccounts()
-                    .findByAccount(new GenericType<Account>() {
+                    .getAccountByAccountNumber(new GenericType<Account>() {
                     }, accountNumber));
 
             data = organizarData(accounts);
             tableAccounts.setItems(data);
 
+        } catch (WebApplicationException error) {
+            alertUser("The introduced account does not exist", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarNumeroCuenta): Exception while populating table, {0}", error.getMessage());
+            alertUser(error.getMessage(), 0);
         }
     }
 
@@ -448,19 +472,31 @@ public class AccountController implements Initializable {
 
     //METODO ELIMINAR
     private void handleAccountDelete(ActionEvent event) {
-        LOGGER.log(Level.INFO, "AccountController(handleAccountDelete): Deleting the selected items from the table");
-        ObservableList<AccountBean> items;
-        items = tableAccounts.getSelectionModel().getSelectedItems();
-        List<AccountBean> itemsErase = new ArrayList(items);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Do you really want delete the selected accounts?");
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+        alert.getButtonTypes().setAll(yesButton, noButton);
+        alert.setTitle("Delete");
+        alert.setHeaderText(null);
+        alert.showAndWait();
+        if (alert.resultProperty().get().equals(yesButton)) {
+            LOGGER.log(Level.INFO, "AccountController(handleAccountDelete): Deleting the selected items from the table");
+            ObservableList<AccountBean> items;
+            items = tableAccounts.getSelectionModel().getSelectedItems();
+            List<AccountBean> itemsErase = new ArrayList(items);
 
-        if (!itemsErase.isEmpty()) {
-            for (AccountBean bean : itemsErase) {
-                AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
-                tableAccounts.getItems().remove(bean);
+            if (!itemsErase.isEmpty()) {
+                for (AccountBean bean : itemsErase) {
+                    AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
+                    tableAccounts.getItems().remove(bean);
 
+                }
             }
+            tableAccounts.refresh();
+        } else {
+            event.consume();
         }
-        tableAccounts.refresh();
 
     }
 
@@ -529,10 +565,51 @@ public class AccountController implements Initializable {
         }
     }
 
+    private void accountNumberListener() {
+        accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() >= 1) {
+                accountNumberSearchButton.setDisable(false);
+            } else {
+                accountNumberSearchButton.setDisable(true);
+            }
+        });
+    }
+
+    private void datePickerListerners() {
+
+        startDate.valueProperty().addListener((observableS, oldValueS, newValueS) -> {
+            endDate.valueProperty().addListener((observableE, oldValueE, newValueE) -> {
+                if (newValueE != null && newValueS != null) {
+                    dateSearchButton.setDisable(false);
+                } else {
+                    dateSearchButton.setDisable(true);
+                }
+
+            });
+
+        });
+        endDate.valueProperty().addListener((observableS, oldValueS, newValueS) -> {
+            startDate.valueProperty().addListener((observableE, oldValueE, newValueE) -> {
+                if (newValueE != null && newValueS != null) {
+                    dateSearchButton.setDisable(false);
+                } else {
+                    dateSearchButton.setDisable(true);
+                }
+
+            });
+
+        });
+
+    }
+
     private void formatAccountNumber() {
         accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
 
             String accountNumberF = newValue.replaceAll("[^\\d]", "");
+
+            if (accountNumberF.length() > 20) {
+                accountNumberF = accountNumberF.substring(0, 20);
+            }
 
             StringBuilder formatted = new StringBuilder();
             for (int i = 0; i < accountNumberF.length(); i++) {
@@ -541,6 +618,10 @@ public class AccountController implements Initializable {
                 }
                 formatted.append(accountNumberF.charAt(i));
             }
+            if (!newValue.equals(formatted.toString())) {
+                int caretPosition = accountNumber.getCaretPosition();
+                int formattedCaretPosition = Math.min(caretPosition, formatted.length());
+            }
             accountNumber.setText(formatted.toString());
 
             accountNumber.positionCaret(formatted.length());
@@ -548,7 +629,7 @@ public class AccountController implements Initializable {
     }
 
     private void customizeDatePickers() {
-
+        LocalDate today = LocalDate.now();
         final Callback<DatePicker, DateCell> dayCellFactory
                 = new Callback<DatePicker, DateCell>() {
             @Override
@@ -556,20 +637,32 @@ public class AccountController implements Initializable {
                 return new DateCell() {
                     @Override
                     public void updateItem(LocalDate item, boolean empty) {
-                        super.updateItem(item, empty);
 
+                        super.updateItem(item, empty);
+                        //Pone el texto al valor de hoy si una fecha futura es introducida texto
+                        if (startDate.getValue() != null && startDate.getValue().isAfter(today)) {
+                            startDate.setValue(today);
+                        }
+                        if (endDate.getValue() != null && endDate.getValue().isAfter(today)) {
+                            endDate.setValue(today);
+                        }
                         if (item.isAfter(
                                 LocalDate.now())) {
                             setDisable(true);
                             setStyle("-fx-background-color: #ffc0cb;");
 
                         }
-
-                        if (datePicker == endDate && item.isBefore(
-                                startDate.getValue())) {//Esto da NullPointer si no se a elegido valor en startDate previamente
+                        //Desabilita fechas anteriores a la fecha elegida en startDate
+                        if (startDate.getValue() != null && datePicker == endDate && item.isBefore(
+                                startDate.getValue())) {
                             setDisable(true);
                             setStyle("-fx-background-color: #ffc0cb;");
-                            //endDate.setValue(startDate.getValue().plusDays(1));
+                        }
+                        //Desabilita fechas posteriores a la fecha elegida en endDate
+                        if (endDate.getValue() != null && datePicker == startDate && item.isAfter(
+                                endDate.getValue())) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
                         }
                     }
                 };
@@ -611,6 +704,23 @@ public class AccountController implements Initializable {
                 dateSearchButton.fire();
             }
         });
+    }
+
+    private static void alertUser(String msg, int tipo) {
+        //0 para un mensaje de ERROR
+        //1 para un mensaje informativo
+        switch (tipo) {
+
+            case 0:
+                Alert alertE = new Alert(Alert.AlertType.ERROR, msg);
+                alertE.showAndWait();
+                break;
+
+            case 1:
+                Alert alertI = new Alert(Alert.AlertType.INFORMATION, msg);
+                alertI.showAndWait();
+        }
+
     }
 
 }
