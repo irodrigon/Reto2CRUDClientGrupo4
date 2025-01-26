@@ -7,8 +7,18 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.models.Admin;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Security;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -26,8 +36,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javax.crypto.Cipher;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.GenericType;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.UrlBase64;
+import org.bouncycastle.util.encoders.UrlBase64Encoder;
+
 import security.Hash;
 
 /**
@@ -35,9 +50,13 @@ import security.Hash;
  * @author Iñi
  */
 public class RovoBankSignInController {
+    static {
+        //Poner BouncyCastle como provider
+        Security.addProvider(new BouncyCastleProvider());
+    }
     private Hash security = new Hash();
     
-    private static Logger logger;
+    private static Logger logger = Logger.getLogger("JavaClient");
 
     private Admin admin;
 
@@ -198,9 +217,39 @@ public class RovoBankSignInController {
             alert.showAndWait();
         } else */{
             try {
-                String hash = security.passwordToHash(passwordField.getText());
+                //Recuperar la llave del fichero
+                FileInputStream input = new FileInputStream(Paths.get("src/security","Public.key").toFile());
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                
+                byte[] data = new byte[1024];
+                int bytesRead;
+                
+                while((bytesRead = input.read(data))!=-1){
+                    buffer.write(data,0,bytesRead);
+                }
+                input.close();
+                
+                byte[] publicKeyBytes = buffer.toByteArray();
+                
+                //Reconstruir la llave Publica
+                X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+                KeyFactory keyFactory = KeyFactory.getInstance("EC","BC");
+                PublicKey publicKey = keyFactory.generatePublic(spec);
+                
+                //Encriptar password con llave publica
+                Cipher cipher = Cipher.getInstance("ECIES","BC");
+                cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+                byte[] encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+                
+                //Convertirlo a String usando BASE64
+                String encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
+                //String encryptedPass64 = Base64.getEncoder().encodeToString(encryptedPass);
+                
+                System.out.print(passwordField.getText());
+                
                 admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
-                }, userField.getText(), hash);
+                }, userField.getText(), encryptedPass64);
+                
                 FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMainView.fxml"));
 
                 Parent root = (Parent) FXMLLoader.load();
@@ -208,14 +257,14 @@ public class RovoBankSignInController {
                 RovoBankMainController controller = (RovoBankMainController) FXMLLoader.getController();
                 controller.setStage(stage);
                 controller.initStage(root);
-            }catch (NoSuchAlgorithmException error){
-                logger.log(Level.SEVERE, "Something went wrong with the verification.", error.getMessage());
             } catch (NotAuthorizedException e) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Incorrect User/Password.");
                 alert.showAndWait();
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
+            }catch(Exception error){
+                logger.log(Level.SEVERE, "Something went wrong when checking the user: {0}.", error.getMessage());
             }
         }
     }
