@@ -54,7 +54,7 @@
                <contextMenu>
                   <ContextMenu>
                     <items>
-                        <MenuItem fx:id="cmnNew" mnemonicParsing="false" text="New Transfer" />
+                        <MenuItem fx:id="cnmNew" mnemonicParsing="false" text="New Transfer" />
                         <MenuItem fx:id="cnmDelete" mnemonicParsing="false" text="Delete Transfer" />
                       <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Reset Data" />
                     </items>

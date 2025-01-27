@@ -24,6 +24,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 import javax.ws.rs.core.GenericType;
 
 public class TransferController implements Initializable {
@@ -44,7 +46,7 @@ public class TransferController implements Initializable {
     private TableColumn<Transfers, Date> tbcDate;
 
     @FXML
-    private TableColumn<Transfers, Integer> tbcAmount;
+    private TableColumn<Transfers, Double> tbcAmount;
 
     @FXML
     private DatePicker dtpFirst;
@@ -54,7 +56,7 @@ public class TransferController implements Initializable {
 
     @FXML
     private Button btnFindDate;
-    
+
     @FXML
     private Button btnNew;
 
@@ -76,9 +78,17 @@ public class TransferController implements Initializable {
     @FXML
     private MenuItem cnmReset;
 
+    @FXML
+    private MenuItem cnmNew;
+
+    @FXML
+    private MenuItem cnmDelete;
+
     private ObservableList<Transfers> transferData;
 
     private Itransfer transferManager;
+
+    private Stage stage;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -99,69 +109,95 @@ public class TransferController implements Initializable {
         tbTransfer.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             btnDelete.setDisable(newSelection == null); // Habilitar si hay una fila seleccionada
         });
-        
-        btnNew.setOnAction(this::createTransfer);
-        btnDelete.setOnAction(this::deleteTransfer);
 
-        cnmReset.setOnAction(this::resetvalues);
+        btnNew.setOnAction(this::createTransfer);
+        cnmNew.setOnAction(this::createTransfer);
+
+        btnDelete.setOnAction(this::deleteTransfer);
+        cnmDelete.setOnAction(this::deleteTransfer);
+
+        cnmReset.setOnAction(this::HandleReset);
 
         // Configurar los botones
-        btnFindDate.setOnAction(event -> filterByDate());
-        btnFindAccount.setOnAction(event -> filterByAccount());
+        btnFindDate.setOnAction(this::filterByDate);
+        btnFindAccount.setOnAction(this::filterByAccount);
 
-       initTable();
+        initTable();
     }
-    
+
+    public void HandleReset(ActionEvent event) {
+        loadAllTransfers();
+    }
+
     @FXML
-public void initTable() {
-    tbTransfer.setEditable(true);
+    public void initTable() {
+        tbTransfer.setEditable(true);
 
-    tbcTransferId.setCellValueFactory(new PropertyValueFactory<>("transferId"));
-    tbcSender.setCellValueFactory(new PropertyValueFactory<>("sender"));
-    tbcReciever.setCellValueFactory(new PropertyValueFactory<>("reciever"));
-    tbcDate.setCellValueFactory(new PropertyValueFactory<>("transferDate"));
-    tbcAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        tbcTransferId.setCellValueFactory(new PropertyValueFactory<>("transferId"));
+        tbcSender.setCellValueFactory(new PropertyValueFactory<>("sender"));
+        tbcReciever.setCellValueFactory(new PropertyValueFactory<>("reciever"));
+        tbcDate.setCellValueFactory(new PropertyValueFactory<>("transferDate"));
+        tbcAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
 
-    tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
-    tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-        t.getTableView().getItems().get(t.getTablePosition().getRow()).setReciever(t.getNewValue());
-    });
-    
-    
-    
-    tbcDate.setCellFactory(colum -> new DatePickerCellEditer());
-    tbcDate.setOnEditCommit(event -> {
-        Transfers transfer = event.getRowValue();
-        transfer.setTransferDate(event.getNewValue());   
-    });
+        tbcSender.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
+        tbcSender.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
+            Transfers transfer = t.getRowValue();
 
-    loadAllTransfers();
-}
+            transfer.setSender(t.getNewValue());
 
+            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+        });
+
+        
+            tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
+            tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
+                Transfers transfer = t.getRowValue();
+
+                transfer.setReciever(t.getNewValue());
+
+                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+            });
+
+        tbcDate.setCellFactory(colum -> new DatePickerCellEditer());
+        tbcDate.setOnEditCommit(event -> {
+            Transfers transfer = event.getRowValue();
+            transfer.setTransferDate(event.getNewValue());
+            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+        });
+
+        tbcAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+
+        tbcAmount.setOnEditCommit((CellEditEvent<Transfers, Double> t) -> {
+            Transfers transfer = t.getRowValue();
+            transfer.setAmount(t.getNewValue());
+            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+        });
+
+        loadAllTransfers();
+    }
 
     @FXML
     private void ParaFuncinar(ActionEvent event) {
         updateAmountsForCurrency();
     }
-    
-    @FXML
-    private void createTransfer(ActionEvent event){
-    // Crea una nueva transferencia 
-    Transfers newTransfer = new Transfers();
-    
-    transferManager.create_XML(newTransfer);
-    
-    
-    // Añade la nueva transferencia a la lista observable y a la tabla
-    transferData.add(newTransfer);
-    tbTransfer.setItems(transferData);
-    
-    // Refrescar la tabla para mostrar la nueva fila
-    tbTransfer.refresh();
-    }
-    @FXML
-    private void resetvalues(ActionEvent event) {
 
+    @FXML
+    private void createTransfer(ActionEvent event) {
+        // Crea una nueva transferencia 
+        Transfers newTransfer = new Transfers();
+
+        transferManager.create_XML(newTransfer);
+        
+
+        // Añade la nueva transferencia a la lista observable y a la tabla
+        transferData.add(newTransfer);
+        tbTransfer.setItems(transferData);
+
+        // Refrescar la tabla para mostrar la nueva fila
+        tbTransfer.refresh();
+        
+        loadAllTransfers();
+        
     }
 
     @FXML
@@ -247,6 +283,7 @@ public void initTable() {
         tbTransfer.refresh();
     }
 
+    @FXML
     private void loadAllTransfers() {
         TransferRESTFull client = new TransferRESTFull();
         List<Transfers> transferList = client.findAll_XML(new GenericType<List<Transfers>>() {
@@ -255,10 +292,10 @@ public void initTable() {
         tbTransfer.setItems(transferData);
     }
 
-    private void filterByDate() {
+    @FXML
+    private void filterByDate(ActionEvent event) {
         // Validar que ambas fechas estén seleccionadas
         if (dtpFirst.getValue() == null || dtpLast.getValue() == null) {
-            System.out.println("Por favor, selecciona ambas fechas.");
             return;
         }
 
@@ -285,7 +322,8 @@ public void initTable() {
         }
     }
 
-    private void filterByAccount() {
+    @FXML
+    private void filterByAccount(ActionEvent event) {
         // Validar que haya una selección en el ComboBox
         String selectedFilter = cmbAccount.getValue();
         if (selectedFilter == null || selectedFilter.isEmpty()) {
@@ -328,8 +366,7 @@ public void initTable() {
                 tbTransfer.setItems(transferData);
 
             } else {
-                System.out.println("Filtro no válido.");
-                return;
+                loadAllTransfers();
             }
 
         } catch (Exception e) {

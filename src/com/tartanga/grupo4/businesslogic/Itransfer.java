@@ -26,4 +26,5 @@ public interface Itransfer {
     public Transfers findByID(GenericType<Transfers> responseType, String transferId) throws WebApplicationException; 
     public void remove(String id) throws WebApplicationException;
     public void create_XML(Object requestEntity) throws WebApplicationException;
+    public void edit_XML(Object requestEntity, String id) throws ClientErrorException;
 }
