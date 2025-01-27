@@ -5,9 +5,9 @@
  */
 package com.tartanga.grupo4.controller;
 
-
 import com.tartanga.grupo4.models.AccountBean;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,7 +23,7 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
 
     public EditingCellDouble(TableView<AccountBean> tableAccounts) {
         this.tableAccounts = tableAccounts;
-         setStyle("-fx-alignment: CENTER-RIGHT;");
+        setStyle("-fx-alignment: CENTER-RIGHT;");
     }
 
     @Override//se llama cuando
@@ -74,36 +74,56 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
                 (ObservableValue<? extends Boolean> arg0,
                         Boolean arg1, Boolean arg2) -> {
                     if (!arg2) {
-                        commitEdit(Double.parseDouble(textField.getText()));
-                    }//deberia controlar parse double
+                        if (isDouble(textField.getText())) {
+                            commitEdit(Double.parseDouble(textField.getText()));
+                        } else {
+                            Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
+                            alertI.showAndWait();
+                            cancelEdit();
+                        }
+                    }
                 });
 
-        textField.setOnAction(e -> commitEdit(Double.parseDouble(textField.getText())));
+        textField.setOnAction(e -> {
+            if (isDouble(textField.getText())) {
+                commitEdit(Double.parseDouble(textField.getText()));
+            } else {
+                cancelEdit();
+            }
+        });
 
         tableAccounts.getSelectionModel().selectedIndexProperty().addListener(
                 (ObservableValue<? extends Number> observable, Number oldSelection, Number newSelection) -> {
                     if (isEditing() && oldSelection != null && !oldSelection.equals(newSelection)) {
-                        commitEdit(Double.parseDouble(textField.getText()));
-                    }
+                        if(isDouble(textField.getText())){
+                             commitEdit(Double.parseDouble(textField.getText()));
+                        }else{
+                            Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
+                            alertI.showAndWait();
+                            cancelEdit();
+                        }
+                       
+                    } 
                 }
         );
-        textField.textProperty().addListener((observable, oldValue, newValue)->{
-         String balance = newValue.replaceAll("(?!^-)[^\\d]|(?<=^-)\\D", "");
-         textField.setText(balance);
-        });
-        
     }
-       private void commitDouble(String text) {
+
+    private void commitDouble(String text) {
         try {
-            
+
             Double value = Double.parseDouble(text);
-            commitEdit(value); 
+            commitEdit(value);
         } catch (NumberFormatException e) {
-               cancelEdit(); //Posiblemente relanzar una excepcion o poner alerta
+            cancelEdit(); //Posiblemente relanzar una excepcion o poner alerta
         }
     }
 
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
+    }
+
+    private boolean isDouble(String text) {
+        String regex = "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
+        return text.matches(regex);
     }
 }

@@ -325,11 +325,12 @@ public class AccountController implements Initializable {
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
+                    
                     Account accountD;
                     String dateNewValue;
                     LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
                             t.getRowValue().getAccountNumber());
-                    
+                    //Validacion de fechas introducidas por texto
                     if(LocalDate.parse(t.getNewValue(),formateadorL).isAfter(today)){
                         dateNewValue = today.format(formateadorL);
                         accountD = toAccount(t.getRowValue(), dateNewValue);
@@ -352,6 +353,7 @@ public class AccountController implements Initializable {
             LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the balance from account {0}",
                     t.getRowValue().getAccountNumber());
             Account accountB = toAccount(t.getRowValue(), null);
+
             accountB.setBalance(t.getNewValue());
             AccountFactory.getInstance().getIaccounts().edit_XML(
                     accountB,
