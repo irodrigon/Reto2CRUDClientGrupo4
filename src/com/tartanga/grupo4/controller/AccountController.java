@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -76,11 +77,13 @@ public class AccountController implements Initializable {
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
     private AccountBean tableAccount;
     private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+    private static final DateTimeFormatter formateadorL = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Logger LOGGER = Logger.getLogger("javaClient");
     private List<Customer> customers;
     private List<Account> accounts;
     private Stage stage;
     private Account account = new Account();
+    private LocalDate today = LocalDate.now();
     @FXML
     private MenuItem itemAccountNum;
     @FXML
@@ -322,14 +325,26 @@ public class AccountController implements Initializable {
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
+                    Account accountD;
+                    String dateNewValue;
                     LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
                             t.getRowValue().getAccountNumber());
-                    Account accountD = toAccount(t.getRowValue(), t.getNewValue());
+                    
+                    if(LocalDate.parse(t.getNewValue(),formateadorL).isAfter(today)){
+                        dateNewValue = today.format(formateadorL);
+                        accountD = toAccount(t.getRowValue(), dateNewValue);
+                        alertUser("Creation date cannot be in the future \n Setting creation date with todays date", 1);
+                    }else{
+                        dateNewValue = t.getNewValue();
+                        accountD = toAccount(t.getRowValue(), dateNewValue);
+                    }
+                  
                     AccountFactory.getInstance().getIaccounts().edit_XML(
                             accountD,
                             t.getRowValue().getId().toString());
                     ((AccountBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setCreationDate(t.getNewValue());
+                            t.getTablePosition().getRow())).setCreationDate(dateNewValue);
+                    tableAccounts.refresh();
                 });
 
         colBalance.setCellFactory(cellFactoryDouble);
