@@ -50,12 +50,13 @@ import security.Hash;
  * @author Iñi
  */
 public class RovoBankSignInController {
+
     static {
         //Poner BouncyCastle como provider
         Security.addProvider(new BouncyCastleProvider());
     }
     private Hash security = new Hash();
-    
+
     private static Logger logger = Logger.getLogger("JavaClient");
 
     private Admin admin;
@@ -203,7 +204,7 @@ public class RovoBankSignInController {
             passwordField.setText(hiddenField.getText());
         }
 
-       /* if (userField.getText().equals("") && passwordField.getText().equals("")) {
+        /* if (userField.getText().equals("") && passwordField.getText().equals("")) {
             alert.setTitle("Empty user fields");
             alert.setContentText("Please fill up the required fields.");
             alert.showAndWait();
@@ -215,41 +216,39 @@ public class RovoBankSignInController {
             alert.setTitle("Invalid Password");
             alert.setContentText("The password must be at least 6 characters long and contain a capital letter and a number.");
             alert.showAndWait();
-        } else */{
+        } else */
+        {
             try {
-                //Recuperar la llave del fichero
-                FileInputStream input = new FileInputStream(Paths.get("src/security","Public.key").toFile());
+               /* //Recuperar la llave del fichero
+                InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                
+
                 byte[] data = new byte[1024];
                 int bytesRead;
-                
-                while((bytesRead = input.read(data))!=-1){
-                    buffer.write(data,0,bytesRead);
+
+                while ((bytesRead = input.read(data)) != -1) {
+                    buffer.write(data, 0, bytesRead);
                 }
                 input.close();
-                
+
                 byte[] publicKeyBytes = buffer.toByteArray();
-                
+
                 //Reconstruir la llave Publica
                 X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
-                KeyFactory keyFactory = KeyFactory.getInstance("EC","BC");
+                KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
                 PublicKey publicKey = keyFactory.generatePublic(spec);
-                
+
                 //Encriptar password con llave publica
-                Cipher cipher = Cipher.getInstance("ECIES","BC");
+                Cipher cipher = Cipher.getInstance("ECIES", "BC");
                 cipher.init(Cipher.ENCRYPT_MODE, publicKey);
                 byte[] encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
-                
-                //Convertirlo a String usando BASE64
-                String encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
-                //String encryptedPass64 = Base64.getEncoder().encodeToString(encryptedPass);
-                
-                System.out.print(passwordField.getText());
-                
+
+                //Convertirlo a String usando BASE64*/
+                String encryptedPass64 = encriptar();
+
                 admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
                 }, userField.getText(), encryptedPass64);
-                
+
                 FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMainView.fxml"));
 
                 Parent root = (Parent) FXMLLoader.load();
@@ -263,10 +262,46 @@ public class RovoBankSignInController {
                 alert.showAndWait();
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
-            }catch(Exception error){
+            } catch (Exception error) {
                 logger.log(Level.SEVERE, "Something went wrong when checking the user: {0}.", error.getMessage());
             }
         }
+    }
+
+    public String encriptar() {
+        String encryptedPass64=null;
+        try {
+            //Recuperar la llave del fichero
+            InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            byte[] data = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = input.read(data)) != -1) {
+                buffer.write(data, 0, bytesRead);
+            }
+            input.close();
+
+            byte[] publicKeyBytes = buffer.toByteArray();
+
+            //Reconstruir la llave Publica
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            PublicKey publicKey = keyFactory.generatePublic(spec);
+
+            //Encriptar password con llave publica
+            Cipher cipher = Cipher.getInstance("ECIES", "BC");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+
+            //Convertirlo a String usando BASE64
+            encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
+        } catch (Exception error) {
+            logger.log(Level.SEVERE, "RovoBankSignInController: Exception while encripting the password: ", error.getMessage());
+        }
+
+        return encryptedPass64;
     }
 
 }
