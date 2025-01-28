@@ -72,11 +72,11 @@
                                 <AnchorPane fx:id="paneAccount">
                                     <children>
                                         <Label fx:id="labelAccount" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce an account number" /> 
-                                        <TextField fx:id="accountNumber" layoutX="60.0" layoutY="102.0" prefWidth="180.0"/>
-                                        <Button fx:id="accountNumberSearchButton" layoutX="270.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                        <TextField fx:id="accountNumber" layoutX="60.0" layoutY="102.0" prefWidth="200.0"/>
+                                        <Button fx:id="accountNumberSearchButton" layoutX="290.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
                                     </children>
                                 </AnchorPane>       
-                                <!-- Pane buscar por customer -->
+                                <!-- Pane buscar por customer --><!-- desabilatado en controlador-->
                                 <AnchorPane fx:id="paneCustomer">
                                     <children>
                                         <Label fx:id="labelOwnerName" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce the customers name" /> 

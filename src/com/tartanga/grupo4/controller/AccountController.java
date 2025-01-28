@@ -262,10 +262,17 @@ public class AccountController implements Initializable {
 
     @FXML
     private void buttonSearchAccountNumber(ActionEvent event) {
+        String regex = "^\\d{4}-\\d{4}-\\d{4}-\\d{4}-\\d{4}$";
+         
         if (accountNumber.getText().length() != 24) {
             alertUser("Bank accounts consists of 20 numbers", 0);
         } else {
-            mostrarNumeroCuenta(accountNumber.getText());
+            if(accountNumber.getText().matches(regex)){
+                mostrarNumeroCuenta(accountNumber.getText());
+            }else{
+                alertUser("Only numbers are allowed \nAllowed format: XXXX-XXXX-XXXX-XXXX-XXXX", 0);
+            }
+            
         }
 
     }
@@ -370,6 +377,7 @@ public class AccountController implements Initializable {
         //tableAccounts.focusedProperty().addListener(this::handleButtonDeselection);
         tableAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mostrarTodasCuentas();
+        accountNumber.setPromptText("XXXX-XXXX-XXXX-XXXX-XXXX");
     }
 
     //METODOS PARA LLENAR LA TABLA
@@ -621,14 +629,14 @@ public class AccountController implements Initializable {
 
     private void formatAccountNumber() {
         accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            
+            String accountNumberF = newValue.replaceAll("[^\\d-]", "");
 
-            String accountNumberF = newValue.replaceAll("[^\\d]", "");
-
-            if (accountNumberF.length() > 20) {
-                accountNumberF = accountNumberF.substring(0, 20);
+            if (accountNumberF.length() > 24) {
+                accountNumberF = accountNumberF.substring(0, 24);
             }
 
-            StringBuilder formatted = new StringBuilder();
+           /* StringBuilder formatted = new StringBuilder();
             for (int i = 0; i < accountNumberF.length(); i++) {
                 if (i > 0 && i % 4 == 0) {
                     formatted.append("-");
@@ -638,10 +646,10 @@ public class AccountController implements Initializable {
             if (!newValue.equals(formatted.toString())) {
                 int caretPosition = accountNumber.getCaretPosition();
                 int formattedCaretPosition = Math.min(caretPosition, formatted.length());
-            }
-            accountNumber.setText(formatted.toString());
+            }*/
+            accountNumber.setText(accountNumberF);
 
-            accountNumber.positionCaret(formatted.length());
+            //accountNumber.positionCaret(formatted.length());
         });
     }
 
