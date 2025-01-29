@@ -53,7 +53,7 @@ public class AccountRESTFull implements Iaccounts {
     }
 
     @Override
-    public void edit_XML(Object requestEntity, String id) throws WebApplicationException {
+    public void updateAccount(Object requestEntity, String id) throws WebApplicationException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), Account.class);
     }
     
@@ -102,7 +102,7 @@ public class AccountRESTFull implements Iaccounts {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
     @Override
-    public void remove(String id) throws WebApplicationException {
+    public void deleteAccount(String id) throws WebApplicationException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete(Account.class);
     }
     

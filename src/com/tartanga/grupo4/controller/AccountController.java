@@ -73,7 +73,7 @@ import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
  * datos?
  */
 public class AccountController implements Initializable {
-
+    
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
     private AccountBean tableAccount;
     private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
@@ -132,10 +132,10 @@ public class AccountController implements Initializable {
     private TableColumn<AccountBean, String> colCreationDate;
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
         itemAccountNum.setOnAction(this::menuButtonAccountHandler);
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
         itemDate.setOnAction(this::menuButtonDateHandler);
@@ -150,9 +150,9 @@ public class AccountController implements Initializable {
         setEnterKeyOnSearchButtons();
         accountNumberListener();
         datePickerListerners();
-
+        
     }
-
+    
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -175,9 +175,9 @@ public class AccountController implements Initializable {
         itemOwner.setVisible(false);
         colSurname.setVisible(false);
         colName.setVisible(false);
-
+        
     }
-
+    
     public Stage getStage() {
         return stage;
     }
@@ -190,7 +190,7 @@ public class AccountController implements Initializable {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
+    
     @FXML
     private void onCloseRequestWindowEvent(Event event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to close the application?");
@@ -218,7 +218,7 @@ public class AccountController implements Initializable {
         startDate.setValue(null);
         endDate.setValue(null);
     }
-
+    
     @FXML
     private void menuButtonCustomerHandler(ActionEvent event) {
         paneDate.setVisible(false);
@@ -226,7 +226,7 @@ public class AccountController implements Initializable {
         paneCustomer.setVisible(true);
         showAll.setText("");
     }
-
+    
     @FXML
     private void menuButtonDateHandler(ActionEvent event) {
         paneAccount.setVisible(false);
@@ -237,11 +237,11 @@ public class AccountController implements Initializable {
         startDate.setValue(null);
         endDate.setValue(null);
     }
-
+    
     public void createTableView() {
-
+        
     }
-
+    
     @FXML
     private void buttonSearchAll(ActionEvent event) {
         paneAccount.setVisible(false);
@@ -259,24 +259,24 @@ public class AccountController implements Initializable {
     private void buttonSearchCustomer(ActionEvent event) {
         mostrarCuentasNombreApellido(customerName.getText(), customerSurname.getText());
     }
-
+    
     @FXML
     private void buttonSearchAccountNumber(ActionEvent event) {
         String regex = "^\\d{4}-\\d{4}-\\d{4}-\\d{4}-\\d{4}$";
-         
+        
         if (accountNumber.getText().length() != 24) {
             alertUser("Bank accounts consists of 20 numbers", 0);
         } else {
-            if(accountNumber.getText().matches(regex)){
+            if (accountNumber.getText().matches(regex)) {
                 mostrarNumeroCuenta(accountNumber.getText());
-            }else{
+            } else {
                 alertUser("Only numbers are allowed \nAllowed format: XXXX-XXXX-XXXX-XXXX-XXXX", 0);
             }
             
         }
-
+        
     }
-
+    
     @FXML
     private void buttonSearchByDates(ActionEvent event) {
         if (startDate.getValue().isAfter(endDate.getValue())) {
@@ -284,7 +284,7 @@ public class AccountController implements Initializable {
         } else {
             mostrarCuentasPorFecha(startDate.getValue().toString(), endDate.getValue().toString());
         }
-
+        
     }
 
     //MENU CONTEXTUAL
@@ -306,29 +306,27 @@ public class AccountController implements Initializable {
         //FACTORIA DE CELDAS EDICION
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryTextField
                 = (TableColumn<AccountBean, String> p) -> new EditingCellTextField(tableAccounts);
-
+        
         Callback<TableColumn<AccountBean, String>, TableCell<AccountBean, String>> cellFactoryDatePicker
                 = (TableColumn<AccountBean, String> p) -> new EditingCellDatePicker(tableAccounts);
-
+        
         Callback<TableColumn<AccountBean, Double>, TableCell<AccountBean, Double>> cellFactoryDouble
                 = (TableColumn<AccountBean, Double> p) -> new EditingCellDouble(tableAccounts);
-
+        
         colName.setCellFactory(cellFactoryTextField);
         colName.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setName(t.getNewValue());//cambiarlo de lambda y aqui
-                    //es donde yo valido datos y errores, excepciones y lo actualizo en la base de datos
-
+                            t.getTablePosition().getRow())).setName(t.getNewValue());
                 });
-
+        
         colSurname.setCellFactory(cellFactoryTextField);
         colSurname.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
                     ((AccountBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setSurname(t.getNewValue());
                 });
-
+        
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
@@ -338,80 +336,100 @@ public class AccountController implements Initializable {
                     LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
                             t.getRowValue().getAccountNumber());
                     //Validacion de fechas introducidas por texto
-                    if(LocalDate.parse(t.getNewValue(),formateadorL).isAfter(today)){
+                    if (LocalDate.parse(t.getNewValue(), formateadorL).isAfter(today)) {
                         dateNewValue = today.format(formateadorL);
                         accountD = toAccount(t.getRowValue(), dateNewValue);
                         alertUser("Creation date cannot be in the future \n Setting creation date with todays date", 1);
-                    }else{
+                    } else {
                         dateNewValue = t.getNewValue();
                         accountD = toAccount(t.getRowValue(), dateNewValue);
                     }
-                  
-                    AccountFactory.getInstance().getIaccounts().edit_XML(
-                            accountD,
-                            t.getRowValue().getId().toString());
-                    ((AccountBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setCreationDate(dateNewValue);
+                    try {
+                        AccountFactory.getInstance().getIaccounts().updateAccount(
+                                accountD,
+                                t.getRowValue().getId().toString());
+                        ((AccountBean) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setCreationDate(dateNewValue);
+                    } catch (Exception error) {
+                        LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
+                                + "Exception while updating the date, {0}", error.getMessage());
+                        alertUser("An error happened while updating the account D", 0);
+                    }
+                    
                     tableAccounts.refresh();
                 });
-
+        
         colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
             LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the balance from account {0}",
                     t.getRowValue().getAccountNumber());
             Account accountB = toAccount(t.getRowValue(), null);
-
+            
             accountB.setBalance(t.getNewValue());
-            AccountFactory.getInstance().getIaccounts().edit_XML(
-                    accountB,
-                    t.getRowValue().getId().toString());
-            AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            accountBean.setBalance(t.getNewValue());
+            try {
+                AccountFactory.getInstance().getIaccounts().updateAccount(
+                        accountB,
+                        t.getRowValue().getId().toString());
+                AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                accountBean.setBalance(t.getNewValue());
+            } catch (Exception error) {
+                LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
+                        + "Exception while updating the balance, {0}", error.getMessage());
+                alertUser("An error happened while updating the account B", 0);
+            }
+            tableAccounts.refresh();
+            
         });
         item2.setDisable(true);
         item3.setDisable(true);
         contextTabla.getItems().addAll(item1, item2, item3);
         tableAccounts.setContextMenu(contextTabla);
-
-        tableAccounts.getSelectionModel().selectedItemProperty().addListener(this::handleAccountSelection);
-        //tableAccounts.focusedProperty().addListener(this::handleButtonDeselection);
+        
+        handleButtonDeselection();
+        
         tableAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mostrarTodasCuentas();
         accountNumber.setPromptText("XXXX-XXXX-XXXX-XXXX-XXXX");
+        /* item2.setOnAction(event -> {
+           AccountBean accountE= tableAccounts.getSelectionModel().getSelectedItem();
+           if(accountE != null){
+               tableAccounts.edit(tableAccounts.getSelectionModel().getSelectedIndex(), colName);
+           }
+        });*/
     }
 
     //METODOS PARA LLENAR LA TABLA
     private void mostrarTodasCuentas() {
         try {
             LOGGER.log(Level.INFO, "AccountController(mostrarTodasCuentas): Getting Accounts and Customers");
-
+            
             accounts = AccountFactory.getInstance().getIaccounts()
                     .getAllAccounts(new GenericType<List<Account>>() {
                     });
-
+            
             data = organizarData(accounts);
             if (data.isEmpty()) {
                 throw new AccountDoesNotExistException();
             }
             tableAccounts.setItems(data);
-
+            
         } catch (AccountDoesNotExistException error) {
             alertUser("Account(s) not found", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
             alertUser(error.getMessage(), 0);
-
+            
         }
     }
-
+    
     private void mostrarCuentasPorFecha(String fechaIni, String fechaFin) {
         try {
             LOGGER.log(Level.INFO, "AccountController(mostrarCuentasPorFecha): Getting Accounts and Customers");
-
+            
             accounts = AccountFactory.getInstance().getIaccounts()
                     .getAccountsByDates(new GenericType<List<Account>>() {
                     }, fechaIni, fechaFin);
-
+            
             data = organizarData(accounts);
             if (data.isEmpty()) {
                 throw new AccountDoesNotExistException();
@@ -424,7 +442,7 @@ public class AccountController implements Initializable {
             alertUser(error.getMessage(), 0);
         }
     }
-
+    
     private void mostrarNumeroCuenta(String accountNumber) {
         try {
             LOGGER.log(Level.INFO, "AccountController(mostrarNumeroCuenta): Getting the Account and Customers");
@@ -432,10 +450,10 @@ public class AccountController implements Initializable {
             accounts.add(AccountFactory.getInstance().getIaccounts()
                     .getAccountByAccountNumber(new GenericType<Account>() {
                     }, accountNumber));
-
+            
             data = organizarData(accounts);
             tableAccounts.setItems(data);
-
+            
         } catch (WebApplicationException error) {
             alertUser("The introduced account does not exist", 1);
         } catch (Exception error) {
@@ -447,7 +465,7 @@ public class AccountController implements Initializable {
     //No se usa de por el momento
     private void mostrarCuentasNombreApellido(String name, String surname) {
         try {
-
+            
             if (!customerName.getText().equals("") && customerSurname.getText().equals("")) {
                 customers = AccountFactory.getInstance().getIaccounts()
                         .findByName(new GenericType<List<Customer>>() {
@@ -461,37 +479,37 @@ public class AccountController implements Initializable {
                         .findByNameSurname(new GenericType<List<Customer>>() {
                         }, name, surname);
             }
-
+            
             LOGGER.log(Level.INFO, "AccountController(mostrarCuentasNombreApellido): Getting Accounts and Customers lists");
             accounts = AccountFactory.getInstance().getIaccounts()
                     .getAllAccounts(new GenericType<List<Account>>() {
                     });
-
+            
             data = organizarData(accounts);
             tableAccounts.setItems(data);
-
+            
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasNomreApellido): "
                     + "Exception while populating table , {0}", error.getMessage());
         }
     }
-
+    
     private ObservableList<AccountBean> organizarData(List<Account> accounts) {
         LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
         data.clear();
-
+        
         for (Account account : accounts) {
-
+            
             tableAccount = new AccountBean(
                     account.getAccountNumber(),
                     formateador.format(account.getCreationDate()),
                     account.getBalance(),
                     account.getIDProduct());
-
+            
             data.add(tableAccount);
-
+            
         }
-
+        
         return data;
     }
 
@@ -510,19 +528,24 @@ public class AccountController implements Initializable {
             ObservableList<AccountBean> items;
             items = tableAccounts.getSelectionModel().getSelectedItems();
             List<AccountBean> itemsErase = new ArrayList(items);
-
-            if (!itemsErase.isEmpty()) {
-                for (AccountBean bean : itemsErase) {
-                    AccountFactory.getInstance().getIaccounts().remove(Integer.toString(bean.getId()));
-                    tableAccounts.getItems().remove(bean);
-
+            try {
+                if (!itemsErase.isEmpty()) {
+                    for (AccountBean bean : itemsErase) {
+                        AccountFactory.getInstance().getIaccounts().deleteAccount(Integer.toString(bean.getId()));
+                        tableAccounts.getItems().remove(bean);
+                        
+                    }
                 }
+            } catch (Exception error) {
+                LOGGER.log(Level.SEVERE, "AccountController(handleAccountDelete): Exception when deleting the account {0}", error.getMessage());
+                alertUser("An error happened while deleting account", 0);
             }
+            
             tableAccounts.refresh();
         } else {
             event.consume();
         }
-
+        
     }
 
     //METODO MODIFICAR
@@ -542,7 +565,7 @@ public class AccountController implements Initializable {
         } catch (ParseException error) {
             LOGGER.log(Level.INFO, "AccountController(toAccount): Exception while parsing to Date");
         }
-
+        
         return accountT;
     }
 
@@ -554,42 +577,44 @@ public class AccountController implements Initializable {
         //Generador de cuenta
         LOGGER.log(Level.INFO, "AccountController(handleAccountCreation): Creating a new account");
         Random random = new Random();
-
+        
         StringBuilder accountNumberC = new StringBuilder();
-
+        
         for (int i = 0; i < 20; i++) {
             int digit = random.nextInt(10);
             accountNumberC.append(digit);
-
+            
             if ((i + 1) % 4 == 0 && i != 19) {
                 accountNumberC.append("-");
             }
         }
-        accountC = new Account(accountNumberC.toString(), 0.0, today, null);
-        AccountFactory.getInstance().getIaccounts().createAccount(accountC);
-        mostrarTodasCuentas();
-    }
-
-    //METODOS DE MODIFICAR ELEMENTOS
-    private void handleAccountSelection(ObservableValue observable, Object oldValue, Object newValue) {
-        if (newValue != null) {
-            deleteButton.setDisable(false);
-            item2.setDisable(false);
-            item3.setDisable(false);
-
+        try {
+            accountC = new Account(accountNumberC.toString(), 0.0, today, null);
+            AccountFactory.getInstance().getIaccounts().createAccount(accountC);
+            mostrarTodasCuentas();
+        } catch (Exception error) {
+            LOGGER.log(Level.INFO, "AccountController( handleAccountCreation): Exception while creating a new account");
+            alertUser("An error happened while creating account", 0);
         }
+        
     }
 
-    private void handleButtonDeselection(ObservableValue observable, Boolean oldValue, Boolean newValue) {
-        if (!newValue) {
-            deleteButton.setDisable(true);
-            item2.setDisable(true);
-            item3.setDisable(true);
-            //tableAccounts.getSelectionModel().clearSelection();esta pensado para que quite el select de la tabla
-            //cuando pierde focus pero hace conflicto con el oncomit del FactoryCell 
-        }
+    //METODOS DE MODIFICAR ELEMENTOS VISTA
+    private void handleButtonDeselection() {
+        tableAccounts.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                deleteButton.setDisable(true);
+                item2.setDisable(true);
+                item3.setDisable(true);
+                
+            } else {
+                deleteButton.setDisable(false);
+                item2.setDisable(false);
+                item3.setDisable(false);
+            }
+        });
     }
-
+    
     private void accountNumberListener() {
         accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() >= 1) {
@@ -599,9 +624,9 @@ public class AccountController implements Initializable {
             }
         });
     }
-
+    
     private void datePickerListerners() {
-
+        
         startDate.valueProperty().addListener((observableS, oldValueS, newValueS) -> {
             endDate.valueProperty().addListener((observableE, oldValueE, newValueE) -> {
                 if (newValueE != null && newValueS != null) {
@@ -609,9 +634,9 @@ public class AccountController implements Initializable {
                 } else {
                     dateSearchButton.setDisable(true);
                 }
-
+                
             });
-
+            
         });
         endDate.valueProperty().addListener((observableS, oldValueS, newValueS) -> {
             startDate.valueProperty().addListener((observableE, oldValueE, newValueE) -> {
@@ -620,23 +645,23 @@ public class AccountController implements Initializable {
                 } else {
                     dateSearchButton.setDisable(true);
                 }
-
+                
             });
-
+            
         });
-
+        
     }
-
+    
     private void formatAccountNumber() {
         accountNumber.textProperty().addListener((observable, oldValue, newValue) -> {
             
             String accountNumberF = newValue.replaceAll("[^\\d-]", "");
-
+            
             if (accountNumberF.length() > 24) {
                 accountNumberF = accountNumberF.substring(0, 24);
             }
 
-           /* StringBuilder formatted = new StringBuilder();
+            /* StringBuilder formatted = new StringBuilder();
             for (int i = 0; i < accountNumberF.length(); i++) {
                 if (i > 0 && i % 4 == 0) {
                     formatted.append("-");
@@ -652,7 +677,7 @@ public class AccountController implements Initializable {
             //accountNumber.positionCaret(formatted.length());
         });
     }
-
+    
     private void customizeDatePickers() {
         LocalDate today = LocalDate.now();
         final Callback<DatePicker, DateCell> dayCellFactory
@@ -662,7 +687,7 @@ public class AccountController implements Initializable {
                 return new DateCell() {
                     @Override
                     public void updateItem(LocalDate item, boolean empty) {
-
+                        
                         super.updateItem(item, empty);
                         //Pone el texto al valor de hoy si una fecha futura es introducida texto
                         if (startDate.getValue() != null && startDate.getValue().isAfter(today)) {
@@ -675,7 +700,7 @@ public class AccountController implements Initializable {
                                 LocalDate.now())) {
                             setDisable(true);
                             setStyle("-fx-background-color: #ffc0cb;");
-
+                            
                         }
                         //Desabilita fechas anteriores a la fecha elegida en startDate
                         if (startDate.getValue() != null && datePicker == endDate && item.isBefore(
@@ -698,54 +723,54 @@ public class AccountController implements Initializable {
         startDate.setPromptText("dd/mm/yyyy");
         endDate.setPromptText("dd/mm/yyyy");
     }
-
+    
     private void setEnterKeyOnSearchButtons() {
         customerName.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 customerSearchButton.fire();
             }
         });
-
+        
         customerSurname.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 customerSearchButton.fire();
             }
         });
-
+        
         accountNumber.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 accountNumberSearchButton.fire();
             }
         });
-
+        
         startDate.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 dateSearchButton.fire();
             }
         });
-
+        
         endDate.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 dateSearchButton.fire();
             }
         });
     }
-
+    
     private static void alertUser(String msg, int tipo) {
         //0 para un mensaje de ERROR
         //1 para un mensaje informativo
         switch (tipo) {
-
+            
             case 0:
                 Alert alertE = new Alert(Alert.AlertType.ERROR, msg);
                 alertE.showAndWait();
                 break;
-
+            
             case 1:
                 Alert alertI = new Alert(Alert.AlertType.INFORMATION, msg);
                 alertI.showAndWait();
         }
-
+        
     }
-
+    
 }

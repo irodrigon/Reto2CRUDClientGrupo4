@@ -25,7 +25,7 @@ public interface Iaccounts {
     public List<Customer> findBySurname(GenericType<List<Customer>> responseType, String surname) throws WebApplicationException; 
     public List<Account> getAccountsByDates(GenericType<List<Account>> responseType, String startDate, String endDate) throws WebApplicationException; 
     public Account getAccountByAccountNumber(GenericType<Account> responseType, String accountNumber) throws WebApplicationException; 
-    public void edit_XML(Object requestEntity, String id) throws WebApplicationException;
-    public void remove(String id) throws WebApplicationException;
+    public void updateAccount(Object requestEntity, String id) throws WebApplicationException;
+    public void deleteAccount(String id) throws WebApplicationException;
     public void createAccount(Object requestEntity) throws WebApplicationException;
 }
