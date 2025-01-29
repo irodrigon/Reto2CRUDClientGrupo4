@@ -16,75 +16,77 @@
 
 <AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/style.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.LoanController">
 
-     <VBox fx:id="vBoxTop" prefHeight="147.0" prefWidth="1366.0">
-      <children>
+    <VBox fx:id="vBoxTop" prefHeight="147.0" prefWidth="1366.0">
+        <children>
       
-          <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1324.0" spacing="10" styleClass="header">
-            <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
-              <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
-              <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-              <Button fx:id="btnExit" styleClass="exit-button" text="Exit" />
-          </HBox>
-         <HBox prefHeight="29.0" prefWidth="1366.0">
-            <children>
+            <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1324.0" spacing="10" styleClass="header">
+                <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+                <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+                <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+                <Button fx:id="btnExit" styleClass="exit-button" text="Exit" />
+            </HBox>
+            <HBox prefHeight="29.0" prefWidth="1366.0">
+                <children>
             
-                <!-- MenuBar -->
-                <MenuBar fx:id="menuBar" prefHeight="31.0" prefWidth="1399.0" styleClass="menu-bar">
-                    <Menu fx:id="menuNavigation" styleClass="menu" text="Navigation">
-                        <MenuItem styleClass="menu-item" text="Settings" />
-                        <MenuItem styleClass="menu-item" text="Log out" />
-                    </Menu>
-                    <Menu fx:id="menuHelp" styleClass="menu" text="Help" />
-                    <Menu fx:id="btnMenu" styleClass="menu" text="Options">
-                        <MenuItem styleClass="menu-item" text="Settings" />
-                        <MenuItem styleClass="menu-item" text="Log out" />
-                    </Menu>
-                </MenuBar>
-            </children>
-         </HBox>
-      </children>
-   </VBox>
+                    <!-- MenuBar -->
+                    <MenuBar fx:id="menuBar" prefHeight="31.0" prefWidth="1399.0" styleClass="menu-bar">
+                        <Menu fx:id="menuNavigation" styleClass="menu" text="Navigation">
+                            <MenuItem styleClass="menu-item" text="Settings" />
+                            <MenuItem styleClass="menu-item" text="Log out" />
+                        </Menu>
+                        <Menu fx:id="menuHelp" styleClass="menu" text="Help" />
+                        <Menu fx:id="btnMenu" styleClass="menu" text="Options">
+                            <MenuItem styleClass="menu-item" text="Settings" />
+                            <MenuItem styleClass="menu-item" text="Log out" />
+                        </Menu>
+                    </MenuBar>
+                </children>
+            </HBox>
+        </children>
+    </VBox>
     <!-- Body -->
     <VBox fx:id="vBoxBody" alignment="TOP_LEFT" layoutY="190.0" prefHeight="556.0" prefWidth="1346.0" spacing="20" styleClass="body" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="190.0">
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Region fx:id="regionEspacioTop212" prefHeight="28.0" prefWidth="38.0" />
-            <TextField prefHeight="26.0" prefWidth="322.0" />
-            <Region fx:id="regionEspacioTop2" prefHeight="28.0" prefWidth="17.0" />
-            <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
-            <Region fx:id="regionEspacioTop21" prefHeight="28.0" prefWidth="90.0" />
-            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="86.0" styleClass="lblDates" text="From:" />
-            <Region fx:id="regionEspacioTop211" prefHeight="28.0" prefWidth="10.0" />
-            <DatePicker />
-            <Region fx:id="regionEspacioTop22" prefHeight="28.0" prefWidth="32.0" />
-            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="64.0" styleClass="#lblDates" text="To:" />
-            <Region fx:id="regionEspacioTop2111" prefHeight="28.0" prefWidth="10.0" />
-            <DatePicker />
-            <Region fx:id="regionEspacioTop221" prefHeight="28.0" prefWidth="32.0" />
-            <Button fx:id="btnSearch1" mnemonicParsing="false" text="Filter" />
-         </children>
-      </HBox>
-        <TableView fx:id="loanTable" prefHeight="534.0" prefWidth="1306.0" styleClass="table-view">
+        <HBox prefHeight="100.0" prefWidth="200.0">
+            <children>
+                <Region fx:id="regionEspacioTop212" prefHeight="28.0" prefWidth="38.0" />
+                <TextField prefHeight="26.0" prefWidth="322.0" />
+                <Region fx:id="regionEspacioTop2" prefHeight="28.0" prefWidth="17.0" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
+                <Region fx:id="regionEspacioTop21" prefHeight="28.0" prefWidth="90.0" />
+                <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="86.0" styleClass="lblDates" text="From:" />
+                <Region fx:id="regionEspacioTop211" prefHeight="28.0" prefWidth="10.0" />
+                <DatePicker fx:id="fromDate" />
+                <Region fx:id="regionEspacioTop22" prefHeight="28.0" prefWidth="32.0" />
+                <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="64.0" styleClass="#lblDates" text="To:" />
+                <Region fx:id="regionEspacioTop2111" prefHeight="28.0" prefWidth="10.0" />
+                <DatePicker fx:id="toDate" />
+                <Region fx:id="regionEspacioTop221" prefHeight="28.0" prefWidth="32.0" />
+                <Button fx:id="btnSearch1" mnemonicParsing="false" text="Filter" />
+            </children>
+        </HBox>
+        <TableView fx:id="loanTable" prefHeight="534.0" prefWidth="1306" styleClass="table-view">
             <columns>
-                <TableColumn fx:id="tcBorrower" prefWidth="250" text="Borrower" />
-                <TableColumn fx:id="tcLoanId" prefWidth="250" text="Loan ID" />
-                <TableColumn fx:id="tcStartingDate" prefWidth="155" text="Starting Date" />
-                <TableColumn fx:id="tcEndingDate" prefWidth="155" text="Ending Date" />
-                <TableColumn fx:id="tcTotalAmount" prefWidth="155" text="Total Amount" />
-                <TableColumn fx:id="tcRemainingAmount" prefWidth="210" text="Remaining Amount" />
-                <TableColumn fx:id="tcInterestRate" prefWidth="155" text="Interest Rate" />
+                
+                <!-- <TableColumn fx:id="tcBorrower" prefWidth="250" text="Borrower" /> -->
+                <TableColumn fx:id="tcLoanId" prefWidth="174.14" text="Loan ID" />
+                <TableColumn fx:id="tcStartingDate" prefWidth="174.14" text= "Starting Date" />
+                <TableColumn fx:id="tcEndingDate" prefWidth="348.27" text="Ending Date" />
+                <TableColumn fx:id="tcTotalAmount" prefWidth="174.14" text="Total Amount" />
+                <TableColumn fx:id="tcRemainingAmount" prefWidth="174.14" text="Remaining Amount" />
+                <TableColumn fx:id="tcInterestRate" prefWidth="87" text="Interest Rate" />
+                <TableColumn fx:id="tcPeriod" prefWidth="174.14" text="Period" />
             </columns>
         </TableView>
-      <HBox fx:id="hBoxMenu" alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="1154.0">
-    <children>
-        <Button fx:id="btnNew" styleClass="button new-button" text="New" />
-            <Region fx:id="regionEspacioTop12" prefHeight="26.0" prefWidth="20.0" />
-        <Button fx:id="btnSave" styleClass="button save-button" text="Save" />
-            <Region fx:id="regionEspacioTop11" prefHeight="26.0" prefWidth="20.0" />
-        <Button fx:id="btnDelete" alignment="TOP_CENTER" styleClass="button delete-button" text="Delete" />
-            <Region fx:id="regionEspacioTop13" prefHeight="26.0" prefWidth="30.0" />
-    </children>
-</HBox>
+        <HBox fx:id="hBoxMenu" alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="1154.0">
+            <children>
+                <Button fx:id="btnNew" styleClass="button new-button" text="New" onAction="#addNewLoan"/>
+                <Region fx:id="regionEspacioTop12" prefHeight="26.0" prefWidth="20.0" />
+             
+                <Region fx:id="regionEspacioTop11" prefHeight="26.0" prefWidth="20.0" />
+                <Button fx:id="btnDelete" alignment="TOP_CENTER" styleClass="button delete-button" text="Delete" onAction="#DeleteLoan" />
+                <Region fx:id="regionEspacioTop13" prefHeight="26.0" prefWidth="30.0" />
+            </children>
+        </HBox>
 
     </VBox>
   
