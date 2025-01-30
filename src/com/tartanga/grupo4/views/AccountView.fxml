@@ -53,7 +53,7 @@
                         <AnchorPane prefHeight="203.0" prefWidth="239.0">
                             <children>
                                 <!-- Menu Buscar Eleccion -->
-                                <MenuButton layoutX="62.0" layoutY="90.0" mnemonicParsing="false" text="Search by...">
+                                <MenuButton fx:id="searchButtons" layoutX="62.0" layoutY="90.0" mnemonicParsing="false" text="Search by...">
                                     <items>
                                         <MenuItem fx:id="itemAccountNum" mnemonicParsing="false" text="Account number" />
                                         <MenuItem fx:id="itemOwner" mnemonicParsing="false" text="Customer" />

@@ -168,7 +168,7 @@ public class AccountController implements Initializable {
         deleteButton.setDisable(true);
         dateSearchButton.setDisable(true);
         accountNumberSearchButton.setDisable(true);
-        stage.show();
+        stage.show();     
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
 
         //Quitarlo cuando implemente busqueda por customer
@@ -353,7 +353,7 @@ public class AccountController implements Initializable {
                     } catch (Exception error) {
                         LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
                                 + "Exception while updating the date, {0}", error.getMessage());
-                        alertUser("An error happened while updating the account D", 0);
+                        alertUser("An error happened while updating the account", 0);
                     }
                     
                     tableAccounts.refresh();
@@ -375,7 +375,7 @@ public class AccountController implements Initializable {
             } catch (Exception error) {
                 LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
                         + "Exception while updating the balance, {0}", error.getMessage());
-                alertUser("An error happened while updating the account B", 0);
+                alertUser("An error happened while updating the account", 0);
             }
             tableAccounts.refresh();
             
@@ -417,7 +417,7 @@ public class AccountController implements Initializable {
             alertUser("Account(s) not found", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
-            alertUser(error.getMessage(), 0);
+            //alertUser("Cannot get accounts", 0);
             
         }
     }
@@ -439,7 +439,7 @@ public class AccountController implements Initializable {
             alertUser("Account(s) not found", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarCuentasPorFecha): Exception while populating table, {0}", error.getMessage());
-            alertUser(error.getMessage(), 0);
+            alertUser("An error happen in application", 0);
         }
     }
     
@@ -458,7 +458,7 @@ public class AccountController implements Initializable {
             alertUser("The introduced account does not exist", 1);
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarNumeroCuenta): Exception while populating table, {0}", error.getMessage());
-            alertUser(error.getMessage(), 0);
+            alertUser("An error happen in application",0);
         }
     }
 
