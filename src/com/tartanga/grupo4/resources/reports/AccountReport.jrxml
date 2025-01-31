@@ -7,18 +7,23 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="103" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="169" height="103" uuid="5d0d3f7a-be58-4cf8-b0b2-2ea222f9559c"/>
+				<imageExpression><![CDATA["C:\\Users\\2dami\\Documents\\NetBeansProjects\\RovoBankLogo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="54" splitType="Stretch">
 			<staticText>
-				<reportElement x="200" y="18" width="151" height="41" uuid="dd333f14-d433-4f76-bb0f-2104a8a11950"/>
+				<reportElement x="199" y="0" width="151" height="41" uuid="dd333f14-d433-4f76-bb0f-2104a8a11950"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16"/>
 				</textElement>
 				<text><![CDATA[Account Report]]></text>
 			</staticText>
 		</band>
-	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band height="61" splitType="Stretch"/>
