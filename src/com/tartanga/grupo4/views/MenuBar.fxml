@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox prefHeight="29.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.MenuBarController">
+<HBox prefHeight="29.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.AccountController">
     <children>
                
         <MenuBar fx:id="menuBar" prefHeight="31.0" prefWidth="1366.0">
@@ -29,7 +29,7 @@
                 </Menu>
                 <Menu fx:id="menuPrint" styleClass="menu" text="Print">
                     <items>
-                        <MenuItem fx:id="menuItemPrint" styleClass="menu-item" text="Print report" />
+                        <MenuItem fx:id="menuItemPrint" onAction="#printReport" styleClass="menu-item" text="Print report" />
                     </items>
                 </Menu>
                 <Menu fx:id="menuHelp" styleClass="menu" text="Help">
