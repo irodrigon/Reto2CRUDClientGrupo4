@@ -111,7 +111,7 @@
     -fx-font-size: 15px;
 }
 
-#hl_create {
+.hyperlink {
     -fx-text-fill: #ffffff;
     -fx-font-size: 15px;
 }

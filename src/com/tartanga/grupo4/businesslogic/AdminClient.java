@@ -41,8 +41,8 @@ public class AdminClient implements AdminLogicController{
         resource = resource.path("count");
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
-
-    public void edit_XML(Object requestEntity, String id) throws ClientErrorException {
+    @Override
+    public void edit_XML(Object requestEntity, String id) throws WebApplicationException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
@@ -61,8 +61,8 @@ public class AdminClient implements AdminLogicController{
         resource = resource.path(java.text.MessageFormat.format("credentials/{0}/{1}", new Object[]{logIn, password}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
-
-    public <T> T find_XML(Class<T> responseType, String id) throws ClientErrorException {
+    @Override
+     public Admin getAdmin(GenericType<Admin> responseType, String id) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

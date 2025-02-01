@@ -7,6 +7,7 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.models.Admin;
+import com.tartanga.grupo4.resources.files.Smtp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -70,6 +72,9 @@ public class RovoBankSignInController {
     private Hyperlink hl_create;
 
     @FXML
+    Hyperlink hl_password;
+
+    @FXML
     private Button btnSeePassword;
 
     @FXML
@@ -116,6 +121,8 @@ public class RovoBankSignInController {
         btnSeePassword.setMaxSize(25, 25);
 
         btnSeePassword.setGraphic(imageView);
+
+        hl_password.setOnAction(this::sendNewPassword);
 
         btnSeePassword.setStyle("-fx-background-color: transparent; -fx-border-color:transparent");
 
@@ -219,32 +226,8 @@ public class RovoBankSignInController {
         } else */
         {
             try {
-               /* //Recuperar la llave del fichero
-                InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-                byte[] data = new byte[1024];
-                int bytesRead;
-
-                while ((bytesRead = input.read(data)) != -1) {
-                    buffer.write(data, 0, bytesRead);
-                }
-                input.close();
-
-                byte[] publicKeyBytes = buffer.toByteArray();
-
-                //Reconstruir la llave Publica
-                X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
-                KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
-                PublicKey publicKey = keyFactory.generatePublic(spec);
-
-                //Encriptar password con llave publica
-                Cipher cipher = Cipher.getInstance("ECIES", "BC");
-                cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-                byte[] encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
-
                 //Convertirlo a String usando BASE64*/
-                String encryptedPass64 = encriptar();
+                String encryptedPass64 = encriptar(null);
 
                 admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
                 }, userField.getText(), encryptedPass64);
@@ -268,8 +251,9 @@ public class RovoBankSignInController {
         }
     }
 
-    public String encriptar() {
-        String encryptedPass64=null;
+    public String encriptar(String password) {
+        String encryptedPass64 = null;
+         byte[] encryptedPass;
         try {
             //Recuperar la llave del fichero
             InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
@@ -293,7 +277,12 @@ public class RovoBankSignInController {
             //Encriptar password con llave publica
             Cipher cipher = Cipher.getInstance("ECIES", "BC");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+            if(password == null){
+                 encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+            }else{
+                 encryptedPass = cipher.doFinal(password.getBytes());
+            }
+            
 
             //Convertirlo a String usando BASE64
             encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
@@ -302,6 +291,53 @@ public class RovoBankSignInController {
         }
 
         return encryptedPass64;
+    }
+
+    private void sendNewPassword(ActionEvent event) {
+        try {
+
+            if (userField.getText().equals("") || !passwordField.getText().equals("")|| !hiddenField.getText().equals("")) {
+                Alert alertE = new Alert(Alert.AlertType.ERROR, "Write in the user box the email to which you "
+                        + "would like the new password to be sent but leave the password box empty");
+                alertE.showAndWait();
+            } else {
+                String email = userField.getText();
+                String password = passwordGenerator();
+                String passwordE = password;
+                //Coger admin de la base de datos
+                Admin adminT = AdminClientFactory.adminLogic().getAdmin(new GenericType<Admin>() {
+                }, email);
+                //Encriptar password
+                password = encriptar(password);
+                adminT.setPassword(password);
+                AdminClientFactory.adminLogic().edit_XML(adminT, email);
+                
+                Smtp mail = new Smtp();
+                mail.sendMail(email, passwordE);
+                Alert alertE = new Alert(Alert.AlertType.INFORMATION, "A new password has been sent to your specified email");
+                alertE.showAndWait();
+            }
+        } catch (NullPointerException error) {
+            logger.log(Level.SEVERE, "RovoBankSignInController: There is no Admin with that login in the database: ", error.getMessage());
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "There is no Admin with that login in the database");
+            alertE.showAndWait();
+        } catch (Exception error){
+            error.printStackTrace();
+            logger.log(Level.SEVERE, "RovoBankSignInController: An error occurred while getting the admin: ", error.getMessage());
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "An error occurred while updating the password");
+            alertE.showAndWait();
+        }
+
+    }
+    private String passwordGenerator(){
+        String characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        
+        StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < 6; i++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return sb.toString();
     }
 
 }
