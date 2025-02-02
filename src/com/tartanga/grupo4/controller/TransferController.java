@@ -3,12 +3,15 @@ package com.tartanga.grupo4.controller;
 import com.tartanga.grupo4.businesslogic.TransferRESTFull;
 import com.tartanga.grupo4.businesslogic.Itransfer;
 import com.tartanga.grupo4.businesslogic.TransferFactory;
+import com.tartanga.grupo4.models.Account;
 import com.tartanga.grupo4.models.Currency;
+import com.tartanga.grupo4.models.Customer;
 import com.tartanga.grupo4.models.Transfers;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,6 +29,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 
 public class TransferController implements Initializable {
@@ -88,7 +92,6 @@ public class TransferController implements Initializable {
 
     private Itransfer transferManager;
 
-    private Stage stage;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -131,6 +134,7 @@ public class TransferController implements Initializable {
 
     @FXML
     public void initTable() {
+
         tbTransfer.setEditable(true);
 
         tbcTransferId.setCellValueFactory(new PropertyValueFactory<>("transferId"));
@@ -141,22 +145,17 @@ public class TransferController implements Initializable {
 
         tbcSender.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
         tbcSender.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-            Transfers transfer = t.getRowValue();
-
+            Transfers transfer = t.getTableView().getItems().get(t.getTablePosition().getRow());
             transfer.setSender(t.getNewValue());
-
             transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
-        
-            tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
-            tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-                Transfers transfer = t.getRowValue();
-
-                transfer.setReciever(t.getNewValue());
-
-                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
-            });
+        tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
+        tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
+            Transfers transfer = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            transfer.setReciever(t.getNewValue());
+            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+        });
 
         tbcDate.setCellFactory(colum -> new DatePickerCellEditer());
         tbcDate.setOnEditCommit(event -> {
@@ -187,7 +186,6 @@ public class TransferController implements Initializable {
         Transfers newTransfer = new Transfers();
 
         transferManager.create_XML(newTransfer);
-        
 
         // Añade la nueva transferencia a la lista observable y a la tabla
         transferData.add(newTransfer);
@@ -195,9 +193,9 @@ public class TransferController implements Initializable {
 
         // Refrescar la tabla para mostrar la nueva fila
         tbTransfer.refresh();
-        
+
         loadAllTransfers();
-        
+
     }
 
     @FXML

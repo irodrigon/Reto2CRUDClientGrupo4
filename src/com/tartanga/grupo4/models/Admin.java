@@ -12,11 +12,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Iñi
  */
+
 @XmlRootElement
 public class Admin extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+        
     private String password;
     
     private Boolean active;

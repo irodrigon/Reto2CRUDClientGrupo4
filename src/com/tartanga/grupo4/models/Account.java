@@ -17,24 +17,35 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author 2dami
  */
+            
+
 @XmlRootElement
 public class Account extends Product implements Serializable {
     private static final long serialVersionUID = 1L;
     
+
     private String accountNumber;
     
     private Double balance;
     
     protected Date creationDate;
-    
+
     private List<CreditCard> creditCardList;
+    
     
     private List<Transfers> outgoingTransfers;
     
+ 
     private List<Transfers> incomingTransfers;
 
     public Account() {
         this.creationDate = super.creationDate;
+    }
+    public Account(String accountNumber, Double balance, Date creationDate, Integer IDProduct){
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.creationDate = creationDate;
+        this.IDProduct = IDProduct;
     }
 
     public String getAccountNumber() {
@@ -53,12 +64,10 @@ public class Account extends Product implements Serializable {
         this.balance = balance;
     }
 
-    @Override
     public Date getCreationDate() {
         return creationDate;
     }
 
-    @Override
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -107,7 +116,7 @@ public class Account extends Product implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (accountNumber != null ? accountNumber.hashCode() : 0);
+        hash += (IDProduct != null ? IDProduct.hashCode() : 0);
         return hash;
     }
 
@@ -118,7 +127,7 @@ public class Account extends Product implements Serializable {
             return false;
         }
         Account other = (Account) object;
-        if ((this.accountNumber == null && other.accountNumber != null) || (this.accountNumber != null && !this.accountNumber.equals(other.accountNumber))) {
+        if ((this.IDProduct == null && other.IDProduct != null) || (this.IDProduct != null && !this.IDProduct.equals(other.IDProduct))) {
             return false;
         }
         return true;
@@ -126,7 +135,7 @@ public class Account extends Product implements Serializable {
 
     @Override
     public String toString() {
-        return "com.tartanga.grupo4.accounts.Accounts[ id=" + accountNumber + " ]";
+        return "com.tartanga.grupo4.accounts.Accounts[ id=" + IDProduct + " ]";
     }
     
 }

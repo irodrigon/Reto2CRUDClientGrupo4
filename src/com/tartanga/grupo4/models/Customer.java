@@ -5,10 +5,15 @@
  */
 package com.tartanga.grupo4.models;
 
+
+
+import java.io.Serializable;
+import java.util.Set;
 import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -37,7 +42,7 @@ public class Customer extends User implements Serializable {
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
-   
+
     private List<Product> products;
     
 
@@ -65,7 +70,7 @@ public class Customer extends User implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (dni != null ? dni.hashCode() : 0);
+        hash += (logIn != null ? logIn.hashCode() : 0);
         return hash;
     }
 
@@ -76,7 +81,7 @@ public class Customer extends User implements Serializable {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.dni == null && other.dni != null) || (this.dni != null && !this.dni.equals(other.dni))) {
+        if ((this.logIn == null && other.logIn != null) || (this.logIn != null && !this.logIn.equals(other.logIn))) {
             return false;
         }
         return true;
@@ -84,7 +89,7 @@ public class Customer extends User implements Serializable {
 
     @Override
     public String toString() {
-        return "com.tartanga.grupo4.customers.Customer[ id=" + dni + " ]";
+        return "com.tartanga.grupo4.customers.Customer[ id=" + logIn + " ]";
     }
 
 }

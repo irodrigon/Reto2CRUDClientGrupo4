@@ -10,12 +10,14 @@ import java.io.Serializable;
 /**
  * @author rabio
  */
+
 public class User implements Serializable {
   
     public User(){};
     private static final long serialVersionUID = 1L;
     
     
+
     protected String logIn;
 
     protected String name;
