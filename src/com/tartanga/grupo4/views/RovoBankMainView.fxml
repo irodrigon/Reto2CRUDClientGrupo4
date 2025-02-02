@@ -14,7 +14,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 
-<AnchorPane id="AnchorPane" fx:id="signInPane" prefHeight="600.0" prefWidth="1366.0" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.RovoBankMainController">
+<AnchorPane id="AnchorPane" fx:id="signInPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.RovoBankMainController">
     <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1366.0" spacing="10" styleClass="header">
