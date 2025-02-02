@@ -209,7 +209,7 @@ public class RovoBankSignInController {
                 alert.setContentText("Incorrect User/Password.");
                 alert.showAndWait();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
+                logger.log(Level.SEVERE, "Something went wrong when loading the window.{0}", e.getMessage());
             }
         }
     }

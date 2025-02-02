@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" fx:controller="com.tartanga.grupo4.controller.RovoBankMovementController">
+    
+    <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0">
+      <children>
+      
+          <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1324.0" spacing="10" styleClass="header">
+            <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+              <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+              <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+            <ImageView fx:id="viewLogout" fitHeight="81.0" fitWidth="157.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="/com/tartanga/grupo4/resources/images/logoutImage.png" />
+               </image>
+            </ImageView>
+          </HBox>
+      
+      </children>
+   </VBox>
+   <TableView fx:id="tableViewMovements" layoutX="9.0" layoutY="185.0" prefHeight="538.0" prefWidth="1348.0">
+     <columns>
+       <TableColumn fx:id="columnIdMovement" prefWidth="400.0000305175781" text="ID" />
+       <TableColumn fx:id="columnDate" prefWidth="394.9999694824219" text="Date" />
+         <TableColumn fx:id="columnAmount" prefWidth="304.0" text="Amount" />
+         <TableColumn fx:id="columnCurrency" minWidth="0.0" prefWidth="247.0" text="Currency" />
+     </columns>
+   </TableView>
+   <Button fx:id="btnGoBacktoCreditCards" layoutX="652.0" layoutY="729.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Go back"/>
+   <Label fx:id="lblMovements" layoutX="627.0" layoutY="158.0" prefHeight="23.0" prefWidth="113.0" text="Movements"/>
+</AnchorPane>

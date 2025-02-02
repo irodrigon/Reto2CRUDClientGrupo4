@@ -19,4 +19,14 @@ public interface CreditCardLogicController {
   
   public void deleteCreditCardByCardNumber(String creditCardNumber);
   
+  public void createCreditCard(CreditCard requestEntity);
+  
+  public void updateCreditCard(CreditCard requestEntity, String id);
+  
+  public List<CreditCard> findCreditCardByCardNumber(GenericType<List<CreditCard>> responseType, String creditCardNumber);
+  
+  public List<CreditCard> findCreditCardByCreationDate(GenericType<List<CreditCard>> responseType, String startDate, String endDate);
+  
+  public List<CreditCard> findCreditCardByExpirationDate(GenericType<List<CreditCard>> responseType, String startDate, String endDate);
+  
 }

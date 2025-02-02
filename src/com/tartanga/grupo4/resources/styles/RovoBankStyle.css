@@ -252,6 +252,12 @@
 }
 
 #lblMovements{
-    -fx-text-fill: #006048;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 20px;
+}
+
+.choice-box .label{
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #000000;
 }
