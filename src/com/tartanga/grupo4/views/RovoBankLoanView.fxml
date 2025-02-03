@@ -81,7 +81,7 @@
             <children>
                 <Button fx:id="btnNew" styleClass="button new-button" text="New" onAction="#addNewLoan"/>
                 <Region fx:id="regionEspacioTop12" prefHeight="26.0" prefWidth="20.0" />
-             
+                <Button fx:id="btnPrint" styleClass="button print-button" text="Print" onAction="#PrintLoan"/>
                 <Region fx:id="regionEspacioTop11" prefHeight="26.0" prefWidth="20.0" />
                 <Button fx:id="btnDelete" alignment="TOP_CENTER" styleClass="button delete-button" text="Delete" onAction="#DeleteLoan" />
                 <Region fx:id="regionEspacioTop13" prefHeight="26.0" prefWidth="30.0" />

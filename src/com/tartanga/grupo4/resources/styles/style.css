@@ -29,7 +29,7 @@
 
 /* Header specific styles */
 .header {
-    -fx-background-image: url("/recursos/fondo.jpg");
+   /*-fx-background-image: url("\\images\fondo.jpg");*/
     -fx-background-color: #147879;
     -fx-padding: 10;
 }

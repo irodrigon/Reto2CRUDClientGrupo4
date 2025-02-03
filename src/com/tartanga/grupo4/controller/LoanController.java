@@ -1,40 +1,30 @@
 package com.tartanga.grupo4.controller;
 
-import com.tartanga.grupo4.businesslogic.ILoan;
 import com.tartanga.grupo4.businesslogic.LoanFactory;
 import com.tartanga.grupo4.models.Loan;
-import com.tartanga.grupo4.models.LoanBean;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
+import org.apache.log4j.Logger;
+import javax.ws.rs.core.GenericType;
+import java.util.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
-import javax.ws.rs.core.GenericType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.input.KeyCode;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class LoanController {
 
-    private ObservableList<LoanBean> data = FXCollections.observableArrayList();
-    private List<Loan> loans;
-
-    private static final Logger LOGGER = Logger.getLogger("javaClient");
+    private static final Logger LOGGER = Logger.getLogger(LoanController.class);
 
     @FXML
     private AnchorPane anchorPane;
@@ -60,9 +50,9 @@ public class LoanController {
     private TableColumn<Loan, Double> tcRemainingAmount;
     @FXML
     private TableColumn<Loan, Integer> tcInterestRate;
-     @FXML
+    @FXML
     private TableColumn<Loan, Integer> tcPeriod;
-    
+
     @FXML
     private Button btnNew;
     @FXML
@@ -74,6 +64,7 @@ public class LoanController {
     private void initialize() {
         loanTable.setEditable(true);
 
+        // Configuración de las columnas
         tcLoanId.setCellValueFactory(new PropertyValueFactory<>("loanId"));
         tcStartingDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         tcEndingDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
@@ -82,150 +73,165 @@ public class LoanController {
         tcInterestRate.setCellValueFactory(new PropertyValueFactory<>("interest"));
         tcPeriod.setCellValueFactory(new PropertyValueFactory<>("period"));
 
+        // Configuración para las celdas editables
         tcTotalAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         tcInterestRate.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         tcPeriod.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
-        // Set DatePicker for date columns
+        // Configuración para las celdas de fecha
         tcStartingDate.setCellFactory(column -> new EditingCellDatePicker());
         tcStartingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
+            Date oldStartDate = loan.getStartDate();  // Guardamos el valor anterior
+
             loan.setStartDate(event.getNewValue());
-            LoanFactory.getInstance().getILoans().edit_XML(loan, loan.getIDProduct());
+            if (isValidDate(loan.getStartDate(), loan.getEndDate())) {
+                updateLoan(loan);
+            } else {
+                showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
+                loan.setStartDate(oldStartDate);  // Restauramos el valor anterior
+                loanTable.refresh();
+            }
         });
 
         tcEndingDate.setCellFactory(column -> new EditingCellDatePicker());
         tcEndingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
-            loan.setStartDate(event.getNewValue());
-            LoanFactory.getInstance().getILoans().edit_XML(loan, loan.getIDProduct());
+            Date oldEndDate = loan.getEndDate();  // Guardamos el valor anterior
+
+            loan.setEndDate(event.getNewValue());
+            if (isValidDate(loan.getStartDate(), loan.getEndDate())) {
+                updateLoan(loan);
+            } else {
+                showErrorAlert("Invalid Date", "End date cannot be before start date.");
+                loan.setEndDate(oldEndDate);  // Restauramos el valor anterior
+                loanTable.refresh();
+            }
         });
 
-        // Configuring columns for editing
+        // Configuración de columnas editables
         configureEditableColumns();
 
-        // Load all loans on start
+        // Cargar los préstamos al iniciar
         mostrarTodosLosPrestamos();
     }
 
     private void configureEditableColumns() {
         tcInterestRate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
-            Integer newInterestRate = event.getNewValue();
+            Integer oldInterestRate = loan.getInterest();  // Guardamos el valor anterior
 
-            if (newInterestRate < 0) {
-                LOGGER.log(Level.WARNING, "Interest rate cannot be negative.");
-                return;
+            String newInterestRateString = event.getNewValue().toString();
+            if (isValidInteger(newInterestRateString)) {
+                Integer newInterestRate = Integer.valueOf(newInterestRateString);
+                if (!isValidInterestRate(newInterestRate)) {
+                    showErrorAlert("Invalid Interest Rate", "Interest rate must be between 0 and 50.");
+                    loan.setInterest(oldInterestRate);  // Restauramos el valor anterior
+                    loanTable.refresh();
+                    return;
+                }
+                loan.setInterest(newInterestRate);
+                updateLoan(loan);
+            } else {
+                showErrorAlert("Invalid Input", "Please enter a valid integer for the interest rate.");
+                loan.setInterest(oldInterestRate);  // Restauramos el valor anterior
+                loanTable.refresh();
             }
-
-            loan.setInterest(newInterestRate);
-            updateLoan(loan);
         });
-        
-         tcPeriod.setOnEditCommit(event -> {
+
+        tcPeriod.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
-            Integer newPeriod = event.getNewValue();
+            Integer oldPeriod = loan.getPeriod();  // Guardamos el valor anterior
 
-            if (newPeriod < 0) {
-                LOGGER.log(Level.WARNING, "Period cannot be negative.");
-                return;
+            String newPeriodString = event.getNewValue().toString();
+            if (isValidInteger(newPeriodString)) {
+                Integer newPeriod = Integer.valueOf(newPeriodString);
+                if (!isValidPeriod(newPeriod)) {
+                    showErrorAlert("Invalid Period", "Period must be positive and no more than four digits.");
+                    loan.setPeriod(oldPeriod);  // Restauramos el valor anterior
+                    loanTable.refresh();
+                    return;
+                }
+                loan.setPeriod(newPeriod);
+                updateLoan(loan);
+            } else {
+                showErrorAlert("Invalid Input", "Please enter a valid integer for the period.");
+                loan.setPeriod(oldPeriod);  // Restauramos el valor anterior
+                loanTable.refresh();
             }
-
-            loan.setPeriod(newPeriod);
-            updateLoan(loan);
         });
 
         tcTotalAmount.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
-            Double newAmount = event.getNewValue();
 
-            if (newAmount <= 0) {
-                LOGGER.log(Level.WARNING, "Amount must be greater than zero.");
-                return;
+            String newAmountString = event.getNewValue().toString();
+            if (isValidDouble(newAmountString)) {
+                Double newAmount = Double.valueOf(newAmountString);
+                if (!isValidTotalAmount(newAmount)) {
+                    showErrorAlert("Invalid Amount", "Amount must be positive and not exceed 100 million.");
+                    loan.setAmount(loan.getAmount());  // Restauramos el valor anterior
+                    loanTable.refresh();
+                    return;
+                }
+                loan.setAmount(newAmount);
+                updateLoan(loan);
+            } else {
+                showErrorAlert("Invalid Input", "Please enter a valid number for the total amount.");
+                loan.setAmount(loan.getAmount());  // Restauramos el valor anterior
+                loanTable.refresh();
             }
-
-            loan.setAmount(newAmount);
-            updateLoan(loan);
         });
+    }
 
-        tcStartingDate.setOnEditCommit(event -> {
-            Loan loan = event.getRowValue();
-            Date newDate = event.getNewValue();
-            if (newDate == null) {
-                LOGGER.log(Level.WARNING, "Invalid date: null value provided.");
-                return;
-            }
-            loan.setStartDate(newDate);
-            updateLoan(loan);
-        });
+    private boolean isValidTotalAmount(Double amount) {
+        return amount > 0 && amount <= 100000000;
+    }
 
-        tcEndingDate.setOnEditCommit(event -> {
-            Loan loan = event.getRowValue();
-            Date newDate = event.getNewValue();
-            if (newDate == null) {
-                LOGGER.log(Level.WARNING, "Invalid date: null value provided.");
-                return;
-            }
-            loan.setEndDate(newDate);
-            updateLoan(loan);
-        });
+    private boolean isValidInterestRate(Integer interestRate) {
+        return interestRate >= 0 && interestRate <= 50;
+    }
+
+    private boolean isValidPeriod(Integer period) {
+        return period > 0 && period <= 9999;
+    }
+
+    private boolean isValidDate(Date startDate, Date endDate) {
+        return startDate != null && endDate != null && !startDate.after(endDate);
+    }
+
+    private boolean isValidDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidInteger(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private void updateLoan(Loan loan) {
         try {
             LoanFactory.getInstance().getILoans().edit_XML(loan, loan.getIDProduct());
-            LOGGER.log(Level.INFO, "Loan updated successfully: {0}", loan.getLoanId());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error updating loan: {0}", e.getMessage());
+            showErrorAlert("Error Updating Loan", "Error updating loan: " + e.getMessage());
         }
         loanTable.refresh();
     }
 
-    // Button Actions
-    @FXML
-    private void buttonSearchAll(ActionEvent event) {
-        mostrarTodosLosPrestamos();
-    }
-
-    @FXML
-    private void buttonFilter(ActionEvent event) {
-        mostrarPrestamosPorFecha();
-    }
-
-    @FXML
-    private void addNewLoan(ActionEvent event) {
-
-        Loan loan = new Loan();
-
-        try {
-            LoanFactory.getInstance().getILoans().create_XML(loan);
-            List<Loan> datasList = LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-            });
-            // datasList.get(datasList.size()-1).getIDProduct();
-          
-            Loan mLoan = datasList.get(datasList.size() - 1);
-            Integer mId =(datasList.get(datasList.size() - 1).getIDProduct());
-            
-            mLoan.setLoanId((long) mId);
-
-            LoanFactory.getInstance().getILoans().edit_XML(mLoan, mId);
-            mostrarTodosLosPrestamos();
-            LOGGER.log(Level.INFO, "Loan added successfully: {0}", loan.toString());
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error adding loan to the table", e);
-        }
-    }
-
-    @FXML
-    private void SaveLoan(ActionEvent event) {
-        Loan selectedLoan = loanTable.getSelectionModel().getSelectedItem();
-        if (selectedLoan != null) {
-            LoanFactory.getInstance().getILoans().edit_XML(selectedLoan, selectedLoan.getIDProduct());
-            mostrarTodosLosPrestamos();
-            LOGGER.log(Level.INFO, "Datos guardados en la base de datos con éxito.");
-        } else {
-            showAlert("No Loan Selected", "Please select a loan to save.");
-        }
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
@@ -234,74 +240,65 @@ public class LoanController {
         if (selectedLoan != null) {
             confirmAndDeleteLoan(selectedLoan);
         } else {
-            showAlert("No Loan Selected", "Please select a loan to delete.");
+            showErrorAlert("No Loan Selected", "Please select a loan to delete.");
         }
     }
 
     private void confirmAndDeleteLoan(Loan selectedLoan) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmar eliminación");
-        alert.setHeaderText("¿Estás seguro de que deseas eliminar este préstamo?");
-        alert.setContentText("ID del préstamo: " + selectedLoan.getLoanId());
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete this loan?");
+        alert.setContentText("Loan ID: " + selectedLoan.getLoanId());
 
-        alert.showAndWait().ifPresent((ButtonType response) -> {
+        alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
                     LoanFactory.getInstance().getILoans().remove(selectedLoan.getIDProduct());
                     mostrarTodosLosPrestamos();
-                    LOGGER.log(Level.INFO, "Préstamo eliminado: {0}", selectedLoan.toString());
                 } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "Error al eliminar el préstamo: {0}", e.getMessage());
+                    showErrorAlert("Error Deleting Loan", "Error deleting loan: " + e.getMessage());
                 }
             }
         });
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    // Data population
-    private void mostrarTodosLosPrestamos() {
+    @FXML
+    private void addNewLoan(ActionEvent event) {
+        Loan loan = new Loan();
         try {
-            LOGGER.log(Level.INFO, "LoanController(mostrarTodosLosPrestamos): Getting Loans");
-            List<Loan> datas = LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+            LoanFactory.getInstance().getILoans().create_XML(loan);
+            List<Loan> datasList = LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
             });
-            loanTable.setItems(FXCollections.observableArrayList(datas));
-        } catch (Exception error) {
-            LOGGER.log(Level.SEVERE, "LoanController(mostrarTodosLosPrestamos): Exception while populating table, {0}", error.getMessage());
+            Loan mLoan = datasList.get(datasList.size() - 1);
+            Integer mId = mLoan.getIDProduct();
+            mLoan.setLoanId((long) mId);
+            LoanFactory.getInstance().getILoans().edit_XML(mLoan, mId);
+            mostrarTodosLosPrestamos();
+        } catch (Exception e) {
+            LOGGER.error("Error adding loan: ", e);
         }
     }
 
-    private void mostrarPrestamosPorFecha() {
+    @FXML
+    private void PrintLoan(ActionEvent event) {
         try {
-            LOGGER.log(Level.INFO, "LoanController(mostrarPrestamosPorFecha): Filtering Loans");
-
-            loans = LoanFactory.getInstance().getILoans().getLoansByDate(new GenericType<List<Loan>>() {
-            }, fromDate.getValue(), toDate.getValue());
-            data = organizarData(loans);
-        } catch (Exception error) {
-            LOGGER.log(Level.SEVERE, "LoanController(mostrarPrestamosPorFecha): Exception while filtering loans, {0}", error.getMessage());
+            LOGGER.info("Beginning print action...");
+            JasperReport report = JasperCompileManager.compileReport(getClass()
+                    .getResourceAsStream("resources.reports\\LoanReport.jrxml.xml"));
+            JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+            }));
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("title", "Loan Report");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+            JasperViewer.viewReport(jasperPrint, false);
+        } catch (JRException e) {
+            LOGGER.error("Error generating report", e);
         }
     }
 
-    private ObservableList<LoanBean> organizarData(List<Loan> loans) {
-        ObservableList<LoanBean> loanData = FXCollections.observableArrayList();
-        for (Loan loan : loans) {
-            LoanBean loanBean = new LoanBean(
-                    loan.getLoanId(),
-                    loan.getCreationDate(),
-                    loan.getInterest(),
-                    loan.getEndDate(),
-                    loan.getAmount(),
-                    loan.getRAmount()
-            );
-            loanData.add(loanBean);
-        }
-        return loanData;
+    private void mostrarTodosLosPrestamos() {
+        ObservableList<Loan> data = FXCollections.observableArrayList(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+        }));
+        loanTable.setItems(data);
     }
 }
