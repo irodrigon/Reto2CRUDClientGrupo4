@@ -238,6 +238,7 @@ public class RovoBankSignInController {
 
                 RovoBankMainController controller = (RovoBankMainController) FXMLLoader.getController();
                 controller.setStage(stage);
+                controller.setAdmin(admin);
                 controller.initStage(root);
             } catch (NotAuthorizedException e) {
                 alert = new Alert(Alert.AlertType.ERROR);
