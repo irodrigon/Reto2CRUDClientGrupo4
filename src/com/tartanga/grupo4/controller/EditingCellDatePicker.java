@@ -8,6 +8,7 @@ package com.tartanga.grupo4.controller;
 import com.tartanga.grupo4.models.AccountBean;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventType;
 import javafx.scene.control.Alert;
@@ -23,10 +24,12 @@ import javafx.util.Callback;
  * @author rabio
  */
 public class EditingCellDatePicker extends TableCell<AccountBean, String> {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
+    private String formato = resourceBundle.getString("formato_fecha");
     LocalDate today = LocalDate.now();
     private DatePicker datePicker;
     private TableView<AccountBean> tableAccounts;
-    private static final DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");//Usar en el zrchivo properties
+    private DateTimeFormatter formateador = DateTimeFormatter.ofPattern(formato);//Usar en el zrchivo properties
 
     public EditingCellDatePicker(TableView<AccountBean> tableAccounts) {
         this.tableAccounts = tableAccounts;
@@ -99,7 +102,7 @@ public class EditingCellDatePicker extends TableCell<AccountBean, String> {
             }
         };
         datePicker.setDayCellFactory(dayCellFactory);
-        datePicker.setPromptText("dd/mm/yyyy");
+        datePicker.setPromptText(formato);
     
         
         datePicker.focusedProperty().addListener(

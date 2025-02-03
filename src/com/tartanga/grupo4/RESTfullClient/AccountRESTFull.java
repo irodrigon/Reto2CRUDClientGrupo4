@@ -10,6 +10,7 @@ import com.tartanga.grupo4.exception.ReadException;
 import com.tartanga.grupo4.models.Account;
 import com.tartanga.grupo4.models.Customer;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -30,10 +31,11 @@ import javax.ws.rs.core.GenericType;
  * @author 2dami
  */
 public class AccountRESTFull implements Iaccounts {
-
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
+    private String baseUri = resourceBundle.getString("base_Uri");
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
+    private String BASE_URI = baseUri;
 
     public AccountRESTFull() {
         client = javax.ws.rs.client.ClientBuilder.newClient();

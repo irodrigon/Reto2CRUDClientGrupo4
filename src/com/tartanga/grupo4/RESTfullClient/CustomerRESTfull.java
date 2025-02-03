@@ -9,6 +9,7 @@ import com.tartanga.grupo4.businesslogic.Icustomer;
 import com.tartanga.grupo4.exception.ReadException;
 import com.tartanga.grupo4.models.Customer;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -20,19 +21,21 @@ import javax.ws.rs.core.GenericType;
  * [com.tartanga.grupo4.customers.customer]<br>
  * USAGE:
  * <pre>
-        CustomerRESTfull client = new CustomerRESTfull();
-        Object response = client.XXX(...);
-        // do whatever with response
-        client.close();
- </pre>
+ * CustomerRESTfull client = new CustomerRESTfull();
+ * Object response = client.XXX(...);
+ * // do whatever with response
+ * client.close();
+ * </pre>
  *
  * @author 2dami
  */
 public class CustomerRESTfull implements Icustomer {
 
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
+        private String baseUri = resourceBundle.getString("base_Uri");
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
+    private String BASE_URI = baseUri;
 
     public CustomerRESTfull() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -103,5 +106,5 @@ public class CustomerRESTfull implements Icustomer {
     public void close() {
         client.close();
     }
-    
+
 }

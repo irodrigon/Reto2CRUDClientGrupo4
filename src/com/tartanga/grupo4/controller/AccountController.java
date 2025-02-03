@@ -64,6 +64,7 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TablePosition;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -87,11 +88,12 @@ import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
  * datos?
  */
 public class AccountController implements Initializable {
-
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
+    private String formato = resourceBundle.getString("formato_fecha");
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
     private AccountBean tableAccount;
-    private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
-    private static final DateTimeFormatter formateadorL = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private SimpleDateFormat formateador = new SimpleDateFormat(formato);
+    private DateTimeFormatter formateadorL = DateTimeFormatter.ofPattern(formato);
     private static final Logger LOGGER = Logger.getLogger("javaClient");
     private List<Customer> customers;
     private List<Account> accounts;
@@ -169,7 +171,7 @@ public class AccountController implements Initializable {
         dateSearchButton.setDisable(true);
         accountNumberSearchButton.setDisable(true);
   
-     //   menuItemPrint.setOnAction(this::handlePrintReport);
+   //   menuItemPrint.setOnAction(this::handlePrintReport);
         itemAccountNum.setOnAction(this::menuButtonAccountHandler);
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
         itemDate.setOnAction(this::menuButtonDateHandler);
@@ -184,7 +186,7 @@ public class AccountController implements Initializable {
         setEnterKeyOnSearchButtons();
         accountNumberListener();
         datePickerListerners();
-        
+        item3.setOnAction(this::handleSetEdit);
         stage.show();
         stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -596,6 +598,15 @@ public class AccountController implements Initializable {
 
         return accountT;
     }
+    
+    private void handleSetEdit(ActionEvent event){
+        TablePosition<AccountBean, ?> cell = tableAccounts.getSelectionModel().getSelectedCells().get(0);
+        int row = cell.getRow();
+        TableColumn<AccountBean, ?> column = cell.getTableColumn();
+        if(column!=colAccountNumber){
+           tableAccounts.edit(row, column);
+        }
+    }
 
     //METODO CREAR CUENTA
     @FXML
@@ -749,8 +760,8 @@ public class AccountController implements Initializable {
         };
         endDate.setDayCellFactory(dayCellFactory);
         startDate.setDayCellFactory(dayCellFactory);
-        startDate.setPromptText("dd/mm/yyyy");
-        endDate.setPromptText("dd/mm/yyyy");
+        startDate.setPromptText(formato);
+        endDate.setPromptText(formato);
     }
 
     private void setEnterKeyOnSearchButtons() {

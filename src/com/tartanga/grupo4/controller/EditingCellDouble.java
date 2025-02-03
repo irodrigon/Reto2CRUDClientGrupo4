@@ -94,16 +94,19 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
 
         tableAccounts.getSelectionModel().selectedIndexProperty().addListener(
                 (ObservableValue<? extends Number> observable, Number oldSelection, Number newSelection) -> {
-                    if (isEditing() && oldSelection != null && !oldSelection.equals(newSelection)) {
-                        if(isDouble(textField.getText())){
-                             commitEdit(Double.parseDouble(textField.getText()));
-                        }else{
-                            Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
-                            alertI.showAndWait();
-                            cancelEdit();
+                    try {
+                        if (isEditing() && oldSelection != null && !oldSelection.equals(newSelection)) {
+                            if (isDouble(textField.getText())) {
+                                commitEdit(Double.parseDouble(textField.getText()));
+                            } else {
+                                throw new NumberFormatException();
+                            }
                         }
-                       
-                    } 
+                    } catch (NumberFormatException error) {
+                        Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
+                        alertI.showAndWait();
+                        cancelEdit();
+                    }
                 }
         );
     }
