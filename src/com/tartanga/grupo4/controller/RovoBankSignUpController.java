@@ -8,7 +8,14 @@ package com.tartanga.grupo4.controller;
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.exception.ReadException;
 import com.tartanga.grupo4.models.Admin;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Security;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -26,8 +33,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javax.crypto.Cipher;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.GenericType;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.UrlBase64;
+import security.Hash;
 
 /**
  *
@@ -35,6 +46,10 @@ import javax.ws.rs.core.GenericType;
  */
 public class RovoBankSignUpController {
 
+       static {
+        //Poner BouncyCastle como provider
+        Security.addProvider(new BouncyCastleProvider());
+    }
     private static Logger logger;
 
     private Stage stage;
@@ -121,7 +136,8 @@ public class RovoBankSignUpController {
     public Stage getStage() {
         return stage;
     }
-
+    private Hash security = new Hash();
+    private static final Logger LOGGER = Logger.getLogger("javaClient");
     @FXML
     private void initialize() {
         btn_Back.setOnAction(this::handleGoBack);
@@ -307,7 +323,7 @@ public class RovoBankSignUpController {
         boolean hasError = false;
 
         // Validate email
-        if (email.isEmpty()) {
+     /*   if (email.isEmpty()) {
             lbl_error_Email.setText("Email is required.");
             hasError = true;
         } else if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -340,7 +356,7 @@ public class RovoBankSignUpController {
             hasError = true;
         } else {
             lbl_error_Confirm.setText("");
-        }
+        }*/
 
         // Validate name
         if (name.isEmpty()) {
@@ -385,14 +401,15 @@ public class RovoBankSignUpController {
         } else {
             lbl_error_Zip.setText("");
         }
-
+        
+        
+        
         // Proceed with registration if no errors
         if (!hasError) {
-
+            
             admin = new Admin();
-
             admin.setLogIn(fld_Email.getText());
-            admin.setPassword(fld_Password.getText());
+            admin.setPassword(encriptar());
             admin.setName(fld_Name.getText());
             admin.setSurname(fld_Surname.getText());
             admin.setCity(fld_City.getText());
@@ -419,7 +436,9 @@ public class RovoBankSignUpController {
                 alert2.setContentText("Go back to sign in to your account.");
                 alert2.showAndWait();
                 clearFields();
-                logger.info("User created correctly.");
+               } catch (Exception error) { 
+                   error.printStackTrace();
+//                logger.info("User created correctly.");
             }
 
         }
@@ -469,6 +488,42 @@ public class RovoBankSignUpController {
         lbl_error_Zip.setText("");
         lbl_error_Password.setText("");
         lbl_error_Confirm.setText("");
+    }
+    
+    public String encriptar() {
+        String encryptedPass64=null;
+        try {
+            //Recuperar la llave del fichero
+            InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            byte[] data = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = input.read(data)) != -1) {
+                buffer.write(data, 0, bytesRead);
+            }
+            input.close();
+
+            byte[] publicKeyBytes = buffer.toByteArray();
+
+            //Reconstruir la llave Publica
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            PublicKey publicKey = keyFactory.generatePublic(spec);
+
+            //Encriptar password con llave publica
+            Cipher cipher = Cipher.getInstance("ECIES", "BC");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] encryptedPass = cipher.doFinal(fld_Password.getText().getBytes());
+
+            //Convertirlo a String usando BASE64
+            encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
+        } catch (Exception error) {
+            logger.log(Level.SEVERE, "RovoBankSignInController: Exception while encripting the password: ", error.getMessage());
+        }
+
+        return encryptedPass64;
     }
 
 }

@@ -45,12 +45,21 @@ public class RovoBankMainController {
         return stage;
     }
     
+    private Admin admin;
+    
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
+    
     @FXML
     private MenuItem menuItemCredit;
+    @FXML
+    private MenuItem menuItemProfile;
 
     @FXML
     private void initialize() {
         menuItemCredit.setOnAction(this::handleCreditCard);
+        menuItemProfile.setOnAction(this::handleViewMyProfile);
     }
 
     public void initStage(Parent root) {
@@ -72,6 +81,23 @@ public class RovoBankMainController {
 
             RovoBankCreditCardController controller = (RovoBankCreditCardController) FXMLLoader.getController();
             controller.setStage(stage);
+            controller.initStage(root);
+
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void handleViewMyProfile(ActionEvent event) {
+        try {
+            FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMyProfileView.fxml"));
+
+            Parent root = (Parent) FXMLLoader.load();
+
+            RovoBankMyProfileController controller = (RovoBankMyProfileController) FXMLLoader.getController();
+            controller.setStage(stage);
+            controller.setAdmin(admin);
             controller.initStage(root);
 
         } catch (IOException e) {
