@@ -14,26 +14,35 @@ import java.time.LocalDate;
  */
 public class AccountBean {
     
-        private Long accountNumber;
+
+        private String accountNumber;
         private String name;
         private String surname;
         private String creationDate;
         private Double balance;
+        private Integer Id;
 
-        public AccountBean(Long accountNumber, String name, String surname, String creationDate, Double balance) {
+        public AccountBean(String accountNumber, String creationDate, Double balance, Integer Id) {
             
             this.accountNumber = accountNumber;
-            this.name =name;
-            this.surname =surname;
             this.creationDate = creationDate;
             this.balance = balance;
+            this.Id = Id;
         }
 
-    public Long getAccountNumber() {
+    public Integer getId() {
+        return Id;
+    }
+
+    public void setId(Integer Id) {
+        this.Id = Id;
+    }
+
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -68,12 +77,6 @@ public class AccountBean {
     public void setBalance(Double balance) {
         this.balance = balance;
     }
-
-       
-        
-        
-        
-
-
-    
+   
 }
+

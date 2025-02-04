@@ -29,14 +29,13 @@ public class CreditCard extends Product implements Serializable {
     private String cvv;
     
     private String pin;
-    
   
     private Account account;
-    
    
     private List<Movement> movementList;
     
     public CreditCard(){
+
         this.creationDate = super.creationDate;
     }
 
@@ -80,7 +79,7 @@ public class CreditCard extends Product implements Serializable {
         this.account = account;
     }
 
-    @XmlTransient
+
     public List<Movement> getMovementList() {
         return movementList;
     }

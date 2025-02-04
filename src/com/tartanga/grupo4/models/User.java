@@ -16,15 +16,13 @@ public class User implements Serializable {
     public User(){};
     private static final long serialVersionUID = 1L;
     
-    
+    protected String logIn;
+    protected String name;
+    protected String surname;
+    protected String street;
+    protected String city;
+    protected Integer zip;
 
-    private String logIn;
-
-    private String name;
-    private String surname;
-    private String street;
-    private String city;
-    private Integer zip;
 
     public String getLogIn() {
         return logIn;
@@ -100,3 +98,4 @@ public class User implements Serializable {
     }
     
 }
+

@@ -7,6 +7,7 @@
 /* AnchorPane */
 #AnchorPane {
     -fx-background-color: white;
+    -fx-background-image: url("/com/tartanga/grupo4/resources/images/RovoBankGreenBackground.jpg");
 }
 
 /* VBox */
@@ -29,7 +30,7 @@
 
 /* Header specific styles */
 .header {
-   /*-fx-background-image: url("\\images\fondo.jpg");*/
+    /*-fx-background-image: url("/com/tartanga/grupo4/resources/images/RovoBankGreenBackground.jpg");*/
     -fx-background-color: #147879;
     -fx-padding: 10;
 }
@@ -47,6 +48,72 @@
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-padding: 5;
+}
+
+
+#signInTitleLabel{
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 25px;
+}
+
+#userLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#passwordLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_PasswordSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_EmailSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_CitySignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_StreetSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ZipSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ConfirmSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_ActiveSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_NameSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+#lbl_SurnameSignUp {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+}
+
+.hyperlink {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
 }
 
 .button:hover {
@@ -90,7 +157,6 @@
     -fx-border-style:solid;
     -fx-border-color: #ffffff;
     -fx-text-fill: white;
-    -fx-font-size: 10px;
     -fx-font-weight: bold;
 }
 
@@ -114,11 +180,10 @@
 
 .menu-bar .menu .menu-item:hover{
     -fx-background-color: #006048;
-    -fx-text-fill: white;
 }
 
 .menu-bar .menu .menu-item:hover .label{
-    -fx-text-fill: #147879;
+    -fx-text-fill: #ffffff;
 }
 
 #lblSearch{
@@ -135,14 +200,10 @@
 
 #tableContextMenu .label{
     -fx-text-fill: #006048;
-    -fx-font-color: #006048;
-    -fx-background-color: white;
 }
 
 #tableContextMenu .menu-item:hover{
-        -fx-text-fill: white;
     -fx-background-color: #006048;
-    
 }
 
 #tableContextMenu .menu-item:hover .label{
@@ -191,11 +252,12 @@
 }
 
 #lblMovements{
-    -fx-text-fill: #006048;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 20px;
 }
 
-#lblDates{
-    -fx-text-fill: #006048;
-    -fx-font-size: 20px;
+.choice-box .label{
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #000000;
 }

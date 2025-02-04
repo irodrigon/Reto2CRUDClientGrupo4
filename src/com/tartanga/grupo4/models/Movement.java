@@ -5,7 +5,6 @@
  */
 package com.tartanga.grupo4.models;
 
-
 import java.io.Serializable;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,15 +19,16 @@ public class Movement implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-      private Long IDMovement;
-    
+    private Long IDMovement;
+
     private Date transactionDate;
     
     private Double amount;
     
     private Currency currency;
-    
-      private CreditCard creditCard;
+
+    private CreditCard creditCard;
+
     
     public Movement(){}
 

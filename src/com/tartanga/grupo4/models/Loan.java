@@ -56,12 +56,11 @@ public class Loan extends Product implements Serializable {
         this.IDProduct = IDProduct;
     }
 
-
-
-
-    
+   
+    // Getters y Setter
 
     // Getters y Setters
+
     public Long getLoanId() {
         return loanId;
     }
@@ -134,11 +133,13 @@ public class Loan extends Product implements Serializable {
             return false;
         }
         Loan other = (Loan) object;
-        if (this.loanId == null && other.loanId != null) {
+
+        if ((this.loanId == null && other.loanId != null) || (this.loanId != null && !this.loanId.equals(other.loanId))) {
             return false;
         }
         return true;
     }
+
 
 //    @Override
 //    public String toString() {
@@ -192,6 +193,5 @@ public class Loan extends Product implements Serializable {
             double result = amountD * interestFactor;
             return Math.round(result * 100.0) / 100.0;  // Redondear a 2 decimales
         }
-
     }
 }
