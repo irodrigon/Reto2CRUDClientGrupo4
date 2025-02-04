@@ -202,8 +202,9 @@ public class LoanController {
         tcTotalAmount.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
 
-            String newAmountString = event.getNewValue().toString();
+           
             try {
+                Double newAmountString = event.getNewValue();
                 Double newAmount = Double.valueOf(newAmountString);
                 if (newAmount < 0 || newAmount > 100000000) {
                     throw new Exception("Amount should be greater than 0 and lower than 100 milion!.");
