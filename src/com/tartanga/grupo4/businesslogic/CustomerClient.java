@@ -8,6 +8,7 @@ package com.tartanga.grupo4.businesslogic;
 import com.tartanga.grupo4.models.Customer;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -101,9 +102,14 @@ public class CustomerClient implements CustomerLogicController{
          WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
+    
+    @Override
+    public void createCustomer(Customer requestEntity) throws WebApplicationException{
+         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+    
 
     public void close() {
         client.close();
     }
-    
 }

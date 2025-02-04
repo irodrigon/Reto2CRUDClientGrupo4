@@ -5,7 +5,7 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
-import com.tartanga.grupo4.models.Customer;
+import com.tartanga.grupo4.models.Product;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
 
@@ -13,9 +13,10 @@ import javax.ws.rs.core.GenericType;
  *
  * @author Iñi
  */
-public interface CustomerLogicController {
+public interface ProductLogicController {
+    List<Product> findAllProducts(GenericType<List<Product>> responseType);
     
-    public List<Customer> findAllCustomers(GenericType<List<Customer>> responseType);
+    public void linkCustomer(Product requestEntity, String id);
     
-    public void createCustomer(Customer requestEntity);
+    public List<Product> find(GenericType<List<Product>> responseType, String from, String to);
 }

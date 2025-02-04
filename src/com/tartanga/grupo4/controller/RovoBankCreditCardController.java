@@ -30,6 +30,9 @@ import com.tartanga.grupo4.models.CreditCard;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,8 +51,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javax.swing.JFrame;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -131,6 +142,9 @@ public class RovoBankCreditCardController {
     
     @FXML
     private MenuItem contextClear;
+    
+    @FXML
+    private MenuItem menuItemPrint;
 
     @FXML
     private void initialize() {
@@ -158,7 +172,9 @@ public class RovoBankCreditCardController {
         contextClear.setOnAction(this::handleClearTable);
 
         creditCardEditingLogic();
-
+       
+        menuItemPrint.setOnAction(this::handlePrintCreditCardReport);
+        
     }
 
     @FXML
@@ -1172,6 +1188,21 @@ public class RovoBankCreditCardController {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
           
+        }
+    }
+    
+    @FXML
+    private void handlePrintCreditCardReport(ActionEvent event) {
+        try {
+            JasperReport report = JasperCompileManager.compileReport(getClass().getResourceAsStream("/com/tartanga/grupo4/resources/reports/CreditCardReport.jrxml"));
+            JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource((Collection<CreditCardBean>)this.tableViewCreditCard.getItems());
+            Map<String,Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report,parameters,dataItems);
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            jasperViewer.setVisible(true);
+        } catch (JRException ex) {
+           logger.log(Level.SEVERE, ex.getMessage());
         }
     }
 

@@ -25,6 +25,7 @@
                                   <!-- MenuBar -->
                 <MenuBar fx:id="menuBar" prefHeight="31.0" prefWidth="1399.0">
                     <Menu fx:id="menuNavigation" styleClass="menu" text="Navigation">
+                        <MenuItem fx:id="menuItemCustomers" styleClass="menu-item" text="Customers creation" />
                         <MenuItem fx:id="menuItemAccount" styleClass="menu-item" text="Account Management" />
                         <MenuItem fx:id="menuItemCredit" styleClass="menu-item" text="Credit card Management" />
                      <MenuItem fx:id="menuItemTransfer" styleClass="menu-item" text="Transfer Management" />
