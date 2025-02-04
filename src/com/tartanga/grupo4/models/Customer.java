@@ -5,6 +5,10 @@
  */
 package com.tartanga.grupo4.models;
 
+
+
+import java.io.Serializable;
+import java.util.Set;
 import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +41,7 @@ public class Customer extends User implements Serializable {
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
-   
+
     private List<Product> products;
     
 
