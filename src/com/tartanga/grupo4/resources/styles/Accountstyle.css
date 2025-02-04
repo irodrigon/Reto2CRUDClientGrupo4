@@ -29,7 +29,7 @@
 
 /* Header specific styles */
 .header {
-    -fx-background-image: url("/com/tartanga/grupo4/resources/images/RovoBankGreenBackground.jpg");
+    -fx-background-image: url("/com/tartanga/grupo4/resources/images/fondo.jpg");
     -fx-background-color: #147879;
     -fx-padding: 10;
 }
@@ -91,6 +91,8 @@
     -fx-font-weight: bold;
 }
 
+
+
 /* MenuBar */
 .menu-bar{
     -fx-background-color: #006048;
@@ -127,36 +129,72 @@
 
 #lblTo{
     -fx-text-fill: #006048;
-} 
-
-#lblFind{
-    -fx-text-fill: black;
-} 
-
-#lblFirst{
-    -fx-text-fill: black;
 }
 
-#lblLast{
-    -fx-text-fill: black;
+/* Menu Button */
+.menu-button {
+    -fx-background-color: #006048;
 }
 
-#cmnNew{
--fx-text-fill: #ffffff
+.menu-button .menu-item .label {
+    -fx-text-fill: #006048;
 }
 
-.context-menu {
-    -fx-background-color: white; /* Fondo blanco */
+.menu-button .menu-item:hover{
+    -fx-background-color: #006048;
 }
+
+.menu-button .menu-item:hover .label{
+    -fx-text-fill: #ffffff;
+}
+
+.menu-button:hover {
+    -fx-background-color: #147879;
+}
+
+/*Context MEnu*/
 
 .context-menu .menu-item .label {
-    -fx-text-fill: #006048; /* Texto verde */
+    -fx-text-fill: #006048;
 }
 
-.context-menu .menu-item:hover {
-    -fx-background-color: #147879; /* Fondo azul al pasar el cursor */
+.context-menu .menu-item:hover{
+    -fx-background-color: #006048;
 }
 
-.context-menu .menu-item:hover .label {
-    -fx-text-fill: #ffffff; /* Texto blanco al pasar el cursor */
+.context-menu .menu-item:hover .label{
+    -fx-text-fill: #ffffff;
 }
+
+/*
+#tableAccounts {
+    -fx-border-style:solid;
+    -fx-border-color:black;
+    
+}*/
+#tableAccounts .column-header {
+    -fx-border-style:solid;
+    -fx-border-color:black;
+   
+}
+#tableAccounts .column-header .arrow{
+    -fx-border-style:solid;
+    -fx-border-color:black;
+    -fx-background-color: #ffffff;
+}
+
+
+#accountFinder {
+    -fx-border-style:solid;
+    -fx-border-color:black;
+    -fx-border-radius: 10px;
+}
+
+#stackPane .label{
+    -fx-text-fill: #006048;
+}
+
+.date-picker .label{
+    -fx-text-fill: #006048;
+}
+

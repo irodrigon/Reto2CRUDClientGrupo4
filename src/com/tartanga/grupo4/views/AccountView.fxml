@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/Accountstyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.AccountController">
+    <children>
+   
+        <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0">
+            <children>
+         
+                <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1324.0" spacing="10" styleClass="header">
+                    <children>
+                        <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+                        <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+                        <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+                        <ImageView fx:id="viewLogout" fitHeight="81.0" fitWidth="157.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../resources/images/Out.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <!-- MenuBar -->
+                <fx:include fx:id="hBoxMenuBar" source="MenuBar.fxml"/>
+            </children>
+        </VBox>
+      
+        <!-- Anchor pane centro --> 
+        <AnchorPane id="mainPane" layoutY="175.0" prefHeight="600.0" prefWidth="1366.0">
+            <children>
+                <HBox fx:id="accountFinder" layoutX="50.0" layoutY="14.0" prefHeight="203.0" prefWidth="1366.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="10.0">
+                    <children>
+                        <AnchorPane prefHeight="203.0" prefWidth="239.0">
+                            <children>
+                                <!-- Menu Buscar Eleccion -->
+                                <MenuButton fx:id="searchButtons" layoutX="62.0" layoutY="90.0" mnemonicParsing="false" text="Search by...">
+                                    <items>
+                                        <MenuItem fx:id="itemAccountNum" mnemonicParsing="false" text="Account number" />
+                                        <MenuItem fx:id="itemOwner" mnemonicParsing="false" text="Customer" />
+                                        <MenuItem fx:id="itemDate" mnemonicParsing="false" text="Date" />
+                                        <MenuItem fx:id="itemAll" mnemonicParsing="false" text="All" />
+                                    </items>
+                                </MenuButton>
+                                <Label alignment="CENTER" layoutX="62.0" layoutY="31.0" prefHeight="50.0" prefWidth="99.0" text="Order by" />
+                            </children>
+                        </AnchorPane>            
+                        <!-- StackPane Buscador -->
+                        <StackPane fx:id="stackPane" prefHeight="203.0" prefWidth="1166.0">
+                            <children>                        
+                                <Label fx:id="showAll" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" />
+                                <!-- Pane buscar por cuenta -->
+                                <AnchorPane fx:id="paneAccount">
+                                    <children>
+                                        <Label fx:id="labelAccount" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce an account number" /> 
+                                        <TextField fx:id="accountNumber" layoutX="60.0" layoutY="102.0" prefWidth="200.0"/>
+                                        <Button fx:id="accountNumberSearchButton" layoutX="290.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                    </children>
+                                </AnchorPane>       
+                                <!-- Pane buscar por customer --><!-- desabilatado en controlador-->
+                                <AnchorPane fx:id="paneCustomer">
+                                    <children>
+                                        <Label fx:id="labelOwnerName" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce the customers name" /> 
+                                        <Label fx:id="labelOwnerSurname" layoutX="400.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Introduce the customers surname" />
+                                        <TextField fx:id="customerName" layoutX="60.0" layoutY="102.0" />
+                                        <TextField fx:id="customerSurname" layoutX="400.0" layoutY="102.0" />
+                                        <Button fx:id="customerSearchButton" layoutX="608.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                    </children>
+                                </AnchorPane>                 
+                                <!-- Pane buscar por fecha -->
+                                <AnchorPane fx:id="paneDate">
+                                    <children>
+                                        <Label fx:id="labelDateIni" layoutX="60.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Choose a starting date" />
+                                        <Label fx:id="labelDateFin" layoutX="320.0" layoutY="61.0" prefHeight="25.0" prefWidth="400.0" text="Choose an end date" />
+                                        <DatePicker fx:id="startDate" layoutX="60.0" layoutY="102.0" />
+                                        <DatePicker fx:id="endDate" layoutX="320.0" layoutY="102.0" />
+                                        <Button fx:id="dateSearchButton" layoutX="553.0" layoutY="102.0" mnemonicParsing="false" text="Search" />
+                                    </children>
+                                </AnchorPane>
+                            </children>                 
+                        </StackPane>
+                    </children>
+                </HBox>
+                <!-- Table view -->
+                <TableView fx:id="tableAccounts" layoutX="34.0" layoutY="154.0" prefHeight="314.0" prefWidth="1266.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+                    <columns>
+                       
+                        <TableColumn fx:id="colAccountNumber" prefWidth="422.0" text="Account Number" /><!-- prefWidth="243.0" original -->
+                        <TableColumn text="Customer">
+                            <columns>
+                                <TableColumn fx:id="colName" prefWidth="171.0" text="Name" /><!-- desabilatado en controlador-->
+                                <TableColumn fx:id="colSurname" prefWidth="180.0" text="Surname" /><!-- desabilitado en controllador -->
+                            </columns>
+                        </TableColumn>
+                        <TableColumn fx:id="colCreationDate" prefWidth="422.0" text="Creation date" /><!-- prefWidth="165.0" original-->
+                        <TableColumn fx:id="colBalance" prefWidth="418.0" text="Balance" /><!-- prefWidth="505.0" original-->
+                    </columns>
+                </TableView>
+                <Button fx:id="deleteButton" layoutX="1151.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Delete Account(s)" />
+                <Button fx:id="addButton" layoutX="975.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Add Account" />
+            </children>
+        </AnchorPane>
+    </children>
+  
+
+</AnchorPane>

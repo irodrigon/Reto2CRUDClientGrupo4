@@ -138,4 +138,6 @@ public class Account extends Product implements Serializable {
         return "com.tartanga.grupo4.accounts.Accounts[ id=" + IDProduct + " ]";
     }
     
+
 }
+

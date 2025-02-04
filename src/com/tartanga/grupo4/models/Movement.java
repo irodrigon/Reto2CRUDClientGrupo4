@@ -13,19 +13,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Iñi
  */
+
 @XmlRootElement
 public class Movement implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
+
     private Long IDMovement;
-    
+  
     private Date transactionDate;
     
     private Double amount;
     
     private Currency currency;
-  
+
     private CreditCard creditCard;
     
     public Movement(){}

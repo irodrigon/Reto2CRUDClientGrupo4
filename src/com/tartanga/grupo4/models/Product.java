@@ -48,10 +48,11 @@ public class Product implements Serializable {
         this.creationDate = creationDate;
     }
 
-    
+
     public List<Customer> getCustomers() {
         return customers;
     }
+
     @XmlElement
     public void setCustomers(List<Customer> customers) {
         this.customers = customers;
@@ -82,4 +83,6 @@ public class Product implements Serializable {
         return "product.product[ id=" + IDProduct + " ]";
     }
     
+
 }
+

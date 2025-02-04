@@ -24,8 +24,9 @@ public class Transfers implements Serializable {
     private String reciever;
 
     private Date transferDate;
-    
+
     private Double Amount;
+
 
     private Currency currency;
     
@@ -135,10 +136,10 @@ public class Transfers implements Serializable {
         }
         return true;
     }
-
     @Override
     public String toString() {
         return "Transfers{" + "transferId=" + transferId + ", sender=" + sender + ", reciever=" + reciever + ", transferDate=" + transferDate + ", Amount=" + Amount + ", currency=" + currency + '}';
     }
     
 }
+

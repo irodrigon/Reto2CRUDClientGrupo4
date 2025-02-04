@@ -7,26 +7,25 @@ package com.tartanga.grupo4.exception;
 
 /**
  *
-<<<<<<< HEAD
  * @author 2dami
  */
-public class ReadException extends Exception {
+public class CreateException extends Exception {
 
     /**
-     * Creates a new instance of <code>ReadException</code> without detail
+     * Creates a new instance of <code>createException</code> without detail
      * message.
      */
-    public ReadException() {
-        super("Error al leer");
+    public CreateException() {
+        super("Error al crear");
     }
 
     /**
-     * Constructs an instance of <code>ReadException</code> with the specified
+     * Constructs an instance of <code>createException</code> with the specified
      * detail message.
      *
      * @param msg the detail message.
      */
-    public ReadException(String msg) {
+    public CreateException(String msg) {
         super(msg);
     }
 }

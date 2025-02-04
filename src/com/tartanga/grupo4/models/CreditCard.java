@@ -11,7 +11,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
 /**
  *
  * @author Iñi
@@ -30,15 +29,15 @@ public class CreditCard extends Product implements Serializable {
     private String cvv;
     
     private String pin;
-    
+  
     private Account account;
    
     private List<Movement> movementList;
     
     public CreditCard(){
     }
-    
-    
+
+
     public Long getCreditCardNumber() {
         return creditCardNumber;
     }
@@ -46,8 +45,7 @@ public class CreditCard extends Product implements Serializable {
     public void setCreditCardNumber(Long creditCardNumber) {
         this.creditCardNumber = creditCardNumber;
     }
-    
-    //@XmlJavaTypeAdapter(DateAdapter.class)
+
     public Date getExpirationDate() {
         return expirationDate;
     }
@@ -87,9 +85,8 @@ public class CreditCard extends Product implements Serializable {
     public void setMovementList(List<Movement> movementList) {
         this.movementList = movementList;
     }
-    
-    //@XmlJavaTypeAdapter(DateAdapter.class)
-    public Date getCreationDate() {
+
+      public Date getCreationDate() {
         return creationDate;
     }
 

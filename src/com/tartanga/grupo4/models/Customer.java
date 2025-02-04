@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.io.Serializable;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -57,10 +58,11 @@ public class Customer extends User implements Serializable {
         this.accounts = accounts;
     }*/
 
-   
     public List<Product> getProducts() {
         return products;
     }
+
+
     @XmlTransient
     public void setProducts(List<Product> products) {
         this.products = products;
@@ -90,5 +92,6 @@ public class Customer extends User implements Serializable {
     public String toString() {
         return "com.tartanga.grupo4.customers.Customer[ id=" + logIn + " ]";
     }
+
 
 }
