@@ -63,12 +63,6 @@ public class LoanRESTFull implements ILoan{
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }**/
 
-    @Override
-    public List <Loan> find_XML(GenericType<List <Loan>> responseType, String id) throws WebApplicationException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
 
     /**public List <Loan> find_JSON(GenericType<List <Loan>> responseType, String id) throws WebApplicationException {
         WebTarget resource = webTarget;
@@ -149,6 +143,13 @@ public class LoanRESTFull implements ILoan{
     @Override
     public List<Loan> getAllLoans(GenericType<List<Loan>> genericType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Loan> find_XML(GenericType<List<Loan>> responseType, Integer id) throws WebApplicationException {
+         WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
    

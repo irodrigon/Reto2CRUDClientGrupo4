@@ -2,6 +2,7 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.LoanFactory;
 import com.tartanga.grupo4.models.Loan;
+import java.time.LocalDate;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,11 +14,13 @@ import javafx.util.converter.IntegerStringConverter;
 import javax.ws.rs.core.GenericType;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
@@ -32,6 +35,8 @@ public class LoanController {
     private VBox vBoxTop;
     @FXML
     private HBox hBoxHeader;
+    @FXML
+    private ChoiceBox<String> choiceSearch;
     @FXML
     private DatePicker fromDate;
     @FXML
@@ -52,18 +57,20 @@ public class LoanController {
     private TableColumn<Loan, Integer> tcInterestRate;
     @FXML
     private TableColumn<Loan, Integer> tcPeriod;
+    @FXML
+    private TextField tfSearch;
 
     @FXML
     private Button btnNew;
     @FXML
-    private Button btnSave;
+    private Button btnSearch;
     @FXML
     private Button btnDelete;
 
     @FXML
     private void initialize() {
         loanTable.setEditable(true);
-
+        choiceSearch.getItems().addAll("Search by ID", "Search by Date", "Search by interest rate", "Search by Amount");
         // Configuración de las columnas
         tcLoanId.setCellValueFactory(new PropertyValueFactory<>("loanId"));
         tcStartingDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -72,6 +79,8 @@ public class LoanController {
         tcRemainingAmount.setCellValueFactory(new PropertyValueFactory<>("rAmount"));
         tcInterestRate.setCellValueFactory(new PropertyValueFactory<>("interest"));
         tcPeriod.setCellValueFactory(new PropertyValueFactory<>("period"));
+
+        btnSearch.setOnAction(this::onSearch);
 
         tcTotalAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter() {
             private Double previousAmount; // Cambiado a Double para coincidir con el tipo de la columna
@@ -202,7 +211,6 @@ public class LoanController {
         tcTotalAmount.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
 
-           
             try {
                 Double newAmountString = event.getNewValue();
                 Double newAmount = Double.valueOf(newAmountString);
@@ -307,4 +315,98 @@ public class LoanController {
         }));
         loanTable.setItems(data);
     }
+
+    @FXML
+    private void onSearch(ActionEvent event) {
+        String selectedOption = choiceSearch.getValue();
+        ObservableList<Loan> filteredLoans = FXCollections.observableArrayList();
+
+        if (selectedOption != null) {
+            // Filtrar por ID
+            if (selectedOption.equals("Search by ID")) {
+                String loanIdText = tfSearch.getText().trim();
+                if (!loanIdText.isEmpty()) {
+                    try {
+                        // Intentar convertir el texto a un valor long
+                        Integer loanId = Integer.parseInt(loanIdText);
+
+                        // Obtener los préstamos y filtrarlos por el loanId
+                        List<Loan> allLoans = LoanFactory.getInstance().getILoans().find_XML(new GenericType<List<Loan>>() {
+                        }, loanId); 
+                        for (Loan l : allLoans) {
+                            System.out.println(l.toString());
+                        }
+                        // Filtrar los préstamos por el loanId
+
+                    } catch (NumberFormatException e) {
+                        // Mostrar alerta en caso de error al parsear el ID
+                        showErrorAlert("Invalid ID", "Please enter a valid loan ID.");
+                        return;
+                    }
+                }
+
+            } // Filtrar por fecha
+            else if (selectedOption.equals("Search by Date")) {
+                LocalDate startDate = fromDate.getValue();
+                LocalDate endDate = toDate.getValue();
+
+                if (startDate != null && endDate != null && startDate.isBefore(endDate)) {
+                    filteredLoans = FXCollections.observableArrayList(
+                            LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                            }).stream()
+                                    .filter(loan -> {
+                                        Date loanStartDate = loan.getStartDate();
+                                        Date loanEndDate = loan.getEndDate();
+                                        return loanStartDate != null && loanEndDate != null
+                                                && !loanStartDate.before(java.sql.Date.valueOf(startDate))
+                                                && !loanEndDate.after(java.sql.Date.valueOf(endDate));
+                                    })
+                                    .collect(Collectors.toList())
+                    );
+                } else {
+                    showErrorAlert("Invalid Date Range", "Please select a valid date range.");
+                    return;
+                }
+            } // Filtrar por tasa de interés
+            else if (selectedOption.equals("Search by interest rate")) {
+                String interestRateText = tfSearch.getText();// Esto obtiene el valor seleccionado
+                if (!interestRateText.isEmpty()) {
+                    try {
+                        int interestRate = Integer.parseInt(interestRateText);
+                        filteredLoans = FXCollections.observableArrayList(
+                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                }).stream()
+                                        .filter(loan -> loan.getInterest() == interestRate)
+                                        .collect(Collectors.toList())
+                        );
+                    } catch (NumberFormatException e) {
+                        showErrorAlert("Invalid Interest Rate", "Please enter a valid interest rate.");
+                        return;
+                    }
+                }
+            } // Filtrar por cantidad
+            else if (selectedOption.equals("Search by Amount")) {
+                String amountText = tfSearch.getText();
+
+                if (!amountText.isEmpty()) {
+                    try {
+                        double amount = Double.parseDouble(amountText);
+                        filteredLoans = FXCollections.observableArrayList(
+                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                }).stream()
+                                        .filter(loan -> loan.getAmount() == amount)
+                                        .collect(Collectors.toList())
+                        );
+                    } catch (NumberFormatException e) {
+                        showErrorAlert("Invalid Amount", "Please enter a valid amount.");
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Actualizar la tabla con los préstamos filtrados
+        loanTable.setItems(filteredLoans);
+    }
+
 }
