@@ -58,11 +58,12 @@ public class Customer extends User implements Serializable {
         this.accounts = accounts;
     }*/
 
-    @XmlElement
     public List<Product> getProducts() {
         return products;
     }
 
+
+    @XmlTransient
     public void setProducts(List<Product> products) {
         this.products = products;
     }
@@ -91,5 +92,6 @@ public class Customer extends User implements Serializable {
     public String toString() {
         return "com.tartanga.grupo4.customers.Customer[ id=" + logIn + " ]";
     }
+
 
 }

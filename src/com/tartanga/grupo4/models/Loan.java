@@ -75,10 +75,14 @@ public class Loan extends Product implements Serializable {
         this.period = period;
     }
 
+
+    @Override
     public Date getCreationDate() {
         return creationDate;
     }
 
+
+    @Override
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }

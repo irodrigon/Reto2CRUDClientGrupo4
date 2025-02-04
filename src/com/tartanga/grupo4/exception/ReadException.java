@@ -7,6 +7,7 @@ package com.tartanga.grupo4.exception;
 
 /**
  *
+<<<<<<< HEAD
  * @author 2dami
  */
 public class ReadException extends Exception {

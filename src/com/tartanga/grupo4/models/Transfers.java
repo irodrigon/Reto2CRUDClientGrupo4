@@ -24,8 +24,9 @@ public class Transfers implements Serializable {
     private String reciever;
 
     private Date transferDate;
-    
-    private Integer Amount;
+
+    private Double Amount;
+
 
     private Currency currency;
     
@@ -40,10 +41,10 @@ public class Transfers implements Serializable {
         this.sender="";
         this.reciever="";
         this.transferDate=null;
-        this.Amount=0;
+        this.Amount=0.0;
         this.currency=Currency.EURO;
     }
-    public Transfers(Integer transferId,String sender,String reciever,Date transferDate,Integer Amount,Currency currency){
+    public Transfers(Integer transferId,String sender,String reciever,Date transferDate,Double Amount,Currency currency){
         this.transferId=transferId;
         this.sender=sender;
         this.reciever=reciever;
@@ -84,11 +85,11 @@ public class Transfers implements Serializable {
         this.transferDate = transferDate;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return Amount;
     }
 
-    public void setAmount(Integer Amount) {
+    public void setAmount(Double Amount) {
         this.Amount = Amount;
     }
 
@@ -135,5 +136,10 @@ public class Transfers implements Serializable {
         }
         return true;
     }
+    @Override
+    public String toString() {
+        return "Transfers{" + "transferId=" + transferId + ", sender=" + sender + ", reciever=" + reciever + ", transferDate=" + transferDate + ", Amount=" + Amount + ", currency=" + currency + '}';
+    }
+    
 }
 

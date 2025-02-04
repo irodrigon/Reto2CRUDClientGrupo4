@@ -9,6 +9,7 @@ package com.tartanga.grupo4.models;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -47,11 +48,12 @@ public class Product implements Serializable {
         this.creationDate = creationDate;
     }
 
-    @XmlTransient
+
     public List<Customer> getCustomers() {
         return customers;
     }
 
+    @XmlElement
     public void setCustomers(List<Customer> customers) {
         this.customers = customers;
     }
@@ -81,4 +83,6 @@ public class Product implements Serializable {
         return "product.product[ id=" + IDProduct + " ]";
     }
     
+
 }
+
