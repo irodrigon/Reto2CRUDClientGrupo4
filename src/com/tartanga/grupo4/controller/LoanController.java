@@ -10,9 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
-import org.apache.log4j.Logger;
 import javax.ws.rs.core.GenericType;
 import java.util.*;
+import java.util.logging.Logger;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
@@ -24,8 +24,8 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class LoanController {
 
-    private static final Logger LOGGER = Logger.getLogger(LoanController.class);
-
+    private static Logger LOGGER = Logger.getLogger(LoanController.class.getName());
+// Declaración de elementos FXML
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -73,21 +73,63 @@ public class LoanController {
         tcInterestRate.setCellValueFactory(new PropertyValueFactory<>("interest"));
         tcPeriod.setCellValueFactory(new PropertyValueFactory<>("period"));
 
-        // Configuración para las celdas editables
-        tcTotalAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        tcInterestRate.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        tcPeriod.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        tcTotalAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter() {
+            private Double previousAmount; // Cambiado a Double para coincidir con el tipo de la columna
+
+            @Override
+            public Double fromString(String value) {
+                try {
+                    previousAmount = Double.valueOf(value); // Guarda el valor válido antes de la edición
+                    return previousAmount;
+                } catch (NumberFormatException e) {
+                    LOGGER.severe("Entrada inválida: " + value);
+                    return previousAmount; // Devuelve el último valor válido
+                }
+            }
+        }));
+
+        tcInterestRate.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter() {
+            private Integer previousValue;
+
+            @Override
+            public Integer fromString(String value) {
+                try {
+                    previousValue = Integer.valueOf(value);
+                    return previousValue;
+                } catch (NumberFormatException e) {
+                    LOGGER.severe("Entrada inválida: " + value);
+                    return previousValue;
+                }
+            }
+        }));
+
+        tcPeriod.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter() {
+            private Integer previousValue;
+
+            @Override
+            public Integer fromString(String value) {
+                try {
+                    previousValue = Integer.valueOf(value);
+                    return previousValue;
+                } catch (NumberFormatException e) {
+                    LOGGER.severe("Entrada inválida: " + value);
+                    return previousValue;
+                }
+            }
+        }));
 
         // Configuración para las celdas de fecha
         tcStartingDate.setCellFactory(column -> new EditingCellDatePicker());
         tcStartingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
             Date oldStartDate = loan.getStartDate();  // Guardamos el valor anterior
-
-            loan.setStartDate(event.getNewValue());
-            if (isValidDate(loan.getStartDate(), loan.getEndDate())) {
+            try {
+                loan.setStartDate(event.getNewValue());
+                if (loan.getStartDate() == null || loan.getEndDate() == null || loan.getStartDate().after(loan.getEndDate())) {
+                    throw new Exception("Start date cannot be later than end date.");
+                }
                 updateLoan(loan);
-            } else {
+            } catch (Exception e) {
                 showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
                 loan.setStartDate(oldStartDate);  // Restauramos el valor anterior
                 loanTable.refresh();
@@ -100,9 +142,13 @@ public class LoanController {
             Date oldEndDate = loan.getEndDate();  // Guardamos el valor anterior
 
             loan.setEndDate(event.getNewValue());
-            if (isValidDate(loan.getStartDate(), loan.getEndDate())) {
+            try {
+
+                if (loan.getStartDate() == null || loan.getEndDate() == null || loan.getStartDate().after(loan.getEndDate())) {
+                    throw new Exception("Start date cannot be later than end date.");
+                }
                 updateLoan(loan);
-            } else {
+            } catch (Exception e) {
                 showErrorAlert("Invalid Date", "End date cannot be before start date.");
                 loan.setEndDate(oldEndDate);  // Restauramos el valor anterior
                 loanTable.refresh();
@@ -117,23 +163,19 @@ public class LoanController {
     }
 
     private void configureEditableColumns() {
-        tcInterestRate.setOnEditCommit(event -> {
+        tcInterestRate.setOnEditCommit((TableColumn.CellEditEvent<Loan, Integer> event) -> {
             Loan loan = event.getRowValue();
             Integer oldInterestRate = loan.getInterest();  // Guardamos el valor anterior
-
-            String newInterestRateString = event.getNewValue().toString();
-            if (isValidInteger(newInterestRateString)) {
+            try {
+                String newInterestRateString = event.getNewValue().toString();
                 Integer newInterestRate = Integer.valueOf(newInterestRateString);
-                if (!isValidInterestRate(newInterestRate)) {
-                    showErrorAlert("Invalid Interest Rate", "Interest rate must be between 0 and 50.");
-                    loan.setInterest(oldInterestRate);  // Restauramos el valor anterior
-                    loanTable.refresh();
-                    return;
+                if (newInterestRate < 0 || newInterestRate > 50) {
+                    throw new Exception("Interest rate should be greater than 0 and lower than 50!.");
                 }
                 loan.setInterest(newInterestRate);
                 updateLoan(loan);
-            } else {
-                showErrorAlert("Invalid Input", "Please enter a valid integer for the interest rate.");
+            } catch (Exception e) {
+                showErrorAlert("Invalid Input", "The interest rate should be an integer greater than 0 and less than 50!");
                 loan.setInterest(oldInterestRate);  // Restauramos el valor anterior
                 loanTable.refresh();
             }
@@ -142,20 +184,16 @@ public class LoanController {
         tcPeriod.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
             Integer oldPeriod = loan.getPeriod();  // Guardamos el valor anterior
-
-            String newPeriodString = event.getNewValue().toString();
-            if (isValidInteger(newPeriodString)) {
+            try {
+                String newPeriodString = event.getNewValue().toString();
                 Integer newPeriod = Integer.valueOf(newPeriodString);
-                if (!isValidPeriod(newPeriod)) {
-                    showErrorAlert("Invalid Period", "Period must be positive and no more than four digits.");
-                    loan.setPeriod(oldPeriod);  // Restauramos el valor anterior
-                    loanTable.refresh();
-                    return;
+                if (newPeriod < 0 || newPeriod > 1000) {
+                    throw new Exception("Period should be greater than 0 and lower than 1000!.");
                 }
                 loan.setPeriod(newPeriod);
                 updateLoan(loan);
-            } else {
-                showErrorAlert("Invalid Input", "Please enter a valid integer for the period.");
+            } catch (Exception e) {
+                showErrorAlert("Invalid Input", "Period should be greater than 0 and lower than 1000!.");
                 loan.setPeriod(oldPeriod);  // Restauramos el valor anterior
                 loanTable.refresh();
             }
@@ -165,56 +203,19 @@ public class LoanController {
             Loan loan = event.getRowValue();
 
             String newAmountString = event.getNewValue().toString();
-            if (isValidDouble(newAmountString)) {
+            try {
                 Double newAmount = Double.valueOf(newAmountString);
-                if (!isValidTotalAmount(newAmount)) {
-                    showErrorAlert("Invalid Amount", "Amount must be positive and not exceed 100 million.");
-                    loan.setAmount(loan.getAmount());  // Restauramos el valor anterior
-                    loanTable.refresh();
-                    return;
+                if (newAmount < 0 || newAmount > 100000000) {
+                    throw new Exception("Amount should be greater than 0 and lower than 100 milion!.");
                 }
                 loan.setAmount(newAmount);
                 updateLoan(loan);
-            } else {
-                showErrorAlert("Invalid Input", "Please enter a valid number for the total amount.");
+            } catch (Exception e) {
+                showErrorAlert("Invalid Input", "(\"Amount should be greater than 0 and lower than 100 milion!");
                 loan.setAmount(loan.getAmount());  // Restauramos el valor anterior
                 loanTable.refresh();
             }
         });
-    }
-
-    private boolean isValidTotalAmount(Double amount) {
-        return amount > 0 && amount <= 100000000;
-    }
-
-    private boolean isValidInterestRate(Integer interestRate) {
-        return interestRate >= 0 && interestRate <= 50;
-    }
-
-    private boolean isValidPeriod(Integer period) {
-        return period > 0 && period <= 9999;
-    }
-
-    private boolean isValidDate(Date startDate, Date endDate) {
-        return startDate != null && endDate != null && !startDate.after(endDate);
-    }
-
-    private boolean isValidDouble(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private boolean isValidInteger(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     private void updateLoan(Loan loan) {
@@ -275,7 +276,9 @@ public class LoanController {
             LoanFactory.getInstance().getILoans().edit_XML(mLoan, mId);
             mostrarTodosLosPrestamos();
         } catch (Exception e) {
-            LOGGER.error("Error adding loan: ", e);
+            LOGGER.severe("Error adding loan: " + e.getMessage());
+            e.printStackTrace();
+
         }
     }
 
@@ -292,7 +295,9 @@ public class LoanController {
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
             JasperViewer.viewReport(jasperPrint, false);
         } catch (JRException e) {
-            LOGGER.error("Error generating report", e);
+            LOGGER.severe("Error generating report: " + e.getMessage());
+            e.printStackTrace();
+
         }
     }
 
