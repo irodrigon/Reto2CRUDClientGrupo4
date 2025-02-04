@@ -7,7 +7,20 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.models.Admin;
+import com.tartanga.grupo4.resources.files.Smtp;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -25,8 +38,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javax.crypto.Cipher;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.GenericType;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.UrlBase64;
+import org.bouncycastle.util.encoders.UrlBase64Encoder;
+
+import security.Hash;
 
 /**
  *
@@ -34,7 +53,13 @@ import javax.ws.rs.core.GenericType;
  */
 public class RovoBankSignInController {
 
-    private static Logger logger;
+    static {
+        //Poner BouncyCastle como provider
+        Security.addProvider(new BouncyCastleProvider());
+    }
+    private Hash security = new Hash();
+
+    private static Logger logger = Logger.getLogger("JavaClient");
 
     private Admin admin;
 
@@ -45,6 +70,9 @@ public class RovoBankSignInController {
 
     @FXML
     private Hyperlink hl_create;
+
+    @FXML
+    Hyperlink hl_password;
 
     @FXML
     private Button btnSeePassword;
@@ -95,6 +123,8 @@ public class RovoBankSignInController {
         btnSeePassword.setMaxSize(25, 25);
 
         btnSeePassword.setGraphic(imageView);
+
+        hl_password.setOnAction(this::sendNewPassword);
 
         btnSeePassword.setStyle("-fx-background-color: transparent; -fx-border-color:transparent");
 
@@ -183,7 +213,7 @@ public class RovoBankSignInController {
             passwordField.setText(hiddenField.getText());
         }
 
-        if (userField.getText().equals("") && passwordField.getText().equals("")) {
+        /* if (userField.getText().equals("") && passwordField.getText().equals("")) {
             alert.setTitle("Empty user fields");
             alert.setContentText("Please fill up the required fields.");
             alert.showAndWait();
@@ -195,10 +225,15 @@ public class RovoBankSignInController {
             alert.setTitle("Invalid Password");
             alert.setContentText("The password must be at least 6 characters long and contain a capital letter and a number.");
             alert.showAndWait();
-        } else {
+        } else */
+        {
             try {
+                //Convertirlo a String usando BASE64*/
+                String encryptedPass64 = encriptar(null);
+
                 admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
-                }, userField.getText(), passwordField.getText());
+                }, userField.getText(), encryptedPass64);
+
                 FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMainView.fxml"));
 
                 Parent root = (Parent) FXMLLoader.load();
@@ -212,9 +247,100 @@ public class RovoBankSignInController {
                 alert.setContentText("Incorrect User/Password.");
                 alert.showAndWait();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Something went wrong when loading the window.{0}", e.getMessage());
+                logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
+            } catch (Exception error) {
+                logger.log(Level.SEVERE, "Something went wrong when checking the user: {0}.", error.getMessage());
             }
         }
+    }
+
+    public String encriptar(String password) {
+        String encryptedPass64 = null;
+         byte[] encryptedPass;
+        try {
+            //Recuperar la llave del fichero
+            InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            byte[] data = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = input.read(data)) != -1) {
+                buffer.write(data, 0, bytesRead);
+            }
+            input.close();
+
+            byte[] publicKeyBytes = buffer.toByteArray();
+
+            //Reconstruir la llave Publica
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            PublicKey publicKey = keyFactory.generatePublic(spec);
+
+            //Encriptar password con llave publica
+            Cipher cipher = Cipher.getInstance("ECIES", "BC");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            if(password == null){
+                 encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+            }else{
+                 encryptedPass = cipher.doFinal(password.getBytes());
+            }
+            
+
+            //Convertirlo a String usando BASE64
+            encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
+        } catch (Exception error) {
+            logger.log(Level.SEVERE, "RovoBankSignInController: Exception while encripting the password: ", error.getMessage());
+        }
+
+        return encryptedPass64;
+    }
+
+    private void sendNewPassword(ActionEvent event) {
+        try {
+
+            if (userField.getText().equals("") || !passwordField.getText().equals("")|| !hiddenField.getText().equals("")) {
+                Alert alertE = new Alert(Alert.AlertType.ERROR, "Write in the user box the email to which you "
+                        + "would like the new password to be sent but leave the password box empty");
+                alertE.showAndWait();
+            } else {
+                String email = userField.getText();
+                String password = passwordGenerator();
+                String passwordE = password;
+                //Coger admin de la base de datos
+                Admin adminT = AdminClientFactory.adminLogic().getAdmin(new GenericType<Admin>() {
+                }, email);
+                //Encriptar password
+                password = encriptar(password);
+                adminT.setPassword(password);
+                AdminClientFactory.adminLogic().edit_XML(adminT, email);
+                
+                Smtp mail = new Smtp();
+                mail.sendMail(email, passwordE);
+                Alert alertE = new Alert(Alert.AlertType.INFORMATION, "A new password has been sent to your specified email");
+                alertE.showAndWait();
+            }
+        } catch (NullPointerException error) {
+            logger.log(Level.SEVERE, "RovoBankSignInController: There is no Admin with that login in the database: ", error.getMessage());
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "There is no Admin with that login in the database");
+            alertE.showAndWait();
+        } catch (Exception error){
+            error.printStackTrace();
+            logger.log(Level.SEVERE, "RovoBankSignInController: An error occurred while getting the admin: ", error.getMessage());
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "An error occurred while updating the password");
+            alertE.showAndWait();
+        }
+
+    }
+    private String passwordGenerator(){
+        String characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        
+        StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < 6; i++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return sb.toString();
     }
 
 }

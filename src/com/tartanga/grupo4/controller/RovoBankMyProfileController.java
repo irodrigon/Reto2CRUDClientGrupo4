@@ -7,12 +7,15 @@ package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AdminClientFactory;
 import com.tartanga.grupo4.models.Admin;
+import com.tartanga.grupo4.resources.files.Smtp;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -21,6 +24,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javax.ws.rs.core.GenericType;
+import security.Hash;
+
 
 /**
  *
@@ -60,6 +65,9 @@ public class RovoBankMyProfileController {
 
     @FXML
     private Button btnSeeCurrentPassword;
+
+    @FXML
+    private Button btnChangePassword;
 
     @FXML
     private Button btnSeeConfirm;
@@ -105,7 +113,7 @@ public class RovoBankMyProfileController {
         btnSeeCurrentPassword.setOnAction(this::handleViewCurrentPassword);
         btnSeePassword.setOnAction(this::handleViewNewPassword);
         btnSeeConfirm.setOnAction(this::handleViewConfirm);
-
+        btnChangePassword.setOnAction(this::handlePasswordChange);
         Platform.runLater(() -> {
             fld_Password.getParent().requestFocus();
         });
@@ -315,6 +323,48 @@ public class RovoBankMyProfileController {
             btnSeeCurrentPassword.setGraphic(imageViewCurrentPassword);
 
             btnSeeCurrentPassword.setStyle("-fx-background-color: transparent; -fx-border-color:transparent");
+        }
+    }
+
+    private void handlePasswordChange(ActionEvent event) {
+        Hash security = new Hash();
+        Smtp mail = new Smtp();
+        Admin adminS =admin;
+        RovoBankSignInController signIn = new RovoBankSignInController();
+        try {
+            if (hiddenFieldConfirm.isVisible()) {
+                fld_Confirm.setText(hiddenFieldConfirm.getText());
+            }
+            if (hiddenFieldCurrentPassword.isVisible()) {
+                fld_CurrentPassword.setText(hiddenFieldCurrentPassword.getText());
+            }
+            if (hiddenFieldPassword.isVisible()) {
+                fld_Password.setText(hiddenFieldPassword.getText());
+            }
+            if (fld_Confirm.getText().equals("") || fld_CurrentPassword.getText().equals("")
+                    || fld_Password.getText().equals("")) {
+                Alert alertE = new Alert(Alert.AlertType.ERROR, "The tree password boxes cannot be empty");
+                alertE.showAndWait();
+            } else if (!fld_Password.getText().equals(fld_Confirm.getText())) {
+                Alert alertE = new Alert(Alert.AlertType.ERROR, "The new password does not match the confirm password");
+                alertE.showAndWait();
+            } else if (!admin.getPassword().equals(security.passwordToHash(fld_CurrentPassword.getText()))) {
+                Alert alertE = new Alert(Alert.AlertType.ERROR, "Wrong current password");
+                alertE.showAndWait();
+            } else {
+                String password = signIn.encriptar(fld_Password.getText());
+                adminS.setPassword(password);
+                AdminClientFactory.adminLogic().edit_XML(adminS, adminS.getLogIn());
+                mail.sendMail(adminS.getLogIn(), fld_Password.getText());
+                Alert alertE = new Alert(Alert.AlertType.INFORMATION, "You password has been change successfully");
+                alertE.showAndWait();
+                admin.setPassword(security.passwordToHash(fld_Password.getText()));
+            }
+
+        } catch (Exception error) {
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "An error occurred while updating the password");
+            alertE.showAndWait();
+           logger.log(Level.SEVERE, "RovoBankMyProfileView: An error occurred while changin the passwordn: {0}", error.getMessage());
         }
     }
 }

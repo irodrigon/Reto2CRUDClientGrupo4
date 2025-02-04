@@ -55,14 +55,17 @@ public class RovoBankMainController {
     private MenuItem menuItemCredit;
     @FXML
     private MenuItem menuItemProfile;
+
     @FXML
     private MenuItem menuItemCustomers;
+
 
     @FXML
     private void initialize() {
         menuItemCredit.setOnAction(this::handleCreditCard);
         menuItemProfile.setOnAction(this::handleViewMyProfile);
         menuItemCustomers.setOnAction(this::handleViewCustomersCreation);
+
     }
 
     public void initStage(Parent root) {
