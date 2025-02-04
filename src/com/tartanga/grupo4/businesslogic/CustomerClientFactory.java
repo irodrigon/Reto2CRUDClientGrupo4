@@ -5,6 +5,8 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
+import com.tartanga.grupo4.RESTfulClient.CustomerRESTful;
+
 /**
  *
  * @author Iñi
@@ -12,7 +14,7 @@ package com.tartanga.grupo4.businesslogic;
 public class CustomerClientFactory {
     
      public static CustomerLogicController customerLogic(){
-        return new CustomerClient();
+        return new CustomerRESTful();
     }
 }
    

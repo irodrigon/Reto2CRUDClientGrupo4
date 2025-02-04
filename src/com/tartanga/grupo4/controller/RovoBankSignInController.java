@@ -101,6 +101,8 @@ public class RovoBankSignInController {
         btn_Login.setOnAction(this::handleLogin);
         hl_create.setOnAction(this::handleCreateUser);
         btnSeePassword.setOnAction(this::handleViewPassword);
+        
+        
     }
 
     public void initStage(Parent root) {

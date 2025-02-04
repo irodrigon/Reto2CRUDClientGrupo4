@@ -126,9 +126,6 @@ public class RovoBankSignUpController {
     private Label lbl_error_Zip;
 
     @FXML
-    private Button btn_register;
-
-    @FXML
     private TextField fld_Surname;
 
     private Admin admin;

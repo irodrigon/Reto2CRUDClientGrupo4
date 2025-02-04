@@ -5,15 +5,14 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
-import com.tartanga.grupo4.RESTfulClient.CreditCardRESTful;
+import com.tartanga.grupo4.models.Account;
+import java.util.List;
+import javax.ws.rs.core.GenericType;
 
 /**
  *
  * @author Iñi
  */
-public class CreditCardClientFactory {
-        
-    public static CreditCardLogicController creditCardLogic(){
-        return new CreditCardRESTful();
-    }
+public interface AccountLogicController {
+    List<Account> findAllAccounts(GenericType<List<Account>> responseType); 
 }

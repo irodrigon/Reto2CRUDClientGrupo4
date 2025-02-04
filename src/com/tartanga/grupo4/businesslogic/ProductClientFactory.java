@@ -5,15 +5,14 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
-import com.tartanga.grupo4.RESTfulClient.CreditCardRESTful;
+import com.tartanga.grupo4.RESTfulClient.ProductRESTful;
 
 /**
  *
  * @author Iñi
  */
-public class CreditCardClientFactory {
-        
-    public static CreditCardLogicController creditCardLogic(){
-        return new CreditCardRESTful();
+public class ProductClientFactory {
+    public static ProductLogicController productLogic(){
+        return new ProductRESTful();
     }
 }

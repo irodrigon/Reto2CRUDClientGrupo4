@@ -19,23 +19,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 public class CreditCardBean {
     
-    private StringProperty owner;
+    private Integer iDProduct;
     
     private SimpleStringProperty creditCardNumber;
-    
+
     private SimpleObjectProperty<LocalDate> creationDate;
-    
+
     private SimpleObjectProperty<LocalDate> expirationDate;
-    
+
     private SimpleStringProperty cvv;
-    
+
     private SimpleStringProperty pin;
-    
+
     private StringProperty accountNumber;
-    
-    
-      public CreditCardBean() {
-        this.owner = new SimpleStringProperty();
+
+    public CreditCardBean() {
         this.creditCardNumber = new SimpleStringProperty();
         this.cvv = new SimpleStringProperty();
         this.pin = new SimpleStringProperty();
@@ -44,8 +42,7 @@ public class CreditCardBean {
         this.accountNumber = new SimpleStringProperty();
     }
 
-    public CreditCardBean(String owner, String creditCardNumber, LocalDate creationDate, LocalDate expirationDate, String cvv, String pin, String accountNumber) {
-        this.owner = new SimpleStringProperty(owner);
+    public CreditCardBean(String creditCardNumber, LocalDate creationDate, LocalDate expirationDate, String cvv, String pin, String accountNumber) {
         this.creditCardNumber = new SimpleStringProperty(creditCardNumber);
         this.creationDate = new SimpleObjectProperty<>(creationDate);
         this.expirationDate = new SimpleObjectProperty<>(expirationDate);
@@ -54,12 +51,13 @@ public class CreditCardBean {
         this.accountNumber = new SimpleStringProperty(accountNumber);
     }
 
-    public String getOwner() {
-        return this.owner.get();
-    }
-
-    public void setOwner(String owner) {
-        this.owner.set(owner);
+    public CreditCardBean(String creditCardNumber, String cvv, String pin, String accountNumber) {
+        this.creditCardNumber = new SimpleStringProperty(creditCardNumber);
+        this.creationDate = new SimpleObjectProperty<>();
+        this.expirationDate = new SimpleObjectProperty<>();
+        this.cvv = new SimpleStringProperty(cvv);
+        this.pin = new SimpleStringProperty(pin);
+        this.accountNumber = new SimpleStringProperty(accountNumber);
     }
 
     public String getCreditCardNumber() {
@@ -70,19 +68,26 @@ public class CreditCardBean {
         this.creditCardNumber.set(creditCardNumber);
     }
 
-   
-    public LocalDate getCreationDate() {
-        return this.creationDate.get();
+    public String getCreationDate() {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        if (this.creationDate.get() == null) {
+            return null;
+        } else {
+            return dateTimeFormatter.format(this.creationDate.get());
+        }
     }
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate.set(creationDate);
     }
-    
-    
-    public LocalDate getExpirationDate() {
+
+    public String getExpirationDate() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return this.expirationDate.get();
+        if (this.expirationDate.get() == null) {
+            return null;
+        } else {
+            return dateTimeFormatter.format(this.expirationDate.get());
+        }
     }
 
     public void setExpirationDate(LocalDate expirationDate) {
@@ -111,6 +116,14 @@ public class CreditCardBean {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber.set(accountNumber);
+    }
+
+    public Integer getiDProduct() {
+        return iDProduct;
+    }
+
+    public void setiDProduct(Integer iDProduct) {
+        this.iDProduct = iDProduct;
     }
 
 }

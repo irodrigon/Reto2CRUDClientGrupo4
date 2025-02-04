@@ -80,7 +80,6 @@ public class CreditCard extends Product implements Serializable {
         this.account = account;
     }
 
-    @XmlTransient
     public List<Movement> getMovementList() {
         return movementList;
     }

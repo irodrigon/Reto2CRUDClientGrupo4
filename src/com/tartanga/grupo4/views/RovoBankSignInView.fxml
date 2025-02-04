@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+
 <AnchorPane id="AnchorPane" fx:id="signInPane" prefHeight="600.0" prefWidth="1366.0" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.RovoBankSignInController">
    <children>
        <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
