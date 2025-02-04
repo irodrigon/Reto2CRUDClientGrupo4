@@ -43,6 +43,7 @@ public class CRUDAccountPassTest extends ApplicationTest {
     public void testA_addAccount() {
         int account0 = 0;
         List<AccountBean> accounts = table.getItems();
+        String accountNumber;
         int rowCount = table.getItems().size();
         for (AccountBean account : accounts) {
             if (account.getBalance() == 0.0) {
@@ -51,10 +52,14 @@ public class CRUDAccountPassTest extends ApplicationTest {
         }
         //Miro que haya una cuenta mas que las que habia antes
         clickOn("#addButton");
+        accounts = table.getItems();
+        accountNumber = accounts.get(accounts.size()-1).getAccountNumber();
         assertEquals(rowCount + 1, table.getItems().size());
         //Miro que hay una cuenta mas con un balance de 0.0 de las que ya habia
         assertEquals("The account has not been created",
                 accounts.stream().filter(u -> u.getBalance() == 0.0).count(), account0 + 1);
+        assertEquals("The account has not been created",
+                accounts.stream().filter(u -> u.getAccountNumber().equals(accountNumber)).count(), 1);
     }
 
     @Test

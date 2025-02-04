@@ -7,6 +7,7 @@ package CRUDTest;
 
 import com.tartanga.grupo4.main.Aplication;
 import com.tartanga.grupo4.models.AccountBean;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -56,19 +57,22 @@ public class CRUDAccountFailTest extends ApplicationTest {
         press(KeyCode.ENTER);
         //clickOn("#dateSearchButton"); no funciona bien el listener para habilitar el boton
         verifyThat("An error happen in application", isVisible());
-        clickOn("OK");
+        clickOn("Aceptar");
     }
 
     @Test
     public void testB_CrearCuenta() {
+        int rowCount = table.getItems().size();
         clickOn("#addButton");
         verifyThat("An error happened while creating account", isVisible());
-        clickOn("OK");
+        clickOn("Aceptar");
+        assertEquals(rowCount, table.getItems().size());
     }
 
     @Test
     public void testC_BorrarCuenta() {
-
+        List<AccountBean> accounts = table.getItems();
+        String accountNumber = accounts.get(0).getAccountNumber();
         int rowCount = table.getItems().size();
         assertNotEquals("Table has no data", rowCount, 0);
         Node row = lookup(".table-row-cell").nth(0).query();
@@ -78,18 +82,23 @@ public class CRUDAccountFailTest extends ApplicationTest {
         clickOn("#deleteButton");
         clickOn("Yes");
         verifyThat("An error happened while deleting account", isVisible());
-        clickOn("OK");
+        clickOn("Aceptar");
+        assertEquals("The account has not been created",
+                accounts.stream().filter(u -> u.getAccountNumber().equals(accountNumber)).count(), 1);
     }
 
     @Test
     public void testD_modifyItem() {
+        List<AccountBean> accounts = table.getItems();
+        Double balance = accounts.get(0).getBalance();
         Node row = lookup(".table-row-cell").nth(0).query();
         clickOn(row);
         doubleClickOn("1536.3");
         write("5666.0");
         press(KeyCode.ENTER);
         verifyThat("An error happened while updating the account", isVisible());
-        clickOn("OK");
-
+        clickOn("Aceptar");
+        assertEquals("The account has not been created",
+                accounts.stream().filter(u -> u.getBalance() == 1536.3).count(), 1);
     }
 }
