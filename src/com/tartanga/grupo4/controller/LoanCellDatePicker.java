@@ -12,11 +12,11 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.time.format.DateTimeFormatter;
 
-public class EditingCellDatePicker extends TableCell<Loan, Date> {
+public class LoanCellDatePicker extends TableCell<Loan, Date> {
     private DatePicker datePicker;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    EditingCellDatePicker() {
+    LoanCellDatePicker() {
     
     }
 

@@ -128,7 +128,7 @@ public class LoanController {
         }));
 
         // Configuración para las celdas de fecha
-        tcStartingDate.setCellFactory(column -> new EditingCellDatePicker());
+        tcStartingDate.setCellFactory(column -> new LoanCellDatePicker());
         tcStartingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
             Date oldStartDate = loan.getStartDate();  // Guardamos el valor anterior
@@ -145,7 +145,7 @@ public class LoanController {
             }
         });
 
-        tcEndingDate.setCellFactory(column -> new EditingCellDatePicker());
+        tcEndingDate.setCellFactory(column -> new LoanCellDatePicker());
         tcEndingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
             Date oldEndDate = loan.getEndDate();  // Guardamos el valor anterior
