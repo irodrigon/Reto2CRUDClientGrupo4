@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tartanga.grupo4.businesslogic;
+package com.tartanga.grupo4.RESTfulClient;
 
+import com.tartanga.grupo4.businesslogic.AdminLogicController;
 import com.tartanga.grupo4.models.Admin;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.WebApplicationException;
@@ -17,21 +18,21 @@ import javax.ws.rs.core.GenericType;
  * [com.tartanga.grupo4.customers.admin]<br>
  * USAGE:
  * <pre>
- *        AdminClient client = new AdminClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
+        AdminRESTful client = new AdminRESTful();
+        Object response = client.XXX(...);
+        // do whatever with response
+        client.close();
+ </pre>
  *
  * @author Iñi
  */
-public class AdminClient implements AdminLogicController{
+public class AdminRESTful implements AdminLogicController{
 
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
 
-    public AdminClient() {
+    public AdminRESTful() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("com.tartanga.grupo4.customers.admin");
     }

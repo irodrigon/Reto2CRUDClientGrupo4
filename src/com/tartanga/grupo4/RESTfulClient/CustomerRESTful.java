@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tartanga.grupo4.businesslogic;
+package com.tartanga.grupo4.RESTfulClient;
 
+import com.tartanga.grupo4.businesslogic.CustomerLogicController;
 import com.tartanga.grupo4.models.Customer;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.GenericType;
  * [com.tartanga.grupo4.customers.customer]<br>
  * USAGE:
  * <pre>
-        CustomerClient client = new CustomerClient();
+        CustomerRESTful client = new CustomerRESTful();
         Object response = client.XXX(...);
         // do whatever with response
         client.close();
@@ -26,13 +27,13 @@ import javax.ws.rs.core.GenericType;
  *
  * @author Iñi
  */
-public class CustomerClient implements CustomerLogicController{
+public class CustomerRESTful implements CustomerLogicController{
 
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
 
-    public CustomerClient() {
+    public CustomerRESTful() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("com.tartanga.grupo4.customers.customer");
     }

@@ -5,12 +5,14 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
+import com.tartanga.grupo4.RESTfulClient.AccountRESTful;
+
 /**
  *
  * @author Iñi
  */
 public class AccountClientFactory {
      public static AccountLogicController accountLogic(){
-        return new AccountClient();
+        return new AccountRESTful();
     }
 }

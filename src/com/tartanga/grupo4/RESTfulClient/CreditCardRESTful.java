@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tartanga.grupo4.businesslogic;
+package com.tartanga.grupo4.RESTfulClient;
 
+import com.tartanga.grupo4.businesslogic.CreditCardLogicController;
 import com.tartanga.grupo4.models.Admin;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
@@ -24,23 +25,23 @@ import javax.ws.rs.WebApplicationException;
  * [com.tartanga.grupo4.creditcards.creditcard]<br>
  * USAGE:
  * <pre>
- * CreditCardClient client = new CreditCardClient();
- * Object response = client.XXX(...);
- * // do whatever with response
- * client.close();
- * </pre>
+ CreditCardRESTful client = new CreditCardRESTful();
+ Object response = client.XXX(...);
+ // do whatever with response
+ client.close();
+ </pre>
  *
  * @author Iñi
  */
-public class CreditCardClient implements CreditCardLogicController {
+public class CreditCardRESTful implements CreditCardLogicController {
 
-    private static Logger logger = Logger.getLogger(CreditCardClient.class.getName());
+    private static Logger logger = Logger.getLogger(CreditCardRESTful.class.getName());
 
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/Reto2CRUDServerGrupo4/webresources";
 
-    public CreditCardClient() {
+    public CreditCardRESTful() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("com.tartanga.grupo4.creditcards.creditcard");
     }

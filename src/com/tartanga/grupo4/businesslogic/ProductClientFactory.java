@@ -5,12 +5,14 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
+import com.tartanga.grupo4.RESTfulClient.ProductRESTful;
+
 /**
  *
  * @author Iñi
  */
 public class ProductClientFactory {
     public static ProductLogicController productLogic(){
-        return new ProductClient();
+        return new ProductRESTful();
     }
 }

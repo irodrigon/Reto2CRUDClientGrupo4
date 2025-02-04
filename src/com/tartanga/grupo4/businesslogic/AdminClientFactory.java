@@ -5,6 +5,8 @@
  */
 package com.tartanga.grupo4.businesslogic;
 
+import com.tartanga.grupo4.RESTfulClient.AdminRESTful;
+
 /**
  *
  * @author Iñi
@@ -12,7 +14,7 @@ package com.tartanga.grupo4.businesslogic;
 public class AdminClientFactory {
     
     public static AdminLogicController adminLogic(){
-        return new AdminClient();
+        return new AdminRESTful();
     }
     
 }
