@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -92,7 +93,6 @@ public class TransferController implements Initializable {
 
     private Itransfer transferManager;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -134,7 +134,6 @@ public class TransferController implements Initializable {
 
     @FXML
     public void initTable() {
-
         tbTransfer.setEditable(true);
 
         tbcTransferId.setCellValueFactory(new PropertyValueFactory<>("transferId"));
@@ -145,20 +144,37 @@ public class TransferController implements Initializable {
 
         tbcSender.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
         tbcSender.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-            Transfers transfer = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            transfer.setSender(t.getNewValue());
+            String newValue = t.getNewValue();
+            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+                showAlert("Error", "Solo se permiten letras en el remitente.");
+                tbTransfer.refresh();
+                return;
+            }
+            Transfers transfer = t.getRowValue();
+            transfer.setSender(newValue);
             transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
         tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
         tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-            Transfers transfer = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            transfer.setReciever(t.getNewValue());
+            String newValue = t.getNewValue();
+            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+                showAlert("Error", "Solo se permiten letras en el destinatario.");
+                tbTransfer.refresh();
+                return;
+            }
+            Transfers transfer = t.getRowValue();
+            transfer.setReciever(newValue);
             transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
         tbcDate.setCellFactory(colum -> new DatePickerCellEditer());
         tbcDate.setOnEditCommit(event -> {
+            if (event.getNewValue() == null) {
+                showAlert("Error", "Formato de fecha incorrecto. Debe ser dd/mm/aaaa.");
+                tbTransfer.refresh();
+                return;
+            }
             Transfers transfer = event.getRowValue();
             transfer.setTransferDate(event.getNewValue());
             transferManager.edit_XML(transfer, transfer.getTransferId().toString());
@@ -173,6 +189,14 @@ public class TransferController implements Initializable {
         });
 
         loadAllTransfers();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
