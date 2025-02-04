@@ -10,7 +10,6 @@ package com.tartanga.grupo4.models;
  * @author Iñi
  */
 public enum Currency {
-
     EURO(1.0),
     DOLLAR(1.05),
     YEN(160.0),

@@ -14,6 +14,7 @@ import java.time.LocalDate;
  */
 public class AccountBean {
     
+
         private String accountNumber;
         private String name;
         private String surname;
@@ -76,7 +77,6 @@ public class AccountBean {
     public void setBalance(Double balance) {
         this.balance = balance;
     }
-    
-
+   
 }
 

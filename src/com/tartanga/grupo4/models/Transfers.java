@@ -85,6 +85,7 @@ public class Transfers implements Serializable {
         this.transferDate = transferDate;
     }
 
+
     public Double getAmount() {
         return Amount;
     }
@@ -136,10 +137,10 @@ public class Transfers implements Serializable {
         }
         return true;
     }
+
     @Override
     public String toString() {
         return "Transfers{" + "transferId=" + transferId + ", sender=" + sender + ", reciever=" + reciever + ", transferDate=" + transferDate + ", Amount=" + Amount + ", currency=" + currency + '}';
     }
-    
 }
 

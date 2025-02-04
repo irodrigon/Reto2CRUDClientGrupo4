@@ -35,8 +35,9 @@ public class CreditCard extends Product implements Serializable {
     private List<Movement> movementList;
     
     public CreditCard(){
-    }
 
+        this.creationDate = super.creationDate;
+    }
 
     public Long getCreditCardNumber() {
         return creditCardNumber;
@@ -77,6 +78,7 @@ public class CreditCard extends Product implements Serializable {
     public void setAccount(Account account) {
         this.account = account;
     }
+
 
     public List<Movement> getMovementList() {
         return movementList;

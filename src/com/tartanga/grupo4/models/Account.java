@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Account extends Product implements Serializable {
     private static final long serialVersionUID = 1L;
     
-
     private String accountNumber;
     
     private Double balance;
@@ -41,6 +40,7 @@ public class Account extends Product implements Serializable {
     public Account() {
         this.creationDate = super.creationDate;
     }
+
     public Account(String accountNumber, Double balance, Date creationDate, Integer IDProduct){
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -116,6 +116,7 @@ public class Account extends Product implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
+
         hash += (IDProduct != null ? IDProduct.hashCode() : 0);
         return hash;
     }
@@ -127,6 +128,7 @@ public class Account extends Product implements Serializable {
             return false;
         }
         Account other = (Account) object;
+
         if ((this.IDProduct == null && other.IDProduct != null) || (this.IDProduct != null && !this.IDProduct.equals(other.IDProduct))) {
             return false;
         }
@@ -140,4 +142,5 @@ public class Account extends Product implements Serializable {
     
 
 }
+
 

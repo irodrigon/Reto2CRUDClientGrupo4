@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Admin extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-        
+
     private String password;
     
     private Boolean active;
@@ -43,6 +43,7 @@ public class Admin extends User implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
+
         hash += (logIn != null ? logIn.hashCode() : 0);
         return hash;
     }
@@ -54,6 +55,7 @@ public class Admin extends User implements Serializable {
             return false;
         }
         Admin other = (Admin) object;
+
         if ((this.logIn == null && other.logIn != null) || (this.logIn != null && !this.logIn.equals(other.logIn))) {
             return false;
         }
@@ -62,6 +64,7 @@ public class Admin extends User implements Serializable {
 
     @Override
     public String toString() {
+
         return "com.tartanga.grupo4.customers.Admin[ id=" + logIn + " ]";
     }
     
