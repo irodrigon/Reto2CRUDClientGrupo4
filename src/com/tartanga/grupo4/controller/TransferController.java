@@ -10,6 +10,7 @@ import com.tartanga.grupo4.models.Transfers;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -307,11 +308,9 @@ public class TransferController implements Initializable {
 
     @FXML
     private void loadAllTransfers() {
-        TransferRESTFull client = new TransferRESTFull();
-        List<Transfers> transferList = client.findAll_XML(new GenericType<List<Transfers>>() {
-        });
-        transferData = FXCollections.observableArrayList(transferList);
-        tbTransfer.setItems(transferData);
+        ObservableList<Transfers> add = FXCollections.observableArrayList(transferManager.findAll_XML(new GenericType<List<Transfers>>() {
+        }));
+        tbTransfer.setItems(add);
     }
 
     @FXML
@@ -325,20 +324,20 @@ public class TransferController implements Initializable {
         String startDate = dtpFirst.getValue().toString();
         String endDate = dtpLast.getValue().toString();
 
-        // Llamar al método RESTful para obtener transferencias por fecha
-        TransferRESTFull client = new TransferRESTFull();
         try {
-            List<Transfers> filteredTransfers = client.findByDate(
+            // Obtener la lista de transferencias filtradas desde transferManager
+            List<Transfers> resultList = transferManager.findByDate(
                     new GenericType<List<Transfers>>() {
-            },
-                    startDate,
-                    endDate
+            }, startDate, endDate
             );
+
+            // Convertir la lista a un ObservableList
+            ObservableList<Transfers> filteredTransfers = FXCollections.observableArrayList(resultList);
 
             // Actualizar la tabla con los datos filtrados
             transferData = FXCollections.observableArrayList(filteredTransfers);
             tbTransfer.setItems(transferData);
-
+            
         } catch (Exception e) {
             System.err.println("Error al filtrar transferencias por fecha: " + e.getMessage());
         }
@@ -360,31 +359,30 @@ public class TransferController implements Initializable {
             return;
         }
 
-        // Llamar al método RESTful adecuado
-        TransferRESTFull client = new TransferRESTFull();
         try {
+            ObservableList<Transfers> filteredTransfers;
             if ("Sender".equalsIgnoreCase(selectedFilter)) {
                 // Filtrar por Sender (igual que antes)
-                List<Transfers> filteredTransfers = client.findBySender(new GenericType<List<Transfers>>() {
+                List<Transfers> resultList = transferManager.findBySender(new GenericType<List<Transfers>>() {
                 }, accountValue);
-                // Actualizar la tabla con los datos filtrados
+                filteredTransfers = FXCollections.observableArrayList(resultList);
                 transferData = FXCollections.observableArrayList(filteredTransfers);
                 tbTransfer.setItems(transferData);
 
             } else if ("Reciever".equalsIgnoreCase(selectedFilter)) {
                 // Filtrar por Reciever (igual que antes)
-                List<Transfers> filteredTransfers = client.findByReciever(new GenericType<List<Transfers>>() {
+                List<Transfers> resultList = transferManager.findByReciever(new GenericType<List<Transfers>>() {
                 }, accountValue);
-                // Actualizar la tabla con los datos filtrados
+                filteredTransfers = FXCollections.observableArrayList(resultList);
                 transferData = FXCollections.observableArrayList(filteredTransfers);
                 tbTransfer.setItems(transferData);
 
             } else if ("Id".equalsIgnoreCase(selectedFilter)) {
                 // Filtrar por Id (cambia a usar un solo objeto de tipo Transfers)
-                Transfers filteredTransfer = client.findByID(new GenericType<Transfers>() {
+                Transfers resultList = transferManager.findByID(new GenericType<Transfers>() {
                 }, accountValue);
-                // Mostrar el resultado en la tabla (si solo hay un resultado)
-                transferData = FXCollections.observableArrayList(filteredTransfer);
+                filteredTransfers = FXCollections.observableArrayList(resultList);
+                transferData = FXCollections.observableArrayList(filteredTransfers);
                 tbTransfer.setItems(transferData);
 
             } else {
