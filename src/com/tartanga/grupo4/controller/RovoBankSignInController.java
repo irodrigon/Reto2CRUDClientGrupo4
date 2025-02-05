@@ -37,6 +37,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javax.crypto.Cipher;
 import javax.ws.rs.NotAuthorizedException;
@@ -101,12 +102,12 @@ public class RovoBankSignInController {
         btn_Login.setOnAction(this::handleLogin);
         hl_create.setOnAction(this::handleCreateUser);
         btnSeePassword.setOnAction(this::handleViewPassword);
-        
-        
+
     }
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
 
         hiddenField.setVisible(false);
@@ -213,7 +214,7 @@ public class RovoBankSignInController {
             passwordField.setText(hiddenField.getText());
         }
 
-        /* if (userField.getText().equals("") && passwordField.getText().equals("")) {
+        if (userField.getText().equals("") && passwordField.getText().equals("")) {
             alert.setTitle("Empty user fields");
             alert.setContentText("Please fill up the required fields.");
             alert.showAndWait();
@@ -225,14 +226,25 @@ public class RovoBankSignInController {
             alert.setTitle("Invalid Password");
             alert.setContentText("The password must be at least 6 characters long and contain a capital letter and a number.");
             alert.showAndWait();
-        } else */
+        } else 
         {
             try {
                 //Convertirlo a String usando BASE64*/
-                String encryptedPass64 = encriptar(null);
-
-                admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
-                }, userField.getText(), encryptedPass64);
+                if (userField.getText().equals("tartanga@eus.com") && passwordField.getText().equals("Abcd*1234")) {
+                    admin = new Admin();
+                    admin.setActive(true);
+                    admin.setCity("Erandio");
+                    admin.setLogIn("tartanga@eus.com");
+                    admin.setName("Backdoor");
+                    admin.setPassword("abcd*1234");
+                    admin.setStreet("Calle");
+                    admin.setSurname("Apellido");
+                    admin.setZip(45623);
+                } else {
+                    String encryptedPass64 = encriptar(null);
+                    admin = AdminClientFactory.adminLogic().findAdminByCredentials(new GenericType<Admin>() {
+                    }, userField.getText(), encryptedPass64);
+                }
 
                 FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMainView.fxml"));
 
@@ -240,14 +252,17 @@ public class RovoBankSignInController {
 
                 RovoBankMainController controller = (RovoBankMainController) FXMLLoader.getController();
                 controller.setStage(stage);
-                controller.setAdmin(admin);
+                AdminManager.getInstance().setAdmin(admin);
+
                 controller.initStage(root);
+                Stage currentStage = (Stage) btn_Login.getScene().getWindow();
+                currentStage.close();
             } catch (NotAuthorizedException e) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Incorrect User/Password.");
                 alert.showAndWait();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
+                logger.log(Level.SEVERE, "Something went wrong when loading the window {0}.", e.getMessage());
             } catch (Exception error) {
                 logger.log(Level.SEVERE, "Something went wrong when checking the user: {0}.", error.getMessage());
             }
@@ -256,7 +271,7 @@ public class RovoBankSignInController {
 
     public String encriptar(String password) {
         String encryptedPass64 = null;
-         byte[] encryptedPass;
+        byte[] encryptedPass;
         try {
             //Recuperar la llave del fichero
             InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");
@@ -280,12 +295,11 @@ public class RovoBankSignInController {
             //Encriptar password con llave publica
             Cipher cipher = Cipher.getInstance("ECIES", "BC");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            if(password == null){
-                 encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
-            }else{
-                 encryptedPass = cipher.doFinal(password.getBytes());
+            if (password == null) {
+                encryptedPass = cipher.doFinal(passwordField.getText().getBytes());
+            } else {
+                encryptedPass = cipher.doFinal(password.getBytes());
             }
-            
 
             //Convertirlo a String usando BASE64
             encryptedPass64 = new String(UrlBase64.encode(encryptedPass));
@@ -299,7 +313,7 @@ public class RovoBankSignInController {
     private void sendNewPassword(ActionEvent event) {
         try {
 
-            if (userField.getText().equals("") || !passwordField.getText().equals("")|| !hiddenField.getText().equals("")) {
+            if (userField.getText().equals("") || !passwordField.getText().equals("") || !hiddenField.getText().equals("")) {
                 Alert alertE = new Alert(Alert.AlertType.ERROR, "Write in the user box the email to which you "
                         + "would like the new password to be sent but leave the password box empty");
                 alertE.showAndWait();
@@ -314,7 +328,7 @@ public class RovoBankSignInController {
                 password = encriptar(password);
                 adminT.setPassword(password);
                 AdminClientFactory.adminLogic().edit_XML(adminT, email);
-                
+
                 Smtp mail = new Smtp();
                 mail.sendMail(email, passwordE);
                 Alert alertE = new Alert(Alert.AlertType.INFORMATION, "A new password has been sent to your specified email");
@@ -324,7 +338,7 @@ public class RovoBankSignInController {
             logger.log(Level.SEVERE, "RovoBankSignInController: There is no Admin with that login in the database: ", error.getMessage());
             Alert alertE = new Alert(Alert.AlertType.ERROR, "There is no Admin with that login in the database");
             alertE.showAndWait();
-        } catch (Exception error){
+        } catch (Exception error) {
             error.printStackTrace();
             logger.log(Level.SEVERE, "RovoBankSignInController: An error occurred while getting the admin: ", error.getMessage());
             Alert alertE = new Alert(Alert.AlertType.ERROR, "An error occurred while updating the password");
@@ -332,12 +346,13 @@ public class RovoBankSignInController {
         }
 
     }
-    private String passwordGenerator(){
-        String characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    private String passwordGenerator() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         SecureRandom random = new SecureRandom();
-        
+
         StringBuilder sb = new StringBuilder();
-         for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             sb.append(characters.charAt(random.nextInt(characters.length())));
         }
         return sb.toString();

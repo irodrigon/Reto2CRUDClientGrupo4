@@ -15,17 +15,17 @@
             <menus>
                 <Menu fx:id="menuNavigation" styleClass="menu" text="Navigation">
                     <items>
-                        <MenuItem fx:id="menuItemMainView" styleClass="menu-item" text="Main Page" />
-                        <MenuItem fx:id="menuItemAccount" styleClass="menu-item" text="Account Management" />
-                        <MenuItem fx:id="menuItemCredit" styleClass="menu-item" text="Credit card Management" />
-                        <MenuItem fx:id="menuItemTransfer" styleClass="menu-item" text="Transfer Management" />
-                        <MenuItem fx:id="menuItemLoan" styleClass="menu-item" text="Loan Management" />
+                        <MenuItem fx:id="menuItemMainView" onAction="#handleMainView" styleClass="menu-item" text="Main Page" />
+                        <MenuItem fx:id="menuItemAccount" onAction="#handleAccountView" styleClass="menu-item" text="Account Management" />
+                        <MenuItem fx:id="menuItemCredit" onAction="#handleCreditCardView" styleClass="menu-item" text="Credit card Management" />
+                        <MenuItem fx:id="menuItemTransfer" onAction="#handleTransferView" styleClass="menu-item" text="Transfer Management" />
+                        <MenuItem fx:id="menuItemLoan" onAction="#handleLoanView" styleClass="menu-item" text="Loan Management" />
                     </items>
                 </Menu>
                 <Menu fx:id="menuMyProfile" styleClass="menu" text="My Profile">
                     <items>
-                        <MenuItem fx:id="menuItemProfile" styleClass="menu-item" text="Go to my profile" />
-                        <MenuItem fx:id="menuItemLogout" styleClass="menu-item" text="Log out" />
+                        <MenuItem fx:id="menuItemProfile" onAction="#handleProfileView" styleClass="menu-item" text="Go to my profile" />
+                        <MenuItem fx:id="menuItemLogout" onAction="#handleLogoutView" styleClass="menu-item" text="Log out" />
                     </items>
                 </Menu>
                 <Menu fx:id="menuPrint" styleClass="menu" text="Print">
@@ -35,7 +35,7 @@
                 </Menu>
                 <Menu fx:id="menuHelp" styleClass="menu" text="Help">
                     <items>
-                        <MenuItem fx:id="menuItemManual" styleClass="menu-item" text="Manual" />
+                        <MenuItem fx:id="menuItemManual" onAction="#handleHelpView" styleClass="menu-item" text="Help" />
                         <MenuItem fx:id="menuitemAbout" styleClass="menu-item" text="About" />
                     </items>
                 </Menu>

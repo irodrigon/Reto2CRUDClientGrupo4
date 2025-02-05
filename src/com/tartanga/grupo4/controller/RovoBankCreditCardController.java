@@ -173,13 +173,14 @@ public class RovoBankCreditCardController {
 
         creditCardEditingLogic();
        
-        menuItemPrint.setOnAction(this::handlePrintCreditCardReport);
+        //menuItemPrint.setOnAction(this::handlePrintCreditCardReport);
         
     }
 
     @FXML
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Credit Cards");
         stage.setResizable(false);

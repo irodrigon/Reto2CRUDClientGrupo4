@@ -117,6 +117,7 @@
                 </TableView>
                 <Button fx:id="deleteButton" layoutX="1151.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Delete Account(s)" />
                 <Button fx:id="addButton" layoutX="975.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Add Account" />
+                <Button fx:id="printButton" layoutX="48.0" layoutY="558.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="160.0" text="Print" />
             </children>
         </AnchorPane>
     </children>

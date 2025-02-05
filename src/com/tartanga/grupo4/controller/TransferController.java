@@ -17,6 +17,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -93,6 +95,7 @@ public class TransferController implements Initializable {
 
     private Itransfer transferManager;
 
+    private Stage stage;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -127,7 +130,17 @@ public class TransferController implements Initializable {
 
         initTable();
     }
+    public void initStage(Parent root){
+        Scene scene = new Scene(root);
+        stage = new Stage();
+        stage.setScene(scene);
 
+        stage.setTitle("Transger");
+        stage.setResizable(false);
+        
+        stage.show();
+    };
+    
     public void HandleReset(ActionEvent event) {
         loadAllTransfers();
     }
