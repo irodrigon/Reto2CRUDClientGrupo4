@@ -8,16 +8,23 @@ import com.tartanga.grupo4.models.Currency;
 import com.tartanga.grupo4.models.Customer;
 import com.tartanga.grupo4.models.Transfers;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -29,10 +36,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class TransferController implements Initializable {
 
@@ -91,8 +106,21 @@ public class TransferController implements Initializable {
     private MenuItem cnmDelete;
 
     private ObservableList<Transfers> transferData;
+    
+    private static final Logger LOGGER = Logger.getLogger("javaClient");
 
     private Itransfer transferManager;
+    
+    private Stage stage;
+    
+    public void initstage(Parent root){
+
+         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().equals(KeyCode.F6)) {
+                printReport(null);
+            }
+        });
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -120,7 +148,7 @@ public class TransferController implements Initializable {
         btnDelete.setOnAction(this::deleteTransfer);
         cnmDelete.setOnAction(this::deleteTransfer);
 
-        cnmReset.setOnAction(this::HandleReset);
+        cnmReset.setOnAction(this::printReport);
 
         // Configurar los botones
         btnFindDate.setOnAction(this::filterByDate);
@@ -392,5 +420,24 @@ public class TransferController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error al filtrar transferencias por cuenta: " + e.getMessage());
         }
+    }
+        @FXML
+    public void printReport(ActionEvent event) {
+        try {
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/com/tartanga/grupo4/resources/reports/TransferReport.jrxml"));
+
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<Transfers>) this.tbTransfer.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
+        }
+
     }
 }
