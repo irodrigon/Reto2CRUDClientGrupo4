@@ -252,7 +252,6 @@ public class TransferController implements Initializable {
     @FXML
     private void createTransfer(ActionEvent event) {
         try {
-            LOGGER.info("Creando nueva transferencia");
             Transfers newTransfer = new Transfers();
             transferManager.create_XML(newTransfer);
             transferData.add(newTransfer);
@@ -356,9 +355,10 @@ public class TransferController implements Initializable {
 
     @FXML
     private void loadAllTransfers() {
-        ObservableList<Transfers> add = FXCollections.observableArrayList(transferManager.findAll_XML(new GenericType<List<Transfers>>() {
+        List<Transfers> load = FXCollections.observableArrayList(transferManager.findAll_XML(new GenericType<List<Transfers>>() {
         }));
-        tbTransfer.setItems(add);
+        transferData=FXCollections.observableArrayList(load);
+        tbTransfer.setItems(transferData);
     }
 
   @FXML
