@@ -61,7 +61,6 @@ public class RovoBankMovementController {
     private void initialize() {
         btnGoBacktoCreditCards.setOnAction(this::handleGoBackToCreditCardsView);
         
-        viewLogout.setOnMouseClicked(this::handleLogout);
     }
 
     @FXML

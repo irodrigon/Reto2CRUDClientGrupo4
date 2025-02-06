@@ -132,11 +132,8 @@ public class RovoBankCreditCardController {
     @FXML
     private Button btnAddCard;
     
-        @FXML
-    private Button btnPrint;
-
     @FXML
-    private ImageView viewLogout;
+    private Button btnPrint;
 
     @FXML
     private MenuItem contextAdd;
@@ -146,9 +143,6 @@ public class RovoBankCreditCardController {
 
     @FXML
     private MenuItem contextClear;
-
-    @FXML
-    private MenuItem menuItemPrint;
 
     @FXML
     private void initialize() {
@@ -1239,6 +1233,7 @@ public class RovoBankCreditCardController {
             controller.initStage(root);
 
         } catch (IOException e) {
+            e.printStackTrace();
             logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
 
         }
