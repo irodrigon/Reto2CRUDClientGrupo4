@@ -1,7 +1,8 @@
 
 package com.tartanga.grupo4.main;
 
-import com.tartanga.grupo4.controller.RovoBankSignInController;
+
+import com.tartanga.grupo4.controller.RovoBankMainController;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,7 @@ public class MainApplicationRovoBank extends Application {
         Parent root = (Parent)loader.load();
         
         RovoBankSignInController controller = (RovoBankSignInController)loader.getController();
+
         controller.setStage(stage);
         controller.initStage(root);
     }

@@ -474,6 +474,7 @@ public class RovoBankSignUpController {
         fld_City.clear();
         fld_Street.clear();
         fld_Zip.clear();
+        fld_Surname.clear();
         fld_Password.clear();
         fld_Surname.clear();
         hiddenFieldPassword.clear();

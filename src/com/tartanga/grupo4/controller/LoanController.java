@@ -13,6 +13,7 @@ import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javax.ws.rs.core.GenericType;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.scene.Parent;
@@ -309,8 +310,7 @@ public class LoanController {
     private void PrintLoan(ActionEvent event) {
         try {
             LOGGER.info("Beginning print action...");
-            JasperReport report = JasperCompileManager.compileReport(getClass()
-                    .getResourceAsStream("resources.reports\\LoanReport.jrxml.xml"));
+            JasperReport report = JasperCompileManager.compileReport(getClass().getResourceAsStream("/com/tartanga/grupo4/resources/reports/LoanReport.jrxml"));
             JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
             }));
             Map<String, Object> parameters = new HashMap<>();
@@ -341,19 +341,16 @@ public class LoanController {
                 String loanIdText = tfSearch.getText().trim();
                 if (!loanIdText.isEmpty()) {
                     try {
-                        // Intentar convertir el texto a un valor long
+                        // Intentar convertir el texto a un valor Integer
                         Integer loanId = Integer.parseInt(loanIdText);
-
-                        // Obtener los préstamos y filtrarlos por el loanId
-                        List<Loan> allLoans = LoanFactory.getInstance().getILoans().find_XML(new GenericType<List<Loan>>() {
-                        }, loanId); 
-                        for (Loan l : allLoans) {
-                            System.out.println(l.toString());
+                        Loan loan = LoanFactory.getInstance().getILoans().find_XML(new GenericType<List<Loan>>() {
+                        }, loanId).stream().findFirst().orElse(null);
+                        if (loan != null) {
+                            filteredLoans.add(loan);
+                        } else {
+                            showErrorAlert("No Loan Found", "No loan found with the given ID.");
                         }
-                        // Filtrar los préstamos por el loanId
-
                     } catch (NumberFormatException e) {
-                        // Mostrar alerta en caso de error al parsear el ID
                         showErrorAlert("Invalid ID", "Please enter a valid loan ID.");
                         return;
                     }
@@ -383,7 +380,7 @@ public class LoanController {
                 }
             } // Filtrar por tasa de interés
             else if (selectedOption.equals("Search by interest rate")) {
-                String interestRateText = tfSearch.getText();// Esto obtiene el valor seleccionado
+                String interestRateText = tfSearch.getText();
                 if (!interestRateText.isEmpty()) {
                     try {
                         int interestRate = Integer.parseInt(interestRateText);
@@ -401,7 +398,6 @@ public class LoanController {
             } // Filtrar por cantidad
             else if (selectedOption.equals("Search by Amount")) {
                 String amountText = tfSearch.getText();
-
                 if (!amountText.isEmpty()) {
                     try {
                         double amount = Double.parseDouble(amountText);
@@ -421,6 +417,25 @@ public class LoanController {
 
         // Actualizar la tabla con los préstamos filtrados
         loanTable.setItems(filteredLoans);
+    }
+
+    @FXML
+    private void Print(ActionEvent event) {
+        try {
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/com/tartanga/grupo4/resources/reports/LoanReport.jrxml"));
+
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<Loan>) this.loanTable.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
+        }
     }
 
 }

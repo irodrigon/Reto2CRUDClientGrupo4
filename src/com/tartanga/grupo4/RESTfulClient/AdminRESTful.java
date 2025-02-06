@@ -58,7 +58,6 @@ public class AdminRESTful implements AdminLogicController {
 
     @Override
     public Admin getAdmin(GenericType<Admin> responseType, String id) throws WebApplicationException {
-
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
