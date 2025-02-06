@@ -25,11 +25,7 @@
             <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
               <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
               <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-            <ImageView fitHeight="87.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/images/Out.png" />
-               </image>
-            </ImageView>
+
           </HBox>
          <HBox prefHeight="29.0" prefWidth="1366.0">
             <children>
@@ -56,7 +52,7 @@
                     <items>
                         <MenuItem fx:id="cnmNew" mnemonicParsing="false" text="New Transfer" />
                         <MenuItem fx:id="cnmDelete" mnemonicParsing="false" text="Delete Transfer" />
-                      <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Reset Data" />
+                      <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Print Report" />
                     </items>
                   </ContextMenu>
                </contextMenu>

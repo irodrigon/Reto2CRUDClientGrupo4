@@ -3,6 +3,7 @@ package com.tartanga.grupo4.main;
 
 
 import com.tartanga.grupo4.controller.RovoBankMainController;
+import com.tartanga.grupo4.controller.RovoBankSignInController;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;

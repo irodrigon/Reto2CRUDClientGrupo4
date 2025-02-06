@@ -131,6 +131,9 @@ public class RovoBankCreditCardController {
 
     @FXML
     private Button btnAddCard;
+    
+        @FXML
+    private Button btnPrint;
 
     @FXML
     private ImageView viewLogout;
@@ -162,8 +165,6 @@ public class RovoBankCreditCardController {
 
         btnAddCard.setOnAction(this::handleAddTableRow);
 
-        viewLogout.setOnMouseClicked(this::handleLogout);
-
         btnFind.setOnAction(this::handleFindCreditCardByCardNumber);
 
         comboSelectDate.valueProperty().addListener(this::handleActivateDatePickerFrom);
@@ -173,7 +174,8 @@ public class RovoBankCreditCardController {
         contextClear.setOnAction(this::handleClearTable);
 
         creditCardEditingLogic();
-
+        
+        btnPrint.setOnAction(this::handlePrintCreditCardReport);
     }
 
     @FXML

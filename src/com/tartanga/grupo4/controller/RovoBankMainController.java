@@ -193,7 +193,8 @@ public class RovoBankMainController {
         ButtonType CloseButton = new ButtonType("Close");
         alert.getButtonTypes().setAll(CloseButton);
         alert.setHeaderText("About");
-        alert.setContentText("Authors: Aitor Barrio Pinos, Alin Marian Dadacu, Aratz Eguren Zarraga, Inigo Rodriguez Gonzalo\n\n\n                           Workplace: Tartanga, Erandio");
+        alert.setContentText("Authors: Aitor Barrio Pinos, Alin Marian Dadacu, Aratz Eguren Zarraga, Inigo Rodriguez Gonzalo\n\n\n"
+                + "                           Workplace: Tartanga, Erandio");
         alert.showAndWait();
     }
 

@@ -1,5 +1,6 @@
 package com.tartanga.grupo4.controller;
 
+
 import com.tartanga.grupo4.businesslogic.TransferRESTFull;
 import com.tartanga.grupo4.businesslogic.Itransfer;
 import com.tartanga.grupo4.businesslogic.TransferFactory;
@@ -109,25 +110,11 @@ public class TransferController implements Initializable {
     private ObservableList<Transfers> transferData;
     
     private static final Logger LOGGER = Logger.getLogger("javaClient");
-
-    private Itransfer transferManager;
     
     private Stage stage;
     
-    public void initstage(Parent root){
-
-         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode().equals(KeyCode.F6)) {
-                printReport(null);
-            }
-        });
-    }
-
-    private Stage stage;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        transferManager = TransferFactory.getItransfer();
 
         // Configurar ComboBox de cuentas
         cmbAccount.getItems().addAll("Sender", "Reciever", "Id");
@@ -166,6 +153,12 @@ public class TransferController implements Initializable {
         stage.setTitle("Transger");
         stage.setResizable(false);
         
+        stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().equals(KeyCode.F6)) {
+                printReport(null);
+            }
+        });
+        
         stage.show();
     };
     
@@ -194,7 +187,7 @@ public class TransferController implements Initializable {
                 }
                 Transfers transfer = t.getRowValue();
                 transfer.setSender(newValue);
-                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+                TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar remitente", e);
             }
@@ -211,7 +204,7 @@ public class TransferController implements Initializable {
                 }
                 Transfers transfer = t.getRowValue();
                 transfer.setReciever(newValue);
-                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+//                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar destinatario", e);
             }
@@ -227,7 +220,7 @@ public class TransferController implements Initializable {
                 }
                 Transfers transfer = event.getRowValue();
                 transfer.setTransferDate(event.getNewValue());
-                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar fecha de transferencia", e);
             }
@@ -238,7 +231,7 @@ public class TransferController implements Initializable {
             try {
                 Transfers transfer = t.getRowValue();
                 transfer.setAmount(t.getNewValue());
-                transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+                ////TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar monto de transferencia", e);
             }
@@ -264,7 +257,7 @@ public class TransferController implements Initializable {
     private void createTransfer(ActionEvent event) {
         try {
             Transfers newTransfer = new Transfers();
-            transferManager.create_XML(newTransfer);
+            TransferFactory.getInstance().getItransfer().create_XML(newTransfer);
             transferData.add(newTransfer);
             tbTransfer.setItems(transferData);
             tbTransfer.refresh();
@@ -280,7 +273,7 @@ public class TransferController implements Initializable {
         try {
             LOGGER.info("Eliminando transferencia seleccionada");
             Transfers borrar = tbTransfer.getSelectionModel().getSelectedItem();
-            transferManager.remove(String.valueOf(borrar.getTransferId()));
+            TransferFactory.getInstance().getItransfer().remove(String.valueOf(borrar.getTransferId()));
             tbTransfer.getItems().remove(borrar);
             tbTransfer.refresh();
             LOGGER.info("Transferencia eliminada correctamente");
@@ -366,7 +359,7 @@ public class TransferController implements Initializable {
 
     @FXML
     private void loadAllTransfers() {
-        List<Transfers> load = FXCollections.observableArrayList(transferManager.findAll_XML(new GenericType<List<Transfers>>() {
+        List<Transfers> load = FXCollections.observableArrayList(TransferFactory.getInstance().getItransfer().findAll_XML(new GenericType<List<Transfers>>() {
         }));
         transferData=FXCollections.observableArrayList(load);
         tbTransfer.setItems(transferData);
@@ -386,7 +379,7 @@ public class TransferController implements Initializable {
             }
             String startDate = dtpFirst.getValue().toString();
             String endDate = dtpLast.getValue().toString();
-            List<Transfers> resultList = transferManager.findByDate(new GenericType<List<Transfers>>() {}, startDate, endDate);
+            List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByDate(new GenericType<List<Transfers>>() {}, startDate, endDate);
             transferData = FXCollections.observableArrayList(resultList);
             tbTransfer.setItems(transferData);
             LOGGER.info("Transferencias filtradas correctamente");
@@ -411,19 +404,19 @@ public class TransferController implements Initializable {
             }
             ObservableList<Transfers> filteredTransfers;
             if ("Sender".equalsIgnoreCase(selectedFilter)) {
-                List<Transfers> resultList = transferManager.findBySender(new GenericType<List<Transfers>>() {}, accountValue);
-                filteredTransfers = FXCollections.observableArrayList(resultList);
+               List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findBySender(new GenericType<List<Transfers>>() {}, accountValue);
+               filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Reciever".equalsIgnoreCase(selectedFilter)) {
-                List<Transfers> resultList = transferManager.findByReciever(new GenericType<List<Transfers>>() {}, accountValue);
+                List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByReciever(new GenericType<List<Transfers>>() {}, accountValue);
                 filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Id".equalsIgnoreCase(selectedFilter)) {
-                Transfers result = transferManager.findByID(new GenericType<Transfers>() {}, accountValue);
+                Transfers result = TransferFactory.getInstance().getItransfer().findByID(new GenericType<Transfers>() {}, accountValue);
                 filteredTransfers = FXCollections.observableArrayList(result);
             } else {
                 loadAllTransfers();
                 return;
             }
-            transferData = FXCollections.observableArrayList(filteredTransfers);
+            //transferData = FXCollections.observableArrayList(filteredTransfers);
             tbTransfer.setItems(transferData);
             LOGGER.info("Filtrado por cuenta completado correctamente");
         } catch (Exception e) {

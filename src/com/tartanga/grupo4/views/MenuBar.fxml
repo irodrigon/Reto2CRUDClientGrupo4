@@ -20,6 +20,7 @@
                         <MenuItem fx:id="menuItemCredit" onAction="#handleCreditCardView" styleClass="menu-item" text="Credit card Management" />
                         <MenuItem fx:id="menuItemTransfer" onAction="#handleTransferView" styleClass="menu-item" text="Transfer Management" />
                         <MenuItem fx:id="menuItemLoan" onAction="#handleLoanView" styleClass="menu-item" text="Loan Management" />
+                        <MenuItem fx:id="menuItemCustomer" onAction="#handleCustomerView" styleClass="menu-item" text="Customer creation" />
                     </items>
                 </Menu>
                 <Menu fx:id="menuMyProfile" styleClass="menu" text="My Profile">
@@ -36,7 +37,7 @@
                 <Menu fx:id="menuHelp" styleClass="menu" text="Help">
                     <items>
                         <MenuItem fx:id="menuItemManual" onAction="#handleHelpView" styleClass="menu-item" text="Help" />
-                        <MenuItem fx:id="menuitemAbout" styleClass="menu-item" text="About" />
+                        <MenuItem fx:id="menuitemAbout" onAction="#handleViewAbout" styleClass="menu-item" text="About" />
                     </items>
                 </Menu>
             </menus>

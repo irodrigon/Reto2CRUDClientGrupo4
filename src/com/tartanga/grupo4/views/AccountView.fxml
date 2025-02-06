@@ -33,11 +33,7 @@
                         <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
                         <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
                         <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-                        <ImageView fx:id="viewLogout" fitHeight="81.0" fitWidth="157.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../resources/images/Out.png" />
-                            </image>
-                        </ImageView>
+
                     </children>
                 </HBox>
                 <!-- MenuBar -->

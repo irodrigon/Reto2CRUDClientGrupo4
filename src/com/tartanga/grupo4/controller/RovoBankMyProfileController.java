@@ -166,6 +166,9 @@ public class RovoBankMyProfileController {
 
         btnSeeCurrentPassword.setStyle("-fx-background-color: transparent; -fx-border-color:transparent");
         if (admin != null) {
+            if(admin.getLogIn().equals("tartanga@eus.com")){
+               btnChangePassword.setDisable(true);
+            }
             lblUsername.setText(admin.getLogIn());
             lblName.setText(admin.getName());
             lblSurname.setText(admin.getSurname());
@@ -176,11 +179,12 @@ public class RovoBankMyProfileController {
         } else {
             Alert alertE = new Alert(Alert.AlertType.ERROR, "Admin data could not be retrieved, log out and try again");
             alertE.showAndWait();
+             btnChangePassword.setDisable(true);
         }
 
         stage.setTitle("My profile");
         stage.setResizable(false);
-        btnChangePassword.setDisable(true);
+
         stage.show();
 
     }

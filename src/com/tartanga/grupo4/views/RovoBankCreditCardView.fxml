@@ -28,11 +28,7 @@
             <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
               <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
               <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-            <ImageView fx:id="viewLogout" fitHeight="81.0" fitWidth="157.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="/com/tartanga/grupo4/resources/images/logoutImage.png" />
-               </image>
-            </ImageView>
+
           </HBox>
          <HBox prefHeight="29.0" prefWidth="1366.0">
             <children>
@@ -91,6 +87,7 @@
                <DatePicker fx:id="dtPickerFrom" layoutX="75.0" layoutY="183.0" prefHeight="23.0" prefWidth="262.0" />
                <DatePicker fx:id="dtPickerTo" layoutX="75.0" layoutY="226.0" prefHeight="23.0" prefWidth="262.0" />
                <Button fx:id="btnSearch" layoutX="139.0" layoutY="282.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Search" />
+               <Button fx:id="btnPrint" layoutX="139.0" layoutY="330.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Print report" />
                <Label fx:id="lblSearch" layoutX="125.0" layoutY="89.0" text="Search Dates:" />
                <Label fx:id="lblFrom" layoutX="10.0" layoutY="183.0" text="From:" />
                <Label fx:id="lblTo" layoutX="29.0" layoutY="226.0" text="To:" />

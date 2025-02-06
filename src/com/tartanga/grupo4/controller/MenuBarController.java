@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -120,7 +121,8 @@ public class MenuBarController implements Initializable {
         } catch (Exception error) {
             Alert alertE = new Alert(Alert.AlertType.ERROR, "An error happen when loading transfer window");
             alertE.showAndWait();
-            LOGGER.log(Level.INFO, "MenuBarController: An error happen when loading transfer view: {}", error.getMessage());
+            error.printStackTrace();
+            LOGGER.log(Level.INFO, "MenuBarController: An error happen when loading transfer view: {0}", error.getMessage());
         }
 
     }
@@ -188,6 +190,7 @@ public class MenuBarController implements Initializable {
 
     }
 
+
     @FXML
     public void handleHelpView(ActionEvent event) {
         try {
@@ -203,6 +206,38 @@ public class MenuBarController implements Initializable {
             LOGGER.log(Level.INFO, "MenuBarController: An error happen when loading help view: {}", error.getMessage());
         }
 
+    }
+    
+            @FXML
+    public void handleCustomerView(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankCustomersView.fxml"));
+
+            Parent root = (Parent) loader.load();
+
+            RovoBankCustomersController controller = (RovoBankCustomersController) loader.getController();
+
+            controller.initStage(root);
+
+            Stage currentStage = (Stage) menuBar.getScene().getWindow();
+            currentStage.close();
+        } catch (Exception error) {
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "An error happen when loading your profile window");
+            alertE.showAndWait();
+            LOGGER.log(Level.INFO, "MenuBarController: An error happen when loading MyProfile view: {}", error.getMessage());
+        }
+
+    }
+
+    @FXML
+    private void handleViewAbout(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        ButtonType CloseButton = new ButtonType("Close");
+        alert.getButtonTypes().setAll(CloseButton);
+        alert.setHeaderText("About");
+        alert.setContentText("Authors: Aitor Barrio Pinos, Alin Marian Dadacu, Aratz Eguren Zarraga, Inigo Rodriguez Gonzalo\n\n\n"
+                + "                           Workplace: Tartanga, Erandio");
+        alert.showAndWait();
     }
 
 }
