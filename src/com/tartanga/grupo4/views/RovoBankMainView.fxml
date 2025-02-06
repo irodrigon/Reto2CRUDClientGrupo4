@@ -13,40 +13,18 @@
 
 <AnchorPane id="AnchorPane" fx:id="signInPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.RovoBankMainController">
     <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <children>
-            <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1366.0" spacing="10" styleClass="header">
-                <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
-                <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
-                <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-            </HBox>
-            <!-- MenuBar -->
-            <MenuBar fx:id="menuBar" prefHeight="31.0" prefWidth="1399.0">
-                <Menu fx:id="menuNavigation" styleClass="menu" text="Navigation">
-                    <MenuItem fx:id="menuItemCustomers" styleClass="menu-item" text="Customers creation" />
-                    <MenuItem fx:id="menuItemAccount" styleClass="menu-item" text="Account Management" />
-                    <MenuItem fx:id="menuItemCredit" styleClass="menu-item" text="Credit card Management" />
-                    <MenuItem fx:id="menuItemTransfer" styleClass="menu-item" text="Transfer Management" />
-                    <MenuItem fx:id="menuItemLoan" styleClass="menu-item" text="Loan Management" />
-                </Menu>
-                <Menu fx:id="menuMyProfile" styleClass="menu" text="My Profile">
-                    <items>
-                        <MenuItem fx:id="menuItemProfile" styleClass="menu-item" text="Go to my profile" />
-                        <MenuItem fx:id="menuItemLogout" styleClass="menu-item" text="Log out" />
-                    </items>
-                </Menu>
-                <Menu fx:id="menuPrint" styleClass="menu" text="Print">
-                    <MenuItem fx:id="menuItemPrint" styleClass="menu-item" text="Print report" />
-                </Menu>
-                <Menu fx:id="menuHelp" styleClass="menu" text="Help">
-                    <items>
-                        <MenuItem fx:id="menuItemManual" styleClass="menu-item" text="Manual" />
-                        <MenuItem fx:id="menuitemAbout" styleClass="menu-item" text="About" />
-                    </items>
-                </Menu>
-            </MenuBar>
-           
-        </children>
-    </VBox>
+      <children>
+        <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1366.0" spacing="10" styleClass="header">
+            <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+              <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+              <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+          </HBox>
+                                  <!-- MenuBar -->
+             <fx:include fx:id="hBoxMenuBar" source="MenuBar.fxml"/>
+          
+      </children>
+   </VBox>
+
     <TableView fx:id="customersTable" layoutX="14.0" layoutY="175.0" prefHeight="534.0" prefWidth="1343.0" styleClass="table-view">
         <columns>
             <TableColumn fx:id="columnDni" prefWidth="211.0" text="DNI" />

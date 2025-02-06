@@ -123,6 +123,7 @@ public class TransferController implements Initializable {
         });
     }
 
+    private Stage stage;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -157,7 +158,17 @@ public class TransferController implements Initializable {
 
         initTable();
     }
+    public void initStage(Parent root){
+        Scene scene = new Scene(root);
+        stage = new Stage();
+        stage.setScene(scene);
 
+        stage.setTitle("Transger");
+        stage.setResizable(false);
+        
+        stage.show();
+    };
+    
     public void HandleReset(ActionEvent event) {
         loadAllTransfers();
     }

@@ -40,6 +40,6 @@ public class HelpController {
         WebEngine webEngine = webView.getEngine();
         //Load help page.
         webEngine.load(getClass()
-                .getResource("/com/tartanga/grupo4/views/AccountHelp.html").toExternalForm());
+                .getResource("/com/tartanga/grupo4/views/IndexHelp.html").toExternalForm());
     }
 }

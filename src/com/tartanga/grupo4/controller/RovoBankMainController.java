@@ -100,14 +100,12 @@ public class RovoBankMainController {
 
     @FXML
     private void initialize() {
-        menuItemCredit.setOnAction(this::handleCreditCard);
-        menuItemProfile.setOnAction(this::handleViewMyProfile);
-        menuItemCustomers.setOnAction(this::handleViewCustomersCreation);
-        menuitemAbout.setOnAction(this::handleViewAbout);
+
     }
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
         
         try {
@@ -165,7 +163,7 @@ public class RovoBankMainController {
 
             RovoBankMyProfileController controller = (RovoBankMyProfileController) FXMLLoader.getController();
             controller.setStage(stage);
-            controller.setAdmin(admin);
+           // controller.setAdmin(admin);
             controller.initStage(root);
 
         } catch (IOException e) {

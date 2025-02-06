@@ -16,11 +16,14 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -67,7 +70,7 @@ public class LoanController {
     private Button btnSearch;
     @FXML
     private Button btnDelete;
-
+    private Stage stage;
     @FXML
     private void initialize() {
         loanTable.setEditable(true);
@@ -170,6 +173,17 @@ public class LoanController {
 
         // Cargar los préstamos al iniciar
         mostrarTodosLosPrestamos();
+    }
+    
+        public void initStage(Parent root) {
+        Scene scene = new Scene(root);
+        stage = new Stage();
+        stage.setScene(scene);
+
+        stage.setTitle("Loans");
+        stage.setResizable(false);
+        stage.show();
+
     }
 
     private void configureEditableColumns() {

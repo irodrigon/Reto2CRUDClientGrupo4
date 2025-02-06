@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Help page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href=".././resources/styles/HelpAccountStyle.css">
+
+    </head>
+    <body>
+                    <a href="IndexHelp.html">Go back to index</a>
+        <div>
+            <h3>Credit Card: Help</h3>
+            <img src=".././resources/images/CreditCardMainWindow.png" width="600" height="400" alt="No image found"/>
+            <h4>General description</h4>
+            <p>This window purpose is to manage the credit cards of RovoBank's customers.
+                It will show you all credit cards or filtered based on different criteria.
+                You can also create new credit cards, modify their data or delete them.</p>
+            <h4>Selecting a line</h4>
+            <img src=".././resources/images/CreditCardSelectingALine.png" width="800" height="450" alt="No image found"/>
+            <p>If you select a line from the table it will cast in a blue color. The buttons <strong>Remove card</strong>
+               and <strong>Go to movements</strong> disabled by default will enable as well, allowing you to perform these actions, 
+               which will be referred in later sections of this help view. You can only select a line at a time, so if you try to select 
+               multiple lines at the same time, this is not allowed.
+            </p>
+            <h4>Adding a credit card</h4>
+            <img src=".././resources/images/ButtonAddCard.png" width="800" height="450" alt="No image found"/>
+            <p>When you press the button <strong>Add Card</strong> the application will add a new credit card. The credit card number
+               will be a random 16 digit number, the creation date will be the date of today, the expiration date will calculate 5 years
+               from now on, the CVV will be a random 3 digit number as well, the PIN will be a generated 4 number PIN and the account number
+               will be chosen from the first account number in the database. Here below is an example of credit card creation with random values:
+               <img src=".././resources/images/AfterPressingButtonAddCard.png" width="800" height="450" alt="No image found"/>
+               <img src=".././resources/images/AddingCardDetail.png" width="800" height="450" alt="No image found"/>
+               You can create all the credit cards you want, so use at your own responsibility.
+            </p>
+            <h4>Editing a credit card field</h4>
+            <p>You need to double click on the field you want to edit to begin editing the data you need to change. For example in the image,
+               you may need to change the credit card number, then double click on the credit card number field, as seen on the image:
+               <img src=".././resources/images/EditingCreditCardFirstSteps.png" width="800" height="450" alt="No image found"/>
+               If you need to cancel, press ESC key and a confirmation is shown, as shown below:
+               <img src=".././resources/images/EditingCreditCardCancel.png" width="800" height="450" alt="No image found"/>
+               If you press, "Yes", you will quit editing, if you press "No", you will continue editing.
+               These fields are sensible to the data you enter, so if you type any other thing that are not 16 numbers in the credit card number field,
+               for example, you will get an error, and you will continue editing until you get the correct data or you cancel the edit.
+               The same thing happens for the dates which must be entered in the correct date format, or the PIN and CVV fields which must be 4 and 3
+               numbers:
+               <img src=".././resources/images/CreditCardEditError.png" width="800" height="450" alt="No image found"/>
+               The only difference is when you need to edit the account number field, it will first ask you for confirmation, as it is sensitive
+               information:
+               <img src=".././resources/images/ChangingAccountNumber.png" width="800" height="450" alt="No image found"/>
+               Then it will ask you to choose from a list of accounts, if there were accounts to choose from:
+               <img src=".././resources/images/ChangingAccountNumberSelection.png" width="800" height="450" alt="No image found"/>
+               Last, it will ask you for confirmation on changing the account number:
+               <img src=".././resources/images/ChangingAccountNumberConfirming.png" width="800" height="450" alt="No image found"/>
+               Be advised that all changes, after being confirmed, are irreversible, so edit on your own account.
+            </p>
+            <h4>Showing credit card Movements</h4>
+               <p>
+                  The <strong>Go to movements</strong> button, as mentioned earlier, is only shown when a line is selected, so 
+                  you need to select a line before pressing the button:
+                  <img src=".././resources/images/MovementsFirstSteps.png" width="800" height="450" alt="No image found"/>
+                  If there are movements in the credit card, it will show you the detail of the movements of that credi card:
+                  <img src=".././resources/images/MovementDetails.png" width="800" height="450" alt="No image found"/>
+                  If there are no movements, it will show you a blank table:
+                  <img src=".././resources/images/NoMovements.png" width="800" height="450" alt="No image found"/>
+                  You can go back to the credit card window by pressing the <strong>"Go back"</strong> button on the bottom of the Movements window.
+                  <img src=".././resources/images/GoingBackFromMovements.png" width="800" height="450" alt="No image found"/>
+               </p>
+            <h4>Removing a credit card</h4>
+            <p>You must first select the line you want to remove from the table to remove the credit card. Then press the button <br/><strong>Remove card</strong>. 
+               Then a confirmation message is shown:
+               <img src=".././resources/images/ConfirmingRemoval.png" width="800" height="450" alt="No image found"/>
+               The credit card should now be removed from your table.
+            </p>
+            <h4>Finding a credit card by card number</h4>
+            <p>You can find a credit card if you enter the correct value in the field which is next to the button labeled as <strong>Find by card number</strong>
+               You must enter the exact value though. If you enter an incorrect value which is not between the values shown in the table, it will show a message telling
+               you it has not found you search:
+               <img src=".././resources/images/NoCreditCardValueFound.png" width="800" height="450" alt="No image found"/>
+               On the other hand, if you have a set of values, as the ones we have here:
+               <img src=".././resources/images/AllValues.png" width="800" height="450" alt="No image found"/>
+               And you enter a value that is between those and after that you press the button <strong>Find by card number</strong>, as shown in the example below:
+               <img src=".././resources/images/findingFirststep.png" width="800" height="450" alt="No image found"/>
+               It will filter the value desired:
+               <img src=".././resources/images/FindingAValue.png" width="800" height="450" alt="No image found"/>
+               The field is cleared after the search is completed. If you need to reset all values, you will need to press the button 
+               <br/><strong>Show all cards</strong>:
+               <img src=".././resources/images/ShowAllCards.png" width="800" height="450" alt="No image found"/>
+               <img src=".././resources/images/AllValues.png" width="800" height="450" alt="No image found"/>
+               That should reset all values.
+               That is all you need to know about finding a value by card number.
+            </p>
+            <h4>Finding a credit card by creation/expiration dates</h4>
+            <p>You first would need to select an option from the drop-down button labeled <strong>Select creation/expiration date</strong>
+            <img src=".././resources/images/searchDates.png" width="800" height="450" alt="No image found"/> 
+            <img src=".././resources/images/comboDates.png" width="800" height="450" alt="No image found"/>  
+            whether it is creation date or expiration date you need to follow the same steps:
+            First you need to select a date from the calendar button that is now available on the <strong>From</strong> field when you have chosen your last option(creation/expiration date):
+            Keep in mind you need to select a range of dates from the values that are in the table:
+            <img src=".././resources/images/selectingFromField.png" width="800" height="450" alt="No image found"/>
+            Second, you have to select a date on the <strong>To</strong> calendar field which is now available for pressing:
+            <img src=".././resources/images/selectingToField.png" width="800" height="450" alt="No image found"/>
+            Next, press the <strong>Search</strong> that is now activated:
+            <img src=".././resources/images/searchC.png" width="800" height="450" alt="No image found"/>
+            If the date is in the values of the table it will be shown as filtered:
+            <img src=".././resources/images/filteringaValidDate.png" width="800" height="450" alt="No image found"/>
+            If not, it will show you a message telling you it is not:
+            <img src=".././resources/images/nodatesfound.png" width="800" height="450" alt="No image found"/>
+            The dates buttons are reset to the date of today and also deactivated after each search.
+            If you want to reset the values of the table press the <strong>Show all cards</strong> button. 
+            That is all you need to know about searching by dates.</p>
+            <h4>Showing all cards</h4>
+            <p>This button resets all values in the table, very useful after each filtering.
+            <img src=".././resources/images/ShowAllCards.png" width="800" height="450" alt="No image found"/>
+            </p>
+            <h4>This is the end of credit cards help</h4>
+        </div>
+                                <a href="IndexHelp.html">Go back to index</a>
+    </body>
+</html>
