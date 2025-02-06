@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/style.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.LoanController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.LoanController">
 
     <VBox fx:id="vBoxTop" prefHeight="147.0" prefWidth="1366.0">
         <children>
