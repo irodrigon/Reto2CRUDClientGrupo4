@@ -1,0 +1,77 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 20px;
+    color: #006048;
+}
+
+/* Container */
+div {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Headers */
+h3 {
+    background-color: #147879;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+h4 {
+    color: #147879;
+    border-bottom: 2px solid #147879;
+    padding-bottom: 5px;
+}
+
+strong {
+    color: #006048;
+}
+
+/* Paragraphs */
+p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Images */
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 10px auto;
+    border: 2px solid #006048;
+    border-radius: 5px;
+}
+
+/* Buttons */
+button {
+    background-color: #006048;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #147879;
+}
+
+/* Highlighted Keyboard Keys */
+strong {
+    background: #006048;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 14px;
+}

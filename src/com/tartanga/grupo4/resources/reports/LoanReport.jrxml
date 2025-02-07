@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LoanReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4c981eef-c5fb-4705-b8b0-062567888ce4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ReportTitle" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT * FROM loans]]>
+	</queryString>
+	<field name="loanId" class="java.lang.Long"/>
+	<field name="creationDate" class="java.util.Date"/>
+	<field name="interest" class="java.lang.Integer"/>
+	<field name="startDate" class="java.util.Date"/>
+	<field name="endDate" class="java.util.Date"/>
+	<field name="amount" class="java.lang.Double"/>
+	<field name="period" class="java.lang.Integer"/>
+	<title>
+		<band height="77">
+			<staticText>
+				<reportElement x="0" y="0" width="535" height="70" uuid="e2419adc-ab83-4711-89eb-67ab3a06bb36"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="36"/>
+				</textElement>
+				<text><![CDATA[RovoBank]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="400" y="50" width="100" height="20" uuid="fb2380c0-2b02-4e36-9c32-bc1668fb1e57"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm">
+				<reportElement x="510" y="50" width="100" height="20" uuid="2ef20d98-db8c-496d-a4c2-5f0cc3a0d176"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="50" width="100" height="20" uuid="a67c3898-63ad-4484-b814-6a8692c8e3cc"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Loan Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="30" uuid="bb433946-7cd4-429a-83f8-d6fc07d423eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Loan ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="80" height="30" uuid="42f1eb94-3580-44f5-b4c2-ea5eba597444"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="80" height="30" uuid="e4a29f82-133e-4178-ac75-64b38b2be22e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Starting Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="273" y="0" width="80" height="30" uuid="3bd0e571-a844-44a1-b1a4-e8a0757d9f30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Ending Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="80" height="30" uuid="8cccaabb-16d9-4f85-8157-5453cc72c730"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Interest Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="80" height="30" uuid="88c62775-9cf8-4c94-bdfd-d7789dc80af5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Period]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<textField>
+				<reportElement x="0" y="0" width="80" height="30" uuid="055a9a58-a0fe-434b-8d9b-3e327d31318d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{loanId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="80" height="30" uuid="9ed54979-8fc9-42b5-8750-4f6009af2ec7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="80" height="30" uuid="ff2890bc-2f11-4821-8f26-c0a90d3adf96"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{startDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="273" y="0" width="80" height="30" uuid="347114f4-89d9-4937-8380-c449f177298d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{endDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="0" width="80" height="30" uuid="5cd4dc61-4540-47f3-9b09-9cf253f9931d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{interest}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="80" height="30" uuid="82a74fc2-0110-472d-9446-58e918577036"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="40">
+			<staticText>
+				<reportElement x="0" y="0" width="535" height="30" uuid="0025c53b-11ac-4aaf-a735-11de90c652da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Page : $V{PAGE_NUMBER}]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="106" y="0" width="80" height="30" uuid="88c62775-9cf8-4c94-bdfd-d7789dc80af5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>
