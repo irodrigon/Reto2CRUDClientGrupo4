@@ -16,11 +16,14 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -73,6 +76,10 @@ public class LoanController {
     private Button btnSearch;
     @FXML
     private Button btnDelete;
+
+    private Stage stage;
+
+
 
     /**
      * Initializes the controller. This method is automatically called after the FXML file has been loaded.
@@ -182,6 +189,17 @@ public class LoanController {
 
         // Load all loans into the table
         mostrarTodosLosPrestamos();
+    }
+    
+        public void initStage(Parent root) {
+        Scene scene = new Scene(root);
+        stage = new Stage();
+        stage.setScene(scene);
+
+        stage.setTitle("Loans");
+        stage.setResizable(false);
+        stage.show();
+
     }
 
     /**

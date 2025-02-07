@@ -7,6 +7,7 @@ package com.tartanga.grupo4.RESTfulClient;
 
 import com.tartanga.grupo4.businesslogic.CustomerLogicController;
 import com.tartanga.grupo4.models.Customer;
+import java.net.ConnectException;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.WebApplicationException;
@@ -97,7 +98,7 @@ public class CustomerRESTful implements CustomerLogicController{
     }
     
     @Override
-    public List<Customer> findAllCustomers(GenericType<List<Customer>> responseType) {
+    public List<Customer> findAllCustomers(GenericType<List<Customer>> responseType) throws WebApplicationException {
          WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

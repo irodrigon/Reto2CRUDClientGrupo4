@@ -6,14 +6,11 @@
 package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.businesslogic.AccountFactory;
-import com.tartanga.grupo4.businesslogic.CustomerFactory;
 import com.tartanga.grupo4.exception.AccountDoesNotExistException;
 import com.tartanga.grupo4.models.Account;
 import com.tartanga.grupo4.models.AccountBean;
 import com.tartanga.grupo4.models.Customer;
-import com.tartanga.grupo4.models.Product;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -21,15 +18,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -49,25 +43,20 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import javax.ws.rs.core.GenericType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Menu;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TablePosition;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javax.ws.rs.WebApplicationException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -75,7 +64,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
-import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
 
 /**
  *
@@ -88,6 +76,7 @@ import org.eclipse.persistence.jpa.jpql.parser.NewValueBNF;
  * datos?
  */
 public class AccountController implements Initializable {
+
     ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
     private String formato = resourceBundle.getString("formato_fecha");
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
@@ -148,8 +137,8 @@ public class AccountController implements Initializable {
     private TableColumn<AccountBean, String> colCreationDate;
     @FXML
     private TableColumn<AccountBean, Double> colBalance;
-  /*  @FXML
-    private MenuItem menuItemPrint;*/
+    @FXML
+    private Button printButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -157,6 +146,9 @@ public class AccountController implements Initializable {
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        if (stage == null) {
+            stage = new Stage();
+        }
         stage.setScene(scene);
         stage.setTitle("Account");
         stage.setResizable(false);
@@ -170,8 +162,8 @@ public class AccountController implements Initializable {
         deleteButton.setDisable(true);
         dateSearchButton.setDisable(true);
         accountNumberSearchButton.setDisable(true);
-  
-   //   menuItemPrint.setOnAction(this::handlePrintReport);
+
+        printButton.setOnAction(this::printReport);
         itemAccountNum.setOnAction(this::menuButtonAccountHandler);
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
         itemDate.setOnAction(this::menuButtonDateHandler);
@@ -196,7 +188,7 @@ public class AccountController implements Initializable {
         });
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().equals(KeyCode.F1)) {
-               showHelp(null);
+                showHelp(null);
             }
         });
 
@@ -419,12 +411,6 @@ public class AccountController implements Initializable {
         tableAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mostrarTodasCuentas();
         accountNumber.setPromptText("XXXX-XXXX-XXXX-XXXX-XXXX");
-        /* item2.setOnAction(event -> {
-           AccountBean accountE= tableAccounts.getSelectionModel().getSelectedItem();
-           if(accountE != null){
-               tableAccounts.edit(tableAccounts.getSelectionModel().getSelectedIndex(), colName);
-           }
-        });*/
     }
 
     //METODOS PARA LLENAR LA TABLA
@@ -447,7 +433,7 @@ public class AccountController implements Initializable {
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
             //COMENTAR LA SIGUIENTE ALERTA ANTES DE LANZAR EL TEST CRUD FAIL********************************************************************
-            //alertUser("Cannot get accounts", 0);
+           alertUser("Cannot get accounts", 0);
 
         }
     }
@@ -524,7 +510,7 @@ public class AccountController implements Initializable {
         }
     }
 
-    private ObservableList<AccountBean> organizarData(List<Account> accounts) {
+    public ObservableList<AccountBean> organizarData(List<Account> accounts) {
         LOGGER.log(Level.INFO, "AccountController(organizarData): preparing the Observable List");
         data.clear();
 
@@ -599,13 +585,13 @@ public class AccountController implements Initializable {
 
         return accountT;
     }
-    
-    private void handleSetEdit(ActionEvent event){
+
+    private void handleSetEdit(ActionEvent event) {
         TablePosition<AccountBean, ?> cell = tableAccounts.getSelectionModel().getSelectedCells().get(0);
         int row = cell.getRow();
         TableColumn<AccountBean, ?> column = cell.getTableColumn();
-        if(column!=colAccountNumber){
-           tableAccounts.edit(row, column);
+        if (column != colAccountNumber) {
+            tableAccounts.edit(row, column);
         }
     }
 
@@ -702,20 +688,7 @@ public class AccountController implements Initializable {
                 accountNumberF = accountNumberF.substring(0, 24);
             }
 
-            /* StringBuilder formatted = new StringBuilder();
-            for (int i = 0; i < accountNumberF.length(); i++) {
-                if (i > 0 && i % 4 == 0) {
-                    formatted.append("-");
-                }
-                formatted.append(accountNumberF.charAt(i));
-            }
-            if (!newValue.equals(formatted.toString())) {
-                int caretPosition = accountNumber.getCaretPosition();
-                int formattedCaretPosition = Math.min(caretPosition, formatted.length());
-            }*/
             accountNumber.setText(accountNumberF);
-
-            //accountNumber.positionCaret(formatted.length());
         });
     }
 
@@ -813,6 +786,7 @@ public class AccountController implements Initializable {
         }
 
     }
+
     @FXML
     public void printReport(ActionEvent event) {
         try {
@@ -833,17 +807,18 @@ public class AccountController implements Initializable {
         }
 
     }
+
     @FXML
-    private void showHelp(ActionEvent event){
-        try{
-             LOGGER.log(Level.INFO, "AccountController(showHelp): Loading the webView");
-            FXMLLoader loader = 
-                    new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/AccountHelp.fxml"));
-            Parent root = (Parent)loader.load();
-            HelpController controller = 
-                    ((HelpController)loader.getController());
+    private void showHelp(ActionEvent event) {
+        try {
+            LOGGER.log(Level.INFO, "AccountController(showHelp): Loading the webView");
+            FXMLLoader loader
+                    = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/AccountHelp.fxml"));
+            Parent root = (Parent) loader.load();
+            HelpController controller
+                    = ((HelpController) loader.getController());
             controller.initStage(root);
-        }catch (Exception error){
+        } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(showHelp): Exception while creating the report {0}", error.getMessage());
             alertUser("An error happened while trying to show the help window", 0);
         }

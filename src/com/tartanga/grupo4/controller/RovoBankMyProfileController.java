@@ -26,7 +26,6 @@ import javafx.stage.Stage;
 import javax.ws.rs.core.GenericType;
 import security.Hash;
 
-
 /**
  *
  * @author Iñi
@@ -37,7 +36,7 @@ public class RovoBankMyProfileController {
 
     private Stage stage;
 
-    private Admin admin;
+    private Admin admin = AdminManager.getInstance().getAdmin();
 
     @FXML
     private Label lblUsername;
@@ -121,6 +120,7 @@ public class RovoBankMyProfileController {
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
 
         hiddenFieldPassword.setVisible(false);
@@ -165,14 +165,22 @@ public class RovoBankMyProfileController {
         btnSeeCurrentPassword.setGraphic(imageViewCurrentPassword);
 
         btnSeeCurrentPassword.setStyle("-fx-background-color: transparent; -fx-border-color:transparent");
-
-        lblUsername.setText(admin.getLogIn());
-        lblName.setText(admin.getName());
-        lblSurname.setText(admin.getSurname());
-        lblCity.setText(admin.getCity());
-        lblStreet.setText(admin.getStreet());
-        lblZip.setText(String.valueOf(admin.getZip()));
-        lblActive.setText(admin.getActive() ? "yes" : "no");
+        if (admin != null) {
+            if(admin.getLogIn().equals("tartanga@eus.com")){
+               btnChangePassword.setDisable(true);
+            }
+            lblUsername.setText(admin.getLogIn());
+            lblName.setText(admin.getName());
+            lblSurname.setText(admin.getSurname());
+            lblCity.setText(admin.getCity());
+            lblStreet.setText(admin.getStreet());
+            lblZip.setText(String.valueOf(admin.getZip()));
+            lblActive.setText(admin.getActive() ? "yes" : "no");
+        } else {
+            Alert alertE = new Alert(Alert.AlertType.ERROR, "Admin data could not be retrieved, log out and try again");
+            alertE.showAndWait();
+             btnChangePassword.setDisable(true);
+        }
 
         stage.setTitle("My profile");
         stage.setResizable(false);
@@ -329,7 +337,7 @@ public class RovoBankMyProfileController {
     private void handlePasswordChange(ActionEvent event) {
         Hash security = new Hash();
         Smtp mail = new Smtp();
-        Admin adminS =admin;
+        Admin adminS = admin;
         RovoBankSignInController signIn = new RovoBankSignInController();
         try {
             if (hiddenFieldConfirm.isVisible()) {
@@ -364,7 +372,7 @@ public class RovoBankMyProfileController {
         } catch (Exception error) {
             Alert alertE = new Alert(Alert.AlertType.ERROR, "An error occurred while updating the password");
             alertE.showAndWait();
-           logger.log(Level.SEVERE, "RovoBankMyProfileView: An error occurred while changin the passwordn: {0}", error.getMessage());
+            logger.log(Level.SEVERE, "RovoBankMyProfileView: An error occurred while changin the passwordn: {0}", error.getMessage());
         }
     }
 }

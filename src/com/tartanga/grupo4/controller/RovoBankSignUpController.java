@@ -46,7 +46,7 @@ import security.Hash;
  */
 public class RovoBankSignUpController {
 
-       static {
+    static {
         //Poner BouncyCastle como provider
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -135,6 +135,7 @@ public class RovoBankSignUpController {
     }
     private Hash security = new Hash();
     private static final Logger LOGGER = Logger.getLogger("javaClient");
+
     @FXML
     private void initialize() {
         btn_Back.setOnAction(this::handleGoBack);
@@ -191,6 +192,8 @@ public class RovoBankSignUpController {
             RovoBankSignInController controller = (RovoBankSignInController) loader.getController();
             controller.setStage(stage);
             controller.initStage(root);
+            Stage currentStage = (Stage) btnSeeConfirm.getScene().getWindow();
+            currentStage.close();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
         }
@@ -320,7 +323,7 @@ public class RovoBankSignUpController {
         boolean hasError = false;
 
         // Validate email
-     /*   if (email.isEmpty()) {
+        if (email.isEmpty()) {
             lbl_error_Email.setText("Email is required.");
             hasError = true;
         } else if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -353,7 +356,7 @@ public class RovoBankSignUpController {
             hasError = true;
         } else {
             lbl_error_Confirm.setText("");
-        }*/
+        }
 
         // Validate name
         if (name.isEmpty()) {
@@ -398,12 +401,10 @@ public class RovoBankSignUpController {
         } else {
             lbl_error_Zip.setText("");
         }
-        
-        
-        
+
         // Proceed with registration if no errors
         if (!hasError) {
-            
+
             admin = new Admin();
             admin.setLogIn(fld_Email.getText());
             admin.setPassword(encriptar());
@@ -433,8 +434,8 @@ public class RovoBankSignUpController {
                 alert2.setContentText("Go back to sign in to your account.");
                 alert2.showAndWait();
                 clearFields();
-               } catch (Exception error) { 
-                   error.printStackTrace();
+            } catch (Exception error) {
+                error.printStackTrace();
 //                logger.info("User created correctly.");
             }
 
@@ -473,7 +474,9 @@ public class RovoBankSignUpController {
         fld_City.clear();
         fld_Street.clear();
         fld_Zip.clear();
+        fld_Surname.clear();
         fld_Password.clear();
+        fld_Surname.clear();
         hiddenFieldPassword.clear();
         hiddenFieldConfirm.clear();
         fld_Confirm.clear();
@@ -485,10 +488,11 @@ public class RovoBankSignUpController {
         lbl_error_Zip.setText("");
         lbl_error_Password.setText("");
         lbl_error_Confirm.setText("");
+
     }
-    
+
     public String encriptar() {
-        String encryptedPass64=null;
+        String encryptedPass64 = null;
         try {
             //Recuperar la llave del fichero
             InputStream input = RovoBankSignInController.class.getClassLoader().getResourceAsStream("security/Public.key");

@@ -53,6 +53,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javax.swing.JFrame;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.GenericType;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -130,21 +131,18 @@ public class RovoBankCreditCardController {
 
     @FXML
     private Button btnAddCard;
+    
+    @FXML
+    private Button btnPrint;
 
     @FXML
-    private ImageView viewLogout;
-    
-    @FXML
     private MenuItem contextAdd;
-    
+
     @FXML
     private MenuItem contextRemove;
-    
+
     @FXML
     private MenuItem contextClear;
-    
-    @FXML
-    private MenuItem menuItemPrint;
 
     @FXML
     private void initialize() {
@@ -161,31 +159,33 @@ public class RovoBankCreditCardController {
 
         btnAddCard.setOnAction(this::handleAddTableRow);
 
-        viewLogout.setOnMouseClicked(this::handleLogout);
-
         btnFind.setOnAction(this::handleFindCreditCardByCardNumber);
 
         comboSelectDate.valueProperty().addListener(this::handleActivateDatePickerFrom);
-        
+
         contextAdd.setOnAction(this::handleAddTableRow);
-        
+
         contextClear.setOnAction(this::handleClearTable);
 
         creditCardEditingLogic();
-       
-        menuItemPrint.setOnAction(this::handlePrintCreditCardReport);
         
+        btnPrint.setOnAction(this::handlePrintCreditCardReport);
     }
 
     @FXML
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Credit Cards");
         stage.setResizable(false);
 
+        stage.setOnCloseRequest(this::onCloseRequestWindowEvent);
+
         comboSelectDate.getItems().addAll("Creation Date", "Expiration Date");
+
         loadAllData();
+
         stage.show();
 
     }
@@ -193,61 +193,71 @@ public class RovoBankCreditCardController {
     private void loadAllData() {
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try {
+            List<CreditCard> cs = CreditCardClientFactory.creditCardLogic().findAllCreditCards(new GenericType<List<CreditCard>>() {
+            });
 
-        List<CreditCard> cs = CreditCardClientFactory.creditCardLogic().findAllCreditCards(new GenericType<List<CreditCard>>() {
-        });
+            List<CreditCardBean> csb = new ArrayList<>();
 
-        List<CreditCardBean> csb = new ArrayList<>();
+            for (CreditCard c : cs) {
 
-        for (CreditCard c : cs) {
+                CreditCardBean cb = new CreditCardBean();
 
-            CreditCardBean cb = new CreditCardBean();
+                cb.setiDProduct(c.getIDProduct());
+                cb.setCreditCardNumber(String.valueOf(c.getCreditCardNumber()));
+                cb.setCreationDate(c.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                if (c.getExpirationDate() != null) {
+                    cb.setExpirationDate(c.getExpirationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                }
+                cb.setCvv(c.getCvv());
+                cb.setPin(c.getPin());
+                if (c.getAccount() != null && c.getAccount().getAccountNumber() != null) {
+                    cb.setAccountNumber(c.getAccount().getAccountNumber());
+                }
+                csb.add(cb);
 
-            cb.setiDProduct(c.getIDProduct());
-            cb.setCreditCardNumber(String.valueOf(c.getCreditCardNumber()));
-            cb.setCreationDate(c.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-            if (c.getExpirationDate() != null) {
-                cb.setExpirationDate(c.getExpirationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             }
-            cb.setCvv(c.getCvv());
-            cb.setPin(c.getPin());
-            if (c.getAccount() != null && c.getAccount().getAccountNumber() != null) {
-                cb.setAccountNumber(c.getAccount().getAccountNumber());
+
+            columnCreditNumber.setCellValueFactory(new PropertyValueFactory<>("creditCardNumber"));
+            columnCvv.setCellValueFactory(new PropertyValueFactory<>("cvv"));
+            columnPin.setCellValueFactory(new PropertyValueFactory<>("pin"));
+            columnCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
+            columnExpDate.setCellValueFactory(new PropertyValueFactory<>("expirationDate"));
+            columnAccNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
+
+            columnCreditNumber.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnCreationDate.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnExpDate.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnCvv.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnPin.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            List<String> accountNumberList = new ArrayList();
+
+            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+            });
+
+            for (Account a : accountList) {
+                accountNumberList.add(a.getAccountNumber());
             }
-            csb.add(cb);
 
+            ObservableList<String> accountChoices = FXCollections.observableArrayList(accountNumberList);
+
+            columnAccNumber.setCellFactory(ChoiceBoxTableCell.forTableColumn(accountChoices));
+
+            ObservableList<CreditCardBean> dataList = FXCollections.observableArrayList(csb);
+
+            tableViewCreditCard.setEditable(true);
+            tableViewCreditCard.setItems(dataList);
+
+        } catch (ProcessingException e) {
+            logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+            Alert alert = new Alert(AlertType.ERROR);
+            ButtonType CloseButton = new ButtonType("Close");
+            alert.getButtonTypes().setAll(CloseButton);
+            alert.setHeaderText("Server Error.");
+            alert.setContentText("An error Ocurred. Contact you system administrator");
+            alert.showAndWait();
         }
-
-        columnCreditNumber.setCellValueFactory(new PropertyValueFactory<>("creditCardNumber"));
-        columnCvv.setCellValueFactory(new PropertyValueFactory<>("cvv"));
-        columnPin.setCellValueFactory(new PropertyValueFactory<>("pin"));
-        columnCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
-        columnExpDate.setCellValueFactory(new PropertyValueFactory<>("expirationDate"));
-        columnAccNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
-
-        columnCreditNumber.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnCreationDate.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnExpDate.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnCvv.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnPin.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        List<String> accountNumberList = new ArrayList();
-
-        List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-        });
-
-        for (Account a : accountList) {
-            accountNumberList.add(a.getAccountNumber());
-        }
-
-        ObservableList<String> accountChoices = FXCollections.observableArrayList(accountNumberList);
-
-        columnAccNumber.setCellFactory(ChoiceBoxTableCell.forTableColumn(accountChoices));
-
-        ObservableList<CreditCardBean> dataList = FXCollections.observableArrayList(csb);
-
-        tableViewCreditCard.setEditable(true);
-        tableViewCreditCard.setItems(dataList);
 
         dtPickerFrom.setDisable(true);
 
@@ -256,11 +266,11 @@ public class RovoBankCreditCardController {
         btnSearch.setDisable(true);
 
         btnRemoveCard.setDisable(true);
-        
+
         contextRemove.setDisable(true);
 
         btnGotoMovements.setDisable(true);
-        
+
         comboSelectDate.setValue("Select creation/expiration date");
     }
 
@@ -270,13 +280,13 @@ public class RovoBankCreditCardController {
         if (newValue != null) {
             btnRemoveCard.setDisable(false);
             btnGotoMovements.setDisable(false);
-            
+
             contextRemove.setDisable(false);
 
             btnRemoveCard.setOnAction(this::handleDeleteItem);
-            
+
             contextRemove.setOnAction(this::handleDeleteItem);
-            
+
             btnGotoMovements.setOnAction(this::handleShowMovements);
         }
     }
@@ -291,25 +301,30 @@ public class RovoBankCreditCardController {
 
     private void updateButtonState(boolean enable) {
         btnRemoveCard.setDisable(!enable);
-        
+
         contextRemove.setDisable(!enable);
 
         btnRemoveCard.setOnAction(this::handleDeleteItem);
-        
+
         contextRemove.setOnAction(this::handleDeleteItem);
 
         btnGotoMovements.setDisable(!enable);
-        
+
         btnGotoMovements.setOnAction(this::handleShowMovements);
     }
 
     private void handleDeleteItem(ActionEvent event) {
         Alert alert = alertYesNo("User confirmation", "Confirm removing credit card:", "Are you sure you want to remove the following credit card: " + tableViewCreditCard.getSelectionModel().getSelectedItem().getCreditCardNumber() + "?");
         if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-            CreditCardClientFactory.creditCardLogic().deleteCreditCardByCardNumber(tableViewCreditCard.getSelectionModel().getSelectedItem().getCreditCardNumber());
-            tableViewCreditCard.getItems().remove(tableViewCreditCard.getSelectionModel().getSelectedItem());
-            loadAllData();
-            tableViewCreditCard.refresh();
+            try {
+                CreditCardClientFactory.creditCardLogic().deleteCreditCardByCardNumber(tableViewCreditCard.getSelectionModel().getSelectedItem().getCreditCardNumber());
+                tableViewCreditCard.getItems().remove(tableViewCreditCard.getSelectionModel().getSelectedItem());
+                loadAllData();
+                tableViewCreditCard.refresh();
+            } catch (ProcessingException e) {
+                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                alertError("Server Error", "An error occurred", "Contact your system administrator");
+            }
         } else {
             loadAllData();
             tableViewCreditCard.refresh();
@@ -384,12 +399,24 @@ public class RovoBankCreditCardController {
 
         creditCard.setPin(random4DigitNumber);
 
-        List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-        });
+        try {
 
-        creditCard.setAccount(accountList.get(0));
+            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+            });
 
-        CreditCardClientFactory.creditCardLogic().createCreditCard(creditCard);
+            creditCard.setAccount(accountList.get(0));
+
+            CreditCardClientFactory.creditCardLogic().createCreditCard(creditCard);
+
+        } catch (ProcessingException e) {
+            logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+            Alert alert = new Alert(AlertType.ERROR);
+            ButtonType CloseButton = new ButtonType("Close");
+            alert.getButtonTypes().setAll(CloseButton);
+            alert.setHeaderText("Server Error.");
+            alert.setContentText("An error Ocurred. Contact you system administrator");
+            alert.showAndWait();
+        }
 
         loadAllData();
     }
@@ -429,17 +456,22 @@ public class RovoBankCreditCardController {
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
 
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
+                            try {
+                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                                });
 
-                            for (Account a : accountList) {
-                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
+                                for (Account a : accountList) {
+                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                        creditCard.setAccount(a);
+                                    }
                                 }
+
+                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
+                            } catch (ProcessingException e) {
+                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                             loadAllData();
                             tableViewCreditCard.refresh();
                         } else {
@@ -497,18 +529,21 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
+                            try {
+                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                                });
 
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
-
-                            for (Account a : accountList) {
-                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
+                                for (Account a : accountList) {
+                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                        creditCard.setAccount(a);
+                                    }
                                 }
+
+                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+                            } catch (ProcessingException e) {
+                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                             loadAllData();
                             tableViewCreditCard.refresh();
                         } else {
@@ -567,18 +602,21 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
+                            try {
+                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                                });
 
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
-
-                            for (Account a : accountList) {
-                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
+                                for (Account a : accountList) {
+                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                        creditCard.setAccount(a);
+                                    }
                                 }
+
+                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+                            } catch (ProcessingException e) {
+                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                             loadAllData();
                             tableViewCreditCard.refresh();
                         } else {
@@ -636,18 +674,21 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(newValue);
                             creditCard.setPin(creditCardBean.getPin());
+                            try {
+                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                                });
 
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
-
-                            for (Account a : accountList) {
-                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
+                                for (Account a : accountList) {
+                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                        creditCard.setAccount(a);
+                                    }
                                 }
+
+                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+                            } catch (ProcessingException e) {
+                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                             loadAllData();
                             tableViewCreditCard.refresh();
                         } else {
@@ -705,18 +746,21 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(newValue);
+                            try {
+                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                                });
 
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
-
-                            for (Account a : accountList) {
-                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
+                                for (Account a : accountList) {
+                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                        creditCard.setAccount(a);
+                                    }
                                 }
+
+                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+                            } catch (ProcessingException e) {
+                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                             loadAllData();
                             tableViewCreditCard.refresh();
                         } else {
@@ -777,18 +821,21 @@ public class RovoBankCreditCardController {
 
                         ((CreditCardBean) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setAccountNumber(t.getNewValue());
+                        try {
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
 
-                        List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                        });
-
-                        for (Account a : accountList) {
-                            if (t.getNewValue().equals(a.getAccountNumber())) {
-                                creditCard.setAccount(a);
+                            for (Account a : accountList) {
+                                if (t.getNewValue().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
+                                }
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+                        } catch (ProcessingException e) {
+                            logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
+                            alertError("Server Error", "An error occurred", "Contact your system administrator");
                         }
-
-                        CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
                         loadAllData();
                         tableViewCreditCard.refresh();
                     } else {
@@ -1027,17 +1074,17 @@ public class RovoBankCreditCardController {
                 btnRemoveCard.setDisable(true);
 
                 btnGotoMovements.setDisable(true);
-                
+
                 dtPickerFrom.setValue(LocalDate.now());
-                
+
                 dtPickerTo.setValue(LocalDate.now());
-                
+
                 dtPickerFrom.setDisable(true);
-                
+
                 dtPickerTo.setDisable(true);
-                
+
                 btnSearch.setDisable(true);
-                
+
                 comboSelectDate.setValue("Select creation/expiration date");
 
             }
@@ -1112,45 +1159,45 @@ public class RovoBankCreditCardController {
                 btnRemoveCard.setDisable(true);
 
                 btnGotoMovements.setDisable(true);
-                
+
                 dtPickerFrom.setValue(LocalDate.now());
-                
+
                 dtPickerTo.setValue(LocalDate.now());
-                
+
                 dtPickerFrom.setDisable(true);
-                
+
                 dtPickerTo.setDisable(true);
-                
+
                 btnSearch.setDisable(true);
-                
+
                 comboSelectDate.setValue("Select creation/expiration date");
 
             }
-        }else{
-                logger.log(Level.INFO, "Unexpected error occurred: ");
+        } else {
+            logger.log(Level.INFO, "Unexpected error occurred: ");
 
-                alertError("Error loading data", "Unexpected error", "Unexpected error.");
-                loadAllData();
-                
-                btnGotoMovements.setDisable(true);
-                
-                dtPickerFrom.setValue(LocalDate.now());
-                
-                dtPickerTo.setValue(LocalDate.now());
-                
-                dtPickerFrom.setDisable(true);
-                
-                dtPickerTo.setDisable(true);
-                
-                btnSearch.setDisable(true);
-                
-                comboSelectDate.setValue("Select creation/expiration date");
+            alertError("Error loading data", "Unexpected error", "Unexpected error.");
+            loadAllData();
+
+            btnGotoMovements.setDisable(true);
+
+            dtPickerFrom.setValue(LocalDate.now());
+
+            dtPickerTo.setValue(LocalDate.now());
+
+            dtPickerFrom.setDisable(true);
+
+            dtPickerTo.setDisable(true);
+
+            btnSearch.setDisable(true);
+
+            comboSelectDate.setValue("Select creation/expiration date");
         }
     }
-    
-    private void handleClearTable(Event event){
+
+    private void handleClearTable(Event event) {
         List<CreditCardBean> csb = new ArrayList<>();
-        
+
         ObservableList<CreditCardBean> dataList = FXCollections.observableArrayList(csb);
 
         tableViewCreditCard.setEditable(true);
@@ -1163,22 +1210,22 @@ public class RovoBankCreditCardController {
         btnSearch.setDisable(true);
 
         btnRemoveCard.setDisable(true);
-        
+
         contextRemove.setDisable(true);
 
         btnGotoMovements.setDisable(true);
-        
+
         comboSelectDate.setValue("Select creation/expiration date");
     }
-    
-    private void handleShowMovements(Event event){
-         try {
+
+    private void handleShowMovements(Event event) {
+        try {
             FXMLLoader FXMLLoader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankMovementView.fxml"));
 
             Parent root = (Parent) FXMLLoader.load();
-            
+
             String creditCardNumber = tableViewCreditCard.getSelectionModel().getSelectedItem().getCreditCardNumber();
-            
+
             stage.setUserData(creditCardNumber);
 
             RovoBankMovementController controller = (RovoBankMovementController) FXMLLoader.getController();
@@ -1186,23 +1233,40 @@ public class RovoBankCreditCardController {
             controller.initStage(root);
 
         } catch (IOException e) {
+            e.printStackTrace();
             logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
-          
+
         }
     }
-    
+
     @FXML
     private void handlePrintCreditCardReport(ActionEvent event) {
         try {
             JasperReport report = JasperCompileManager.compileReport(getClass().getResourceAsStream("/com/tartanga/grupo4/resources/reports/CreditCardReport.jrxml"));
-            JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource((Collection<CreditCardBean>)this.tableViewCreditCard.getItems());
-            Map<String,Object> parameters = new HashMap<>();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(report,parameters,dataItems);
+            JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource((Collection<CreditCardBean>) this.tableViewCreditCard.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             jasperViewer.setVisible(true);
         } catch (JRException ex) {
-           logger.log(Level.SEVERE, ex.getMessage());
+            logger.log(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onCloseRequestWindowEvent(Event event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to close the application?");
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+        alert.getButtonTypes().setAll(yesButton, noButton);
+        alert.setTitle("Closing Application");
+        alert.setHeaderText(null);
+        alert.showAndWait();
+        if (alert.resultProperty().get().equals(yesButton)) {
+            Platform.exit();
+        } else {
+            event.consume();
         }
     }
 

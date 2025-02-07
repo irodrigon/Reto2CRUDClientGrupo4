@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/style.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.TransferController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../resources/styles/TransferStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.TransferController">
 
      <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0">
       <children>
@@ -25,11 +25,7 @@
             <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
               <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
               <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
-            <ImageView fitHeight="87.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/Out.png" />
-               </image>
-            </ImageView>
+
           </HBox>
          <HBox prefHeight="29.0" prefWidth="1366.0">
             <children>
@@ -56,7 +52,7 @@
                     <items>
                         <MenuItem fx:id="cnmNew" mnemonicParsing="false" text="New Transfer" />
                         <MenuItem fx:id="cnmDelete" mnemonicParsing="false" text="Delete Transfer" />
-                      <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Reset Data" />
+                      <MenuItem fx:id="cnmReset" mnemonicParsing="false" text="Print Report" />
                     </items>
                   </ContextMenu>
                </contextMenu>
@@ -64,9 +60,8 @@
             <AnchorPane prefHeight="578.0" prefWidth="357.0">
                <children>
                   <Button fx:id="btnNew" layoutX="52.0" layoutY="172.0" mnemonicParsing="false" text="New Transfer" />
-                  <Button fx:id="btnDelete" layoutX="228.0" layoutY="172.0" mnemonicParsing="false" text="Delete Transfer" />
+                  <Button fx:id="btnDelete" disable="true" layoutX="228.0" layoutY="172.0" mnemonicParsing="false" text="Delete Transfer" />
                   <ComboBox fx:id="cmbMoney" layoutX="20.0" layoutY="224.0" prefWidth="150.0" promptText="Money Type" />
-                  <Label fx:id="lblFind" layoutX="24.0" layoutY="284.0" text="Find between Dates" />
                   <DatePicker fx:id="dtpFirst" layoutX="24.0" layoutY="350.0" promptText="dd/mm/aaaa" />
                   <DatePicker fx:id="dtpLast" layoutX="24.0" layoutY="432.0" promptText="dd/mm/aaaa" />
                   <Label fx:id="lblFirst" layoutX="23.0" layoutY="316.0" text="Pick the first Date" />

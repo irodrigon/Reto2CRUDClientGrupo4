@@ -1,22 +1,32 @@
 package com.tartanga.grupo4.controller;
 
+
 import com.tartanga.grupo4.businesslogic.TransferRESTFull;
 import com.tartanga.grupo4.businesslogic.Itransfer;
 import com.tartanga.grupo4.businesslogic.TransferFactory;
+import com.tartanga.grupo4.exception.DeleteException;
 import com.tartanga.grupo4.models.Account;
 import com.tartanga.grupo4.models.Currency;
 import com.tartanga.grupo4.models.Customer;
 import com.tartanga.grupo4.models.Transfers;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Observable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -28,10 +38,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class TransferController implements Initializable {
 
@@ -90,13 +108,13 @@ public class TransferController implements Initializable {
     private MenuItem cnmDelete;
 
     private ObservableList<Transfers> transferData;
-
-    private Itransfer transferManager;
-
+    
+    private static final Logger LOGGER = Logger.getLogger("javaClient");
+    
+    private Stage stage;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        transferManager = TransferFactory.getItransfer();
 
         // Configurar ComboBox de cuentas
         cmbAccount.getItems().addAll("Sender", "Reciever", "Id");
@@ -119,7 +137,7 @@ public class TransferController implements Initializable {
         btnDelete.setOnAction(this::deleteTransfer);
         cnmDelete.setOnAction(this::deleteTransfer);
 
-        cnmReset.setOnAction(this::HandleReset);
+        cnmReset.setOnAction(this::printReport);
 
         // Configurar los botones
         btnFindDate.setOnAction(this::filterByDate);
@@ -127,7 +145,23 @@ public class TransferController implements Initializable {
 
         initTable();
     }
+    public void initStage(Parent root){
+        Scene scene = new Scene(root);
+        stage = new Stage();
+        stage.setScene(scene);
 
+        stage.setTitle("Transger");
+        stage.setResizable(false);
+        
+        stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().equals(KeyCode.F6)) {
+                printReport(null);
+            }
+        });
+        
+        stage.show();
+    };
+    
     public void HandleReset(ActionEvent event) {
         loadAllTransfers();
     }
@@ -144,48 +178,63 @@ public class TransferController implements Initializable {
 
         tbcSender.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
         tbcSender.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-            String newValue = t.getNewValue();
-            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
-                showAlert("Error", "Solo se permiten letras en el remitente.");
-                tbTransfer.refresh();
-                return;
+            try {
+                String newValue = t.getNewValue();
+                if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+                    showAlert("Error", "Solo se permiten letras en el remitente.");
+                    tbTransfer.refresh();
+                    return;
+                }
+                Transfers transfer = t.getRowValue();
+                transfer.setSender(newValue);
+                TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al editar remitente", e);
             }
-            Transfers transfer = t.getRowValue();
-            transfer.setSender(newValue);
-            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
         tbcReciever.setCellFactory(TextFieldTableCell.<Transfers>forTableColumn());
         tbcReciever.setOnEditCommit((CellEditEvent<Transfers, String> t) -> {
-            String newValue = t.getNewValue();
-            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
-                showAlert("Error", "Solo se permiten letras en el destinatario.");
-                tbTransfer.refresh();
-                return;
+            try {
+                String newValue = t.getNewValue();
+                if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+                    showAlert("Error", "Solo se permiten letras en el destinatario.");
+                    tbTransfer.refresh();
+                    return;
+                }
+                Transfers transfer = t.getRowValue();
+                transfer.setReciever(newValue);
+//                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al editar destinatario", e);
             }
-            Transfers transfer = t.getRowValue();
-            transfer.setReciever(newValue);
-            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
         tbcDate.setCellFactory(colum -> new DatePickerCellEditer());
         tbcDate.setOnEditCommit(event -> {
-            if (event.getNewValue() == null) {
-                showAlert("Error", "Formato de fecha incorrecto. Debe ser dd/mm/aaaa.");
-                tbTransfer.refresh();
-                return;
+            try {
+                if (event.getNewValue() == null) {
+                    showAlert("Error", "Formato de fecha incorrecto. Debe ser dd/mm/aaaa.");
+                    tbTransfer.refresh();
+                    return;
+                }
+                Transfers transfer = event.getRowValue();
+                transfer.setTransferDate(event.getNewValue());
+                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al editar fecha de transferencia", e);
             }
-            Transfers transfer = event.getRowValue();
-            transfer.setTransferDate(event.getNewValue());
-            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
         });
 
         tbcAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-
         tbcAmount.setOnEditCommit((CellEditEvent<Transfers, Double> t) -> {
-            Transfers transfer = t.getRowValue();
-            transfer.setAmount(t.getNewValue());
-            transferManager.edit_XML(transfer, transfer.getTransferId().toString());
+            try {
+                Transfers transfer = t.getRowValue();
+                transfer.setAmount(t.getNewValue());
+                ////TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al editar monto de transferencia", e);
+            }
         });
 
         loadAllTransfers();
@@ -206,28 +255,31 @@ public class TransferController implements Initializable {
 
     @FXML
     private void createTransfer(ActionEvent event) {
-        // Crea una nueva transferencia 
-        Transfers newTransfer = new Transfers();
-
-        transferManager.create_XML(newTransfer);
-
-        // Añade la nueva transferencia a la lista observable y a la tabla
-        transferData.add(newTransfer);
-        tbTransfer.setItems(transferData);
-
-        // Refrescar la tabla para mostrar la nueva fila
-        tbTransfer.refresh();
-
+        try {
+            Transfers newTransfer = new Transfers();
+            TransferFactory.getInstance().getItransfer().create_XML(newTransfer);
+            transferData.add(newTransfer);
+            tbTransfer.setItems(transferData);
+            tbTransfer.refresh();
+            LOGGER.info("Transferencia creada correctamente");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al crear transferencia", e);
+        }
         loadAllTransfers();
-
     }
 
-    @FXML
+@FXML
     private void deleteTransfer(ActionEvent event) {
-        Transfers borrar = (Transfers) tbTransfer.getSelectionModel().getSelectedItem();
-        transferManager.remove(String.valueOf(borrar.getTransferId()));
-        tbTransfer.getItems().remove(borrar);
-        tbTransfer.refresh();
+        try {
+            LOGGER.info("Eliminando transferencia seleccionada");
+            Transfers borrar = tbTransfer.getSelectionModel().getSelectedItem();
+            TransferFactory.getInstance().getItransfer().remove(String.valueOf(borrar.getTransferId()));
+            tbTransfer.getItems().remove(borrar);
+            tbTransfer.refresh();
+            LOGGER.info("Transferencia eliminada correctamente");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar transferencia", e);
+        }
     }
 
     private void updateAmountsForCurrency() {
@@ -307,92 +359,89 @@ public class TransferController implements Initializable {
 
     @FXML
     private void loadAllTransfers() {
-        TransferRESTFull client = new TransferRESTFull();
-        List<Transfers> transferList = client.findAll_XML(new GenericType<List<Transfers>>() {
-        });
-        transferData = FXCollections.observableArrayList(transferList);
+        List<Transfers> load = FXCollections.observableArrayList(TransferFactory.getInstance().getItransfer().findAll_XML(new GenericType<List<Transfers>>() {
+        }));
+        transferData=FXCollections.observableArrayList(load);
         tbTransfer.setItems(transferData);
     }
 
-    @FXML
+  @FXML
     private void filterByDate(ActionEvent event) {
-        // Validar que ambas fechas estén seleccionadas
-        if (dtpFirst.getValue() == null || dtpLast.getValue() == null) {
-            return;
-        }
-
-        // Convertir las fechas al formato esperado (aaaa/mm/dd)
-        String startDate = dtpFirst.getValue().toString();
-        String endDate = dtpLast.getValue().toString();
-
-        // Llamar al método RESTful para obtener transferencias por fecha
-        TransferRESTFull client = new TransferRESTFull();
         try {
-            List<Transfers> filteredTransfers = client.findByDate(
-                    new GenericType<List<Transfers>>() {
-            },
-                    startDate,
-                    endDate
-            );
-
-            // Actualizar la tabla con los datos filtrados
-            transferData = FXCollections.observableArrayList(filteredTransfers);
+            LOGGER.info("Filtrando transferencias por fecha");
+            if (dtpFirst.getValue() == null || dtpLast.getValue() == null) {
+                LOGGER.warning("Fechas no seleccionadas para el filtro");
+                return;
+            }
+            if (dtpLast.getValue().isBefore(dtpFirst.getValue())) {
+                showAlert("Error", "La fecha final no puede ser anterior a la fecha inicial.");
+                return;
+            }
+            String startDate = dtpFirst.getValue().toString();
+            String endDate = dtpLast.getValue().toString();
+            List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByDate(new GenericType<List<Transfers>>() {}, startDate, endDate);
+            transferData = FXCollections.observableArrayList(resultList);
             tbTransfer.setItems(transferData);
-
+            LOGGER.info("Transferencias filtradas correctamente");
         } catch (Exception e) {
-            System.err.println("Error al filtrar transferencias por fecha: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al filtrar transferencias por fecha", e);
         }
     }
 
     @FXML
     private void filterByAccount(ActionEvent event) {
-        // Validar que haya una selección en el ComboBox
-        String selectedFilter = cmbAccount.getValue();
-        if (selectedFilter == null || selectedFilter.isEmpty()) {
-            System.out.println("Por favor, selecciona una opción en el ComboBox.");
-            return;
-        }
-
-        // Validar que el campo de texto no esté vacío
-        String accountValue = fldAccount.getText();
-        if (accountValue == null || accountValue.isEmpty()) {
-            System.out.println("Por favor, ingresa un valor en el campo de texto.");
-            return;
-        }
-
-        // Llamar al método RESTful adecuado
-        TransferRESTFull client = new TransferRESTFull();
         try {
+            LOGGER.info("Iniciando filtrado por cuenta");
+            String selectedFilter = cmbAccount.getValue();
+            if (selectedFilter == null || selectedFilter.isEmpty()) {
+                showAlert("Error", "Por favor, selecciona una opción en el ComboBox.");
+                return;
+            }
+            String accountValue = fldAccount.getText();
+            if (accountValue == null || accountValue.isEmpty()) {
+                showAlert("Error", "Por favor, ingresa un valor en el campo de texto.");
+                return;
+            }
+            ObservableList<Transfers> filteredTransfers;
             if ("Sender".equalsIgnoreCase(selectedFilter)) {
-                // Filtrar por Sender (igual que antes)
-                List<Transfers> filteredTransfers = client.findBySender(new GenericType<List<Transfers>>() {
-                }, accountValue);
-                // Actualizar la tabla con los datos filtrados
-                transferData = FXCollections.observableArrayList(filteredTransfers);
-                tbTransfer.setItems(transferData);
-
+               List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findBySender(new GenericType<List<Transfers>>() {}, accountValue);
+               filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Reciever".equalsIgnoreCase(selectedFilter)) {
-                // Filtrar por Reciever (igual que antes)
-                List<Transfers> filteredTransfers = client.findByReciever(new GenericType<List<Transfers>>() {
-                }, accountValue);
-                // Actualizar la tabla con los datos filtrados
-                transferData = FXCollections.observableArrayList(filteredTransfers);
-                tbTransfer.setItems(transferData);
-
+                List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByReciever(new GenericType<List<Transfers>>() {}, accountValue);
+                filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Id".equalsIgnoreCase(selectedFilter)) {
-                // Filtrar por Id (cambia a usar un solo objeto de tipo Transfers)
-                Transfers filteredTransfer = client.findByID(new GenericType<Transfers>() {
-                }, accountValue);
-                // Mostrar el resultado en la tabla (si solo hay un resultado)
-                transferData = FXCollections.observableArrayList(filteredTransfer);
-                tbTransfer.setItems(transferData);
-
+                Transfers result = TransferFactory.getInstance().getItransfer().findByID(new GenericType<Transfers>() {}, accountValue);
+                filteredTransfers = FXCollections.observableArrayList(result);
             } else {
                 loadAllTransfers();
+                return;
             }
-
+            //transferData = FXCollections.observableArrayList(filteredTransfers);
+            tbTransfer.setItems(transferData);
+            LOGGER.info("Filtrado por cuenta completado correctamente");
         } catch (Exception e) {
-            System.err.println("Error al filtrar transferencias por cuenta: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al filtrar transferencias por cuenta", e);
+            showAlert("Error", "Error al filtrar transferencias por cuenta");
         }
+    }
+
+        @FXML
+    public void printReport(ActionEvent event) {
+        try {
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/com/tartanga/grupo4/resources/reports/TransferReport.jrxml"));
+
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<Transfers>) this.tbTransfer.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+        } catch (Exception error) {
+            LOGGER.log(Level.SEVERE, "AccountController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
+        }
+
     }
 }

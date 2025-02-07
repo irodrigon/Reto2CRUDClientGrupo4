@@ -106,6 +106,7 @@ public class RovoBankCustomersController {
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
 
         stage.setTitle("Customers creation");
