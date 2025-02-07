@@ -11,7 +11,11 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Represents a loan product with various attributes such as loan ID, creation date,
+ * interest rate, start date, end date, amount, and period.
+ * This class extends the Product class and implements Serializable.
+ * It provides methods to calculate the remaining amount based on the loan's terms.
+ * 
  * @author egure
  */
 @XmlRootElement
@@ -27,26 +31,39 @@ public class Loan extends Product implements Serializable {
     private Double amount;
     private Integer period;
 
+    /**
+     * Constructs a Loan object with specified parameters.
+     *
+     * @param loanId      The unique identifier for the loan.
+     * @param creationDate The date the loan was created.
+     * @param interest     The interest rate of the loan.
+     * @param endDate     The date the loan ends.
+     * @param amount      The total amount of the loan.
+     * @param rAmount     The remaining amount of the loan (not used in constructor).
+     */
     public Loan(Long loanId, Date creationDate, Integer interest, Date endDate, Double amount, Double rAmount) {
-    this.loanId = loanId;
-    this.creationDate = creationDate;
-    this.interest = interest;
-    this.endDate = endDate;
-    this.amount = amount;
-    // Nota: El campo rAmount ya se calcula automáticamente, no es necesario pasarlo al constructor
-    // this.rAmount = rAmount; // Si decides usar este campo, necesitas agregarlo en la clase Loan.
-}
+        this.loanId = loanId;
+        this.creationDate = creationDate;
+        this.interest = interest;
+        this.endDate = endDate;
+        this.amount = amount;
+        // Note: The field rAmount is calculated automatically, not necessary to pass to the constructor
+    }
 
+    /**
+     * Default constructor for Loan, initializes with default values.
+     */
     public Loan() {
         this.IDProduct = super.IDProduct;
         this.creationDate = super.creationDate;
         this.interest = 0;
-//        this.loanId = (long)IDProduct;
         this.startDate = super.creationDate;
         this.endDate = super.creationDate;
-        this.amount = 00.0;
+        this.amount = 0.0;
         this.period = 30;
     }
+
+    // Getters and Setters
 
     public Integer getIDProduct() {
         return IDProduct;
@@ -55,11 +72,6 @@ public class Loan extends Product implements Serializable {
     public void setIDProduct(Integer IDProduct) {
         this.IDProduct = IDProduct;
     }
-
-   
-    // Getters y Setter
-
-    // Getters y Setters
 
     public Long getLoanId() {
         return loanId;
@@ -128,7 +140,7 @@ public class Loan extends Product implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the loanId fields are not set
+        // Warning - this method won't work in the case the loanId fields are not set
         if (!(object instanceof Loan)) {
             return false;
         }
@@ -140,36 +152,23 @@ public class Loan extends Product implements Serializable {
         return true;
     }
 
-
-//    @Override
-//    public String toString() {
-//        return "com.tartanga.grupo4.loans.Loan[ loanId=" + loanId + " ]";
-//    }
+    /**
+     * Returns a string representation of the Loan object.
+     *
+     * @return A string containing loan details.
+     */
     @Override
     public String toString() {
         return "Loan{" + "loanId=" + loanId + ", creationDate=" + creationDate + ", interest=" + interest + ", startDate=" + startDate + ", endDate=" + endDate + ", amount=" + amount + ", period=" + period + '}';
     }
 
-//   public Double getRAmount() {
-//    LocalDate currentDate = LocalDate.now();
-//    LocalDate start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//    LocalDate end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//
-//    if (currentDate.isBefore(start)) {
-//        return amount;
-//    } else if (currentDate.isAfter(end)) {
-//        return 0.0;
-//    } else {
-//        long totalPeriods = ChronoUnit.DAYS.between(start, end) / this.period;
-//        long elapsedPeriods = ChronoUnit.DAYS.between(start, currentDate) / this.period;
-//
-//        BigDecimal interestFactor = BigDecimal.valueOf(1 + (interest / 100.0) * (elapsedPeriods / (double) totalPeriods));
-//        BigDecimal result = BigDecimal.valueOf(this.amount).multiply(interestFactor);
-//        return result.setScale(2, RoundingMode.HALF_UP).doubleValue();
-//    }
-//}
+    /**
+     * Calculates the remaining amount of the loan based on the current date,
+     * start date, end date, interest rate, and period.
+     *
+     * @return The remaining amount of the loan, rounded to two decimal places.
+     */
     public Double getRAmount() {
-
         LocalDate currentDate = LocalDate.now();
         LocalDate start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -179,19 +178,19 @@ public class Loan extends Product implements Serializable {
         } else if (currentDate.isAfter(end)) {
             return 0.0;
         } else {
-
             long totalPeriods = ChronoUnit.DAYS.between(start, end) / this.period;
             long elapsedPeriods = ChronoUnit.DAYS.between(start, currentDate) / this.period;
 
-            // Calcular el factor de interés
+            // Calculate the interest factor
             double interestFactor = 1 + (interest.doubleValue() / 100.0) * (elapsedPeriods / (double) totalPeriods);
 
-            // Asegurarse de que 'this.amount' sea un double
-            double amountD = this.amount;
-
-            // Calcular el resultado y redondear a dos decimales
-            double result = amountD * interestFactor;
-            return Math.round(result * 100.0) / 100.0;  // Redondear a 2 decimales
+            // Calculate the result and round to two decimal places
+            double result = amount * interestFactor;
+            return Math.round(result * 100.0) / 100.0;  // Round to 2 decimal places
         }
+    }
+
+    public void setStartDate(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose Tools | Templates.
     }
 }
