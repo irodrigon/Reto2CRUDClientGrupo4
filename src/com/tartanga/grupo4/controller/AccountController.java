@@ -65,7 +65,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
-
 /**
  *
  * @author Aitor
@@ -77,6 +76,7 @@ import net.sf.jasperreports.view.JasperViewer;
  * datos?
  */
 public class AccountController implements Initializable {
+
     ResourceBundle resourceBundle = ResourceBundle.getBundle("com/tartanga/grupo4/resources/files/configuration");
     private String formato = resourceBundle.getString("formato_fecha");
     private ObservableList<AccountBean> data = FXCollections.observableArrayList();
@@ -140,14 +140,15 @@ public class AccountController implements Initializable {
     @FXML
     private Button printButton;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     }
 
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
-        stage = new Stage();
+        if (stage == null) {
+            stage = new Stage();
+        }
         stage.setScene(scene);
         stage.setTitle("Account");
         stage.setResizable(false);
@@ -161,7 +162,7 @@ public class AccountController implements Initializable {
         deleteButton.setDisable(true);
         dateSearchButton.setDisable(true);
         accountNumberSearchButton.setDisable(true);
-  
+
         printButton.setOnAction(this::printReport);
         itemAccountNum.setOnAction(this::menuButtonAccountHandler);
         itemOwner.setOnAction(this::menuButtonCustomerHandler);
@@ -187,7 +188,7 @@ public class AccountController implements Initializable {
         });
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().equals(KeyCode.F1)) {
-               showHelp(null);
+                showHelp(null);
             }
         });
 
@@ -432,7 +433,7 @@ public class AccountController implements Initializable {
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
             //COMENTAR LA SIGUIENTE ALERTA ANTES DE LANZAR EL TEST CRUD FAIL********************************************************************
-            //alertUser("Cannot get accounts", 0);
+           alertUser("Cannot get accounts", 0);
 
         }
     }
@@ -584,13 +585,13 @@ public class AccountController implements Initializable {
 
         return accountT;
     }
-    
-    private void handleSetEdit(ActionEvent event){
+
+    private void handleSetEdit(ActionEvent event) {
         TablePosition<AccountBean, ?> cell = tableAccounts.getSelectionModel().getSelectedCells().get(0);
         int row = cell.getRow();
         TableColumn<AccountBean, ?> column = cell.getTableColumn();
-        if(column!=colAccountNumber){
-           tableAccounts.edit(row, column);
+        if (column != colAccountNumber) {
+            tableAccounts.edit(row, column);
         }
     }
 
@@ -785,6 +786,7 @@ public class AccountController implements Initializable {
         }
 
     }
+
     @FXML
     public void printReport(ActionEvent event) {
         try {
@@ -805,17 +807,18 @@ public class AccountController implements Initializable {
         }
 
     }
+
     @FXML
-    private void showHelp(ActionEvent event){
-        try{
-             LOGGER.log(Level.INFO, "AccountController(showHelp): Loading the webView");
-            FXMLLoader loader = 
-                    new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/AccountHelp.fxml"));
-            Parent root = (Parent)loader.load();
-            HelpController controller = 
-                    ((HelpController)loader.getController());
+    private void showHelp(ActionEvent event) {
+        try {
+            LOGGER.log(Level.INFO, "AccountController(showHelp): Loading the webView");
+            FXMLLoader loader
+                    = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/AccountHelp.fxml"));
+            Parent root = (Parent) loader.load();
+            HelpController controller
+                    = ((HelpController) loader.getController());
             controller.initStage(root);
-        }catch (Exception error){
+        } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(showHelp): Exception while creating the report {0}", error.getMessage());
             alertUser("An error happened while trying to show the help window", 0);
         }

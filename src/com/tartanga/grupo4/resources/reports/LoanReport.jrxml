@@ -19,7 +19,7 @@
 			<staticText>
 				<reportElement x="0" y="0" width="535" height="70" uuid="e2419adc-ab83-4711-89eb-67ab3a06bb36"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="HP Simplified" size="36"/>
+					<font size="36"/>
 				</textElement>
 				<text><![CDATA[RovoBank]]></text>
 			</staticText>

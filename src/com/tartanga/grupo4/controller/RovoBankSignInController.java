@@ -355,7 +355,8 @@ public class RovoBankSignInController {
         for (int i = 0; i < 6; i++) {
             sb.append(characters.charAt(random.nextInt(characters.length())));
         }
-        return sb.toString();
+        String password = sb.toString();
+        return password+"At6";
     }
 
 }

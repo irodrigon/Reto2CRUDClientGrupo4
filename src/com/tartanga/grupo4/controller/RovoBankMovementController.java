@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -53,14 +54,14 @@ public class RovoBankMovementController {
 
     @FXML
     private Button btnGoBacktoCreditCards;
-    
+
     @FXML
     private ImageView viewLogout;
 
     @FXML
     private void initialize() {
         btnGoBacktoCreditCards.setOnAction(this::handleGoBackToCreditCardsView);
-        
+
     }
 
     @FXML
@@ -88,18 +89,26 @@ public class RovoBankMovementController {
         }, creditCardNumber);
 
         List<Movement> movementList = new ArrayList<>();
+        if (cs != null) {
+            for (CreditCard c : cs) {
+                if (c.getMovementList() != null) {
+                    for (Movement m : c.getMovementList()) {
+                        if (creditCardNumber.equals(String.valueOf(c.getCreditCardNumber()))) {
+                            Movement movement = new Movement();
+                            movement.setIDMovement(m.getIDMovement());
+                            movement.setTransactionDate(m.getTransactionDate());
+                            movement.setAmount(m.getAmount());
+                            movement.setCurrency(m.getCurrency());
+                            movementList.add(m);
+                        }
+                    }
 
-        for (CreditCard c : cs) {
-            for (Movement m : c.getMovementList()) {
-                if (creditCardNumber.equals(String.valueOf(c.getCreditCardNumber()))) {
-                    Movement movement = new Movement();
-                    movement.setIDMovement(m.getIDMovement());
-                    movement.setTransactionDate(m.getTransactionDate());
-                    movement.setAmount(m.getAmount());
-                    movement.setCurrency(m.getCurrency());
                 }
-                movementList.add(m);
             }
+        }
+        if (movementList.isEmpty()) {
+            Alert alertE = new Alert(Alert.AlertType.INFORMATION, "No transger found on this card");
+            alertE.showAndWait();
         }
 
         columnIdMovement.setCellValueFactory(new PropertyValueFactory<>("IDMovement"));
@@ -140,12 +149,14 @@ public class RovoBankMovementController {
 
             controller.setStage(stage);
             controller.initStage(root);
+            Stage currentStage = (Stage) btnGoBacktoCreditCards.getScene().getWindow();
+            currentStage.close();
 
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Something went wrong when loading the window.", e.getMessage());
         }
     }
-    
+
     @FXML
     private void handleLogout(Event event
     ) {
