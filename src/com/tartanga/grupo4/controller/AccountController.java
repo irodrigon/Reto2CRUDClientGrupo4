@@ -433,7 +433,7 @@ public class AccountController implements Initializable {
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
             //COMENTAR LA SIGUIENTE ALERTA ANTES DE LANZAR EL TEST CRUD FAIL********************************************************************
-           alertUser("Cannot get accounts", 0);
+           //alertUser("Cannot get accounts", 0);
 
         }
     }
