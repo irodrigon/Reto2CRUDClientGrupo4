@@ -1,6 +1,5 @@
 package com.tartanga.grupo4.controller;
 
-
 import com.tartanga.grupo4.businesslogic.TransferRESTFull;
 import com.tartanga.grupo4.businesslogic.Itransfer;
 import com.tartanga.grupo4.businesslogic.TransferFactory;
@@ -51,6 +50,10 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
+/**
+ * Controller for managing bank transfers in the application. Handles UI
+ * interactions and communicates with business logic.
+ */
 public class TransferController implements Initializable {
 
     @FXML
@@ -108,11 +111,17 @@ public class TransferController implements Initializable {
     private MenuItem cnmDelete;
 
     private ObservableList<Transfers> transferData;
-    
+
     private static final Logger LOGGER = Logger.getLogger("javaClient");
-    
+
     private Stage stage;
-    
+
+    /**
+     * Initializes the controller class.
+     *
+     * @param url URL location.
+     * @param rb Resource bundle.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -121,7 +130,6 @@ public class TransferController implements Initializable {
         cmbAccount.setValue("Sender");
 
         cmbMoney.getItems().addAll(Currency.values());
-        cmbMoney.setValue(Currency.EURO); // Divisa por defecto
 
         // Listener para manejar el cambio de divisa
         cmbMoney.setOnAction(this::ParaFuncinar);
@@ -145,27 +153,41 @@ public class TransferController implements Initializable {
 
         initTable();
     }
-    public void initStage(Parent root){
+
+    /**
+     * Initializes the application stage.
+     *
+     * @param root Parent node of the scene.
+     */
+    public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage = new Stage();
         stage.setScene(scene);
 
-        stage.setTitle("Transger");
+        stage.setTitle("Transfer");
         stage.setResizable(false);
-        
+
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().equals(KeyCode.F6)) {
                 printReport(null);
             }
         });
-        
+
         stage.show();
-    };
+
+        loadAllTransfers();
+    }
+
+    ;
     
     public void HandleReset(ActionEvent event) {
         loadAllTransfers();
     }
 
+    /**
+     * Initializes the transfer table with appropriate columns and properties.
+     * Configures editable columns for inline modifications and validation.
+     */
     @FXML
     public void initTable() {
         tbTransfer.setEditable(true);
@@ -190,6 +212,7 @@ public class TransferController implements Initializable {
                 TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar remitente", e);
+                showAlert("Error", "Error al editar el remitente");
             }
         });
 
@@ -204,9 +227,10 @@ public class TransferController implements Initializable {
                 }
                 Transfers transfer = t.getRowValue();
                 transfer.setReciever(newValue);
-//                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+                TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar destinatario", e);
+                showAlert("Error", "Error al editar el destinatario");
             }
         });
 
@@ -220,9 +244,10 @@ public class TransferController implements Initializable {
                 }
                 Transfers transfer = event.getRowValue();
                 transfer.setTransferDate(event.getNewValue());
-                //TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+                TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error al editar fecha de transferencia", e);
+                showAlert("Error", "Error al editar la fecha");
             }
         });
 
@@ -231,13 +256,13 @@ public class TransferController implements Initializable {
             try {
                 Transfers transfer = t.getRowValue();
                 transfer.setAmount(t.getNewValue());
-                ////TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
+                TransferFactory.getInstance().getItransfer().edit_XML(transfer, transfer.getTransferId().toString());
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error al editar monto de transferencia", e);
+                LOGGER.log(Level.SEVERE, "Error al editar la cantidad de transferencia", e);
+                showAlert("Error", "Error al editor la cantidad");
             }
         });
 
-        loadAllTransfers();
     }
 
     private void showAlert(String title, String message) {
@@ -253,6 +278,11 @@ public class TransferController implements Initializable {
         updateAmountsForCurrency();
     }
 
+    /**
+     * Creates a new transfer and adds it to the database.
+     *
+     * @param event Action event triggered by button click.
+     */
     @FXML
     private void createTransfer(ActionEvent event) {
         try {
@@ -264,11 +294,17 @@ public class TransferController implements Initializable {
             LOGGER.info("Transferencia creada correctamente");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al crear transferencia", e);
+            showAlert("Error", "Error al crear transferencias");
         }
         loadAllTransfers();
     }
 
-@FXML
+    /**
+     * Deletes the selected transfer from the database.
+     *
+     * @param event Action event triggered by button click.
+     */
+    @FXML
     private void deleteTransfer(ActionEvent event) {
         try {
             LOGGER.info("Eliminando transferencia seleccionada");
@@ -279,9 +315,15 @@ public class TransferController implements Initializable {
             LOGGER.info("Transferencia eliminada correctamente");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al eliminar transferencia", e);
+            showAlert("Error", "Error al eliminar transferencias");
         }
     }
 
+    /**
+     * Changes the amounts currency
+     *
+     * @param event Action event triggered by choosing options in the combobox
+     */
     private void updateAmountsForCurrency() {
         Currency selectedCurrency = cmbMoney.getValue();
         if (selectedCurrency == null) {
@@ -359,13 +401,24 @@ public class TransferController implements Initializable {
 
     @FXML
     private void loadAllTransfers() {
-        List<Transfers> load = FXCollections.observableArrayList(TransferFactory.getInstance().getItransfer().findAll_XML(new GenericType<List<Transfers>>() {
-        }));
-        transferData=FXCollections.observableArrayList(load);
-        tbTransfer.setItems(transferData);
+        try {
+            List<Transfers> load = TransferFactory.getInstance()
+                    .getItransfer()
+                    .findAll_XML(new GenericType<List<Transfers>>() {
+                    });
+            transferData = FXCollections.observableArrayList(load);
+            tbTransfer.setItems(transferData);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al cargar transferencias: servidor inaccesible", e);
+        }
     }
 
-  @FXML
+    /**
+     * Filters transfers by a selected date range.
+     *
+     * @param event Action event triggered by button click.
+     */
+    @FXML
     private void filterByDate(ActionEvent event) {
         try {
             LOGGER.info("Filtrando transferencias por fecha");
@@ -379,15 +432,22 @@ public class TransferController implements Initializable {
             }
             String startDate = dtpFirst.getValue().toString();
             String endDate = dtpLast.getValue().toString();
-            List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByDate(new GenericType<List<Transfers>>() {}, startDate, endDate);
+            List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByDate(new GenericType<List<Transfers>>() {
+            }, startDate, endDate);
             transferData = FXCollections.observableArrayList(resultList);
             tbTransfer.setItems(transferData);
             LOGGER.info("Transferencias filtradas correctamente");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al filtrar transferencias por fecha", e);
+            showAlert("Error", "Error al filtrar entre fechas");
         }
     }
 
+    /**
+     * Filters transfers by selected account criteria.
+     *
+     * @param event Action event triggered by button click.
+     */
     @FXML
     private void filterByAccount(ActionEvent event) {
         try {
@@ -404,19 +464,22 @@ public class TransferController implements Initializable {
             }
             ObservableList<Transfers> filteredTransfers;
             if ("Sender".equalsIgnoreCase(selectedFilter)) {
-               List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findBySender(new GenericType<List<Transfers>>() {}, accountValue);
-               filteredTransfers = FXCollections.observableArrayList(resultList);
+                List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findBySender(new GenericType<List<Transfers>>() {
+                }, accountValue);
+                filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Reciever".equalsIgnoreCase(selectedFilter)) {
-                List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByReciever(new GenericType<List<Transfers>>() {}, accountValue);
+                List<Transfers> resultList = TransferFactory.getInstance().getItransfer().findByReciever(new GenericType<List<Transfers>>() {
+                }, accountValue);
                 filteredTransfers = FXCollections.observableArrayList(resultList);
             } else if ("Id".equalsIgnoreCase(selectedFilter)) {
-                Transfers result = TransferFactory.getInstance().getItransfer().findByID(new GenericType<Transfers>() {}, accountValue);
+                Transfers result = TransferFactory.getInstance().getItransfer().findByID(new GenericType<Transfers>() {
+                }, accountValue);
                 filteredTransfers = FXCollections.observableArrayList(result);
             } else {
                 loadAllTransfers();
                 return;
             }
-            //transferData = FXCollections.observableArrayList(filteredTransfers);
+            transferData = FXCollections.observableArrayList(filteredTransfers);
             tbTransfer.setItems(transferData);
             LOGGER.info("Filtrado por cuenta completado correctamente");
         } catch (Exception e) {
@@ -425,7 +488,12 @@ public class TransferController implements Initializable {
         }
     }
 
-        @FXML
+    /**
+     * Prints a report of the transfer data.
+     *
+     * @param event Action event triggered by button click.
+     */
+    @FXML
     public void printReport(ActionEvent event) {
         try {
             JasperReport report
