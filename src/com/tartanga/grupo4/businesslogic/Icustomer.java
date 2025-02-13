@@ -13,9 +13,19 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 
 /**
- *
+ * Interface for customer-related operations.
+ * This interface defines methods for retrieving customer data.
+ * 
  * @author rabio
  */
 public interface Icustomer {
+
+    /**
+     * Retrieves a list of all customers in XML format.
+     *
+     * @param responseType The type of response expected.
+     * @return A list of {@link Customer} objects.
+     * @throws WebApplicationException if an error occurs while retrieving the customers.
+     */
     public List<Customer> findAll_XML(GenericType<List<Customer>> responseType) throws WebApplicationException;
 }

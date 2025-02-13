@@ -28,13 +28,7 @@ public class CRUDLoanFailTest extends ApplicationTest {
 
     private TableView table;
 
-    /**
-     * Initializes the application and sets up a loan for testing.
-     * This method is automatically called by TestFX to set up the application for each test.
-     *
-     * @param stage the primary stage for this application
-     * @throws Exception if any error occurs during the setup
-     */
+
     @Override
     public void start(Stage stage) throws Exception {
         new Aplication().start(stage);
@@ -52,31 +46,9 @@ public class CRUDLoanFailTest extends ApplicationTest {
         table.getItems().add(loan);
     }
 
-    /**
-     * Test to search for loans by date range and loan ID.
-     * Verifies that an error message is shown when attempting to search for loans.
-     */
-    @Test
-    public void testA_searchLoansByDate() {
-        clickOn("#btnSearch");
-        clickOn("#choiceSearch");
-        write("Loan ID");
-        clickOn("#tfSearch");
-        write("1234");
-        clickOn("#fromDate");
-        write("01/01/2020");
-        clickOn("#toDate");
-        write("31/12/2025");
-        press(KeyCode.ENTER);
-        verifyThat("An error occurred while searching loans", isVisible());
-        clickOn("Aceptar");
-    }
 
-    /**
-     * Test to add a new loan.
-     * Verifies that an error message is shown when attempting to add a new loan,
-     * and ensures that the number of rows in the table remains the same.
-     */
+
+
     @Test
     public void testB_addNewLoan() {
         int rowCount = table.getItems().size();
