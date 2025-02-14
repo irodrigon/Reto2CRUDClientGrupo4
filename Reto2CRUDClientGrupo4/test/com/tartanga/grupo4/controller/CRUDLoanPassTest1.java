@@ -152,7 +152,7 @@ public class CRUDLoanPassTest1 extends ApplicationTest {
         sleep(200);
 
        
-        write("20/02/2020");
+        write("20/02/2028");
         type(KeyCode.ENTER);
 
         clickOn(row);
@@ -164,7 +164,7 @@ public class CRUDLoanPassTest1 extends ApplicationTest {
                 .toLocalDate();
 
         // Compare only the date (without the time part)
-        assertEquals(LocalDate.of(2020, 2, 20), actualEndDate);
+        assertEquals(LocalDate.of(2028, 2, 20), actualEndDate);
     }
 
     @Test
