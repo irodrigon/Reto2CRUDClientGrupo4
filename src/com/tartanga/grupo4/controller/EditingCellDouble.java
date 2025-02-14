@@ -6,6 +6,9 @@
 package com.tartanga.grupo4.controller;
 
 import com.tartanga.grupo4.models.AccountBean;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
@@ -20,6 +23,8 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
 
     private TextField textField;
     private TableView<AccountBean> tableAccounts;
+    private Locale fLocale = Locale.getDefault();
+    private NumberFormat nf = NumberFormat.getInstance(fLocale);
 
     public EditingCellDouble(TableView<AccountBean> tableAccounts) {
         this.tableAccounts = tableAccounts;
@@ -60,7 +65,10 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
                 setText(null);
                 setGraphic(textField);
             } else {
-                setText(getString());
+                nf.setMaximumFractionDigits(2);
+                nf.setMinimumFractionDigits(2);
+                String balance = nf.format(item);
+                setText(balance);
                 setGraphic(null);
             }
         }
@@ -74,20 +82,36 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
                 (ObservableValue<? extends Boolean> arg0,
                         Boolean arg1, Boolean arg2) -> {
                     if (!arg2) {
-                        if (isDouble(textField.getText())) {
-                            commitEdit(Double.parseDouble(textField.getText()));
-                        } else {
+                        try {
+                            Double balance = null;
+                            if (nf.parse(textField.getText()) instanceof Long) {
+                                balance = 0.0;
+                            } else {
+                                balance = (Double) nf.parse(textField.getText());
+                            }
+
+                            commitEdit(balance);
+                        } catch (ParseException error) {
                             Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
                             alertI.showAndWait();
                             cancelEdit();
                         }
+
                     }
                 });
 
         textField.setOnAction(e -> {
-            if (isDouble(textField.getText())) {
-                commitEdit(Double.parseDouble(textField.getText()));
-            } else {
+            try {
+                Double balance = null;
+                if (nf.parse(textField.getText()) instanceof Long) {
+                    balance = 0.0;
+                } else {
+                    balance = (Double) nf.parse(textField.getText());
+                }
+                commitEdit(balance);
+            } catch (ParseException error) {
+                Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
+                alertI.showAndWait();
                 cancelEdit();
             }
         });
@@ -96,10 +120,18 @@ public class EditingCellDouble extends TableCell<AccountBean, Double> {
                 (ObservableValue<? extends Number> observable, Number oldSelection, Number newSelection) -> {
                     try {
                         if (isEditing() && oldSelection != null && !oldSelection.equals(newSelection)) {
-                            if (isDouble(textField.getText())) {
-                                commitEdit(Double.parseDouble(textField.getText()));
-                            } else {
-                                throw new NumberFormatException();
+                            try {
+                                Double balance = null;
+                                if (nf.parse(textField.getText()) instanceof Long) {
+                                    balance = 0.0;
+                                } else {
+                                    balance = (Double) nf.parse(textField.getText());
+                                }
+                                commitEdit(balance);
+                            } catch (ParseException error) {
+                                Alert alertI = new Alert(Alert.AlertType.INFORMATION, "Only numbers are allowed");
+                                alertI.showAndWait();
+                                cancelEdit();
                             }
                         }
                     } catch (NumberFormatException error) {

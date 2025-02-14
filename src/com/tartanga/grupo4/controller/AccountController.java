@@ -49,6 +49,7 @@ import javafx.util.Callback;
 import javax.ws.rs.core.GenericType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
@@ -351,55 +352,57 @@ public class AccountController implements Initializable {
         colCreationDate.setCellFactory(cellFactoryDatePicker);
         colCreationDate.setOnEditCommit(
                 (CellEditEvent<AccountBean, String> t) -> {
-
-                    Account accountD;
-                    String dateNewValue;
-                    LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
-                            t.getRowValue().getAccountNumber());
-                    //Validacion de fechas introducidas por texto
-                    if (LocalDate.parse(t.getNewValue(), formateadorL).isAfter(today)) {
-                        dateNewValue = today.format(formateadorL);
-                        accountD = toAccount(t.getRowValue(), dateNewValue);
-                        alertUser("Creation date cannot be in the future \n Setting creation date with todays date", 1);
-                    } else {
-                        dateNewValue = t.getNewValue();
-                        accountD = toAccount(t.getRowValue(), dateNewValue);
-                    }
                     try {
+                        Account accountD;
+                        String dateNewValue;
+                        LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the date from account {0}",
+                                t.getRowValue().getAccountNumber());
+                        //Validacion de fechas introducidas por texto
+                        if (LocalDate.parse(t.getNewValue(), formateadorL).isAfter(today)) {
+                            dateNewValue = today.format(formateadorL);
+                            accountD = toAccount(t.getRowValue(), dateNewValue);
+                            throw new Exception("Creation date cannot be in the future \n Setting creation date with todays date");
+
+                        } 
+                            dateNewValue = t.getNewValue();
+                            accountD = toAccount(t.getRowValue(), dateNewValue);
+                        
+
                         AccountFactory.getInstance().getIaccounts().updateAccount(
                                 accountD,
                                 t.getRowValue().getId().toString());
                         ((AccountBean) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setCreationDate(dateNewValue);
-                    } catch (Exception error) {
-                        LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
-                                + "Exception while updating the date, {0}", error.getMessage());
-                        alertUser("An error happened while updating the account", 0);
-                    }
 
+                    } catch (Exception error) {
+                        LOGGER.log(Level.SEVERE, "AccountController(setOnEditCommit): "
+                                + "Exception while updating the date, {0}", error.getMessage());
+                        alertUser(error.getMessage(), 0);
+                    }
                     tableAccounts.refresh();
                 });
 
         colBalance.setCellFactory(cellFactoryDouble);
         colBalance.setOnEditCommit((TableColumn.CellEditEvent<AccountBean, Double> t) -> {
-            LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the balance from account {0}",
-                    t.getRowValue().getAccountNumber());
-            Account accountB = toAccount(t.getRowValue(), null);
-
-            accountB.setBalance(t.getNewValue());
             try {
+                LOGGER.log(Level.INFO, "AccountController(setOnEditCommit): Updating the balance from account {0}",
+                        t.getRowValue().getAccountNumber());
+                Account accountB = toAccount(t.getRowValue(), null);
+
+                accountB.setBalance(t.getNewValue());
+
                 AccountFactory.getInstance().getIaccounts().updateAccount(
                         accountB,
                         t.getRowValue().getId().toString());
                 AccountBean accountBean = t.getTableView().getItems().get(t.getTablePosition().getRow());
                 accountBean.setBalance(t.getNewValue());
+
             } catch (Exception error) {
-                LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): "
+                LOGGER.log(Level.SEVERE, "AccountController(setOnEditCommit): "
                         + "Exception while updating the balance, {0}", error.getMessage());
                 alertUser("An error happened while updating the account", 0);
             }
             tableAccounts.refresh();
-
         });
         item2.setDisable(true);
         item3.setDisable(true);
@@ -433,7 +436,7 @@ public class AccountController implements Initializable {
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(mostrarTodasCuentas): Exception while populating table, {0}", error.getMessage());
             //COMENTAR LA SIGUIENTE ALERTA ANTES DE LANZAR EL TEST CRUD FAIL********************************************************************
-           alertUser("Cannot get accounts", 0);
+            alertUser("Cannot get accounts", 0);
 
         }
     }
