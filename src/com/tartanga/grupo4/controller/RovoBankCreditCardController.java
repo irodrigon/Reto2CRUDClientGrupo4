@@ -131,7 +131,7 @@ public class RovoBankCreditCardController {
 
     @FXML
     private Button btnAddCard;
-    
+
     @FXML
     private Button btnPrint;
 
@@ -168,7 +168,7 @@ public class RovoBankCreditCardController {
         contextClear.setOnAction(this::handleClearTable);
 
         creditCardEditingLogic();
-        
+
         btnPrint.setOnAction(this::handlePrintCreditCardReport);
     }
 
@@ -425,20 +425,19 @@ public class RovoBankCreditCardController {
 
         columnCreditNumber.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
-                    String newValue = t.getNewValue();
-                    CreditCardBean creditCardBean = t.getRowValue();
-                    if (!newValue.matches("\\d{16}")) {
-                        alertError("Error inserting credit card number", "Wrong credit card number", "Credit card numbers are made of 16 digits.");
+                    try {
+                        String newValue = t.getNewValue();
+                        CreditCardBean creditCardBean = t.getRowValue();
+                        if (!newValue.matches("\\d{16}")) {
+                            alertError("Error inserting credit card number", "Wrong credit card number", "Credit card numbers are made of 16 digits.");
 
-                        // Revert to the old value if the new value is invalid.
-                        creditCardBean.setCreditCardNumber((String) t.getOldValue());
-                        //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreditNumber);
-                        });
-                    } else {
-                        Alert alert = alertYesNo("User confirmation", "Confirm editing credit card number:", "Are you sure you want to edit following credit card number: " + newValue + "?");
-                        if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                            // Revert to the old value if the new value is invalid.
+                            creditCardBean.setCreditCardNumber((String) t.getOldValue());
+                            //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
+                            Platform.runLater(() -> {
+                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreditNumber);
+                            });
+                        } else {
                             ((CreditCardBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setCreditCardNumber(newValue);
 
@@ -456,62 +455,47 @@ public class RovoBankCreditCardController {
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
 
-                            try {
-                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                                });
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
 
-                                for (Account a : accountList) {
-                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                        creditCard.setAccount(a);
-                                    }
+                            for (Account a : accountList) {
+                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
                                 }
-
-                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-
-                            } catch (ProcessingException e) {
-                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
                             loadAllData();
                             tableViewCreditCard.refresh();
-                        } else {
-                            //If I press I don't want to confirm editing the card number, I continue editing.
-                            Platform.runLater(() -> {
-                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreditNumber);
-                            });
                         }
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
                 }
         );
-        columnCreditNumber.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User confirmation", "Cancel editing credit card number:", "Are you sure you want to cancel editing credit card number?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreditNumber);
-                        });
-                    }
-                }
-        );
+
+        columnCreditNumber.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
 
         columnCreationDate.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
-                    String newValue = t.getNewValue();
-                    CreditCardBean creditCardBean = t.getRowValue();
-                    if (!newValue.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/([0-9]{4})$")) {
-                        alertError("Error inserting creation date", "Wrong creation date", "Please insert a valid date in format dd/MM/yyyy");
+                    try {
+                        String newValue = t.getNewValue();
+                        CreditCardBean creditCardBean = t.getRowValue();
+                        if (!newValue.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/([0-9]{4})$")) {
+                            alertError("Error inserting creation date", "Wrong creation date", "Please insert a valid date in format dd/MM/yyyy");
 
-                        // Revert to the old value if the new value is invalid.
-                        creditCardBean.setCreationDate(LocalDate.parse((String) t.getOldValue(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreationDate);
-                        });
-                    } else {
-                        Alert alert = alertYesNo("User confirmation", "Confirm editing creation date:", "Are you sure you want to edit following creation date: " + newValue + "?");
-                        if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                            // Revert to the old value if the new value is invalid.
+                            creditCardBean.setCreationDate(LocalDate.parse((String) t.getOldValue(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
+                            Platform.runLater(() -> {
+                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreationDate);
+                            });
+                        } else {
+
                             ((CreditCardBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setCreationDate(LocalDate.parse(newValue, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -529,62 +513,48 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
-                            try {
-                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                                });
 
-                                for (Account a : accountList) {
-                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                        creditCard.setAccount(a);
-                                    }
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
+
+                            for (Account a : accountList) {
+                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
                                 }
-
-                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-                            } catch (ProcessingException e) {
-                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
                             loadAllData();
                             tableViewCreditCard.refresh();
-                        } else {
-                            //If I press I don't want to confirm editing the card number, I continue editing.
-                            Platform.runLater(() -> {
-                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreationDate);
-                            });
                         }
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
                 }
         );
 
-        columnCreationDate.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User confirmation", "Cancel editing creation date:", "Are you sure you want to cancel editing creation date?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCreationDate);
-                        });
-                    }
-                }
-        );
+        columnCreationDate.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
 
         columnExpDate.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
-                    String newValue = t.getNewValue();
-                    CreditCardBean creditCardBean = t.getRowValue();
-                    if (!newValue.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/([0-9]{4})$")) {
-                        alertError("Error inserting expiration date", "Wrong expiration date", "Please insert a valid date in format dd/MM/yyyy");
+                    try {
+                        String newValue = t.getNewValue();
+                        CreditCardBean creditCardBean = t.getRowValue();
+                        if (!newValue.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/([0-9]{4})$")) {
+                            alertError("Error inserting expiration date", "Wrong expiration date", "Please insert a valid date in format dd/MM/yyyy");
 
-                        // Revert to the old value if the new value is invalid.
-                        creditCardBean.setExpirationDate(LocalDate.parse((String) t.getOldValue(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnExpDate);
-                        });
-                    } else {
-                        Alert alert = alertYesNo("User confirmation", "Confirm editing expiration date:", "Are you sure you want to edit following expiration date: " + newValue + "?");
-                        if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                            // Revert to the old value if the new value is invalid.
+                            creditCardBean.setExpirationDate(LocalDate.parse((String) t.getOldValue(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
+                            Platform.runLater(() -> {
+                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnExpDate);
+                            });
+                        } else {
+
                             ((CreditCardBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setExpirationDate(LocalDate.parse(newValue, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -602,62 +572,48 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(creditCardBean.getPin());
-                            try {
-                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                                });
 
-                                for (Account a : accountList) {
-                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                        creditCard.setAccount(a);
-                                    }
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
+
+                            for (Account a : accountList) {
+                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
                                 }
-
-                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-                            } catch (ProcessingException e) {
-                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
                             loadAllData();
                             tableViewCreditCard.refresh();
-                        } else {
-                            //If I press I don't want to confirm editing the card number, I continue editing.
-                            Platform.runLater(() -> {
-                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnExpDate);
-                            });
                         }
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
+
                 }
         );
 
-        columnExpDate.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User confirmation", "Cancel editing expiration date:", "Are you sure you want to cancel editing expiration date?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnExpDate);
-                        });
-                    }
-                }
-        );
+        columnExpDate.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
 
         columnCvv.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
-                    String newValue = t.getNewValue();
-                    CreditCardBean creditCardBean = t.getRowValue();
-                    if (!newValue.matches("\\d{3}")) {
-                        alertError("Error inserting CVV", "Wrong CVV", "CVVs are made of 3 digits");
+                    try {
+                        String newValue = t.getNewValue();
+                        CreditCardBean creditCardBean = t.getRowValue();
+                        if (!newValue.matches("\\d{3}")) {
+                            alertError("Error inserting CVV", "Wrong CVV", "CVVs are made of 3 digits");
 
-                        // Revert to the old value if the new value is invalid.
-                        creditCardBean.setCvv((String) t.getOldValue());
-                        //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCvv);
-                        });
-                    } else {
-                        Alert alert = alertYesNo("User confirmation", "Confirm editing CVV:", "Are you sure you want to edit the following CVV: " + t.getNewValue() + "?");
-                        if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                            // Revert to the old value if the new value is invalid.
+                            creditCardBean.setCvv((String) t.getOldValue());
+                            //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
+                            Platform.runLater(() -> {
+                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCvv);
+                            });
+                        } else {
                             ((CreditCardBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setCvv(newValue);
 
@@ -674,61 +630,47 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(newValue);
                             creditCard.setPin(creditCardBean.getPin());
-                            try {
-                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                                });
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
 
-                                for (Account a : accountList) {
-                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                        creditCard.setAccount(a);
-                                    }
+                            for (Account a : accountList) {
+                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
                                 }
-
-                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-                            } catch (ProcessingException e) {
-                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
                             loadAllData();
                             tableViewCreditCard.refresh();
-                        } else {
-                            //If I press I don't want to confirm editing the card number, I continue editing.
-                            Platform.runLater(() -> {
-                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCvv);
-                            });
                         }
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
+
                 }
         );
-        columnCvv.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User Confirmation", "Cancel editing CVV:", "Are you sure you want to cancel editing CVV?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnCvv);
-                        });
-                    }
-                }
-        );
+
+        columnCvv.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
 
         columnPin.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
-                    String newValue = t.getNewValue();
-                    CreditCardBean creditCardBean = t.getRowValue();
-                    if (!newValue.matches("\\d{4}")) {
-                        alertError("Error inserting PIN", "Wrong PIN", "PINs are made of 4 digits");
+                    try {
+                        String newValue = t.getNewValue();
+                        CreditCardBean creditCardBean = t.getRowValue();
+                        if (!newValue.matches("\\d{4}")) {
+                            alertError("Error inserting PIN", "Wrong PIN", "PINs are made of 4 digits");
 
-                        // Revert to the old value if the new value is invalid.
-                        creditCardBean.setPin((String) t.getOldValue());
-                        //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnPin);
-                        });
-                    } else {
-                        Alert alert = alertYesNo("User Confirmation", "Confirm editing PIN:", "Are you sure you want to edit the following PIN: " + newValue + "?");
-                        if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                            // Revert to the old value if the new value is invalid.
+                            creditCardBean.setPin((String) t.getOldValue());
+                            //This is deferring the event of the placing of the cursor inside the cell when the alert is closed.
+                            Platform.runLater(() -> {
+                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnPin);
+                            });
+                        } else {
 
                             ((CreditCardBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setPin(newValue);
@@ -746,62 +688,37 @@ public class RovoBankCreditCardController {
 
                             creditCard.setCvv(creditCardBean.getCvv());
                             creditCard.setPin(newValue);
-                            try {
-                                List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                                });
 
-                                for (Account a : accountList) {
-                                    if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
-                                        creditCard.setAccount(a);
-                                    }
+                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
+                            });
+
+                            for (Account a : accountList) {
+                                if (creditCardBean.getAccountNumber().equals(a.getAccountNumber())) {
+                                    creditCard.setAccount(a);
                                 }
-
-                                CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-                            } catch (ProcessingException e) {
-                                logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                                alertError("Server Error", "An error occurred", "Contact your system administrator");
                             }
+
+                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
                             loadAllData();
                             tableViewCreditCard.refresh();
-                        } else {
-                            //If I press I don't want to confirm editing the card number, I continue editing.
-                            Platform.runLater(() -> {
-                                tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnPin);
-                            });
                         }
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
+
                 }
         );
 
-        columnPin.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User Confirmation", "Cancel editing PIN:", "Are you Sure you want to cancel editing PIN?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnPin);
-                        });
-                    }
-                }
-        );
-
-        columnAccNumber.setOnEditStart(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User confirmation", "Confirm changing the account number:", "Are you sure you want to change the account number?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnAccNumber);
-                    } else {
-                        loadAllData();
-                    }
-                }
-        );
+        columnPin.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
 
         columnAccNumber.setOnEditCommit(
                 (CellEditEvent<CreditCardBean, String> t) -> {
 
-                    Alert alert = alertYesNo("User confirmation", "Confirm editing account number:", "Are you sure you want to edit the following account number: " + t.getNewValue() + "?");
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
+                    try {
 
                         CreditCardBean creditCardBean = t.getRowValue();
 
@@ -821,44 +738,32 @@ public class RovoBankCreditCardController {
 
                         ((CreditCardBean) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setAccountNumber(t.getNewValue());
-                        try {
-                            List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
-                            });
 
-                            for (Account a : accountList) {
-                                if (t.getNewValue().equals(a.getAccountNumber())) {
-                                    creditCard.setAccount(a);
-                                }
-                            }
-
-                            CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
-                        } catch (ProcessingException e) {
-                            logger.log(Level.SEVERE, "Error with the Server. Contact your system administrator.", e.getMessage());
-                            alertError("Server Error", "An error occurred", "Contact your system administrator");
-                        }
-                        loadAllData();
-                        tableViewCreditCard.refresh();
-                    } else {
-                        loadAllData();
-                        tableViewCreditCard.refresh();
-                    }
-
-                }
-        );
-
-        columnAccNumber.setOnEditCancel(
-                (CellEditEvent<CreditCardBean, String> t) -> {
-                    Alert alert = alertYesNo("User confirmation", "Cancel editing account number", "Are you Sure you want to cancel editing account number?");
-                    //This line is going to get the "yes" button with the '0' index from the alert in the method and confirm if the user is pressing 'yes' or 'no', then acting accordingly.
-                    if (alert.resultProperty().get().equals(alert.getButtonTypes().get(0))) {
-                        loadAllData();
-                    } else {
-                        Platform.runLater(() -> {
-                            tableViewCreditCard.edit(tableViewCreditCard.getSelectionModel().getSelectedIndex(), columnAccNumber);
+                        List<Account> accountList = AccountClientFactory.accountLogic().findAllAccounts(new GenericType<List<Account>>() {
                         });
+
+                        for (Account a : accountList) {
+                            if (t.getNewValue().equals(a.getAccountNumber())) {
+                                creditCard.setAccount(a);
+                            }
+                        }
+
+                        CreditCardClientFactory.creditCardLogic().updateCreditCard(creditCard, String.valueOf(creditCardBean.getiDProduct()));
+
+                        loadAllData();
+                        tableViewCreditCard.refresh();
+                    } catch (Exception e) {
+                        logger.severe(e.getMessage());
+                        alertError("Error", "Error", e.getMessage());
                     }
+
                 }
         );
+
+        columnAccNumber.setOnEditCancel((CellEditEvent<CreditCardBean, String> t) -> {
+            loadAllData();
+        });
+
     }
 
     private void alertError(String title, String header, String content) {
