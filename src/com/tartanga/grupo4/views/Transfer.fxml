@@ -9,8 +9,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -61,7 +59,6 @@
                <children>
                   <Button fx:id="btnNew" layoutX="52.0" layoutY="172.0" mnemonicParsing="false" text="New Transfer" />
                   <Button fx:id="btnDelete" disable="true" layoutX="228.0" layoutY="172.0" mnemonicParsing="false" text="Delete Transfer" />
-                  <ComboBox fx:id="cmbMoney" layoutX="20.0" layoutY="224.0" prefWidth="150.0" promptText="Money Type" />
                   <DatePicker fx:id="dtpFirst" layoutX="24.0" layoutY="350.0" promptText="dd/mm/aaaa" />
                   <DatePicker fx:id="dtpLast" layoutX="24.0" layoutY="432.0" promptText="dd/mm/aaaa" />
                   <Label fx:id="lblFirst" layoutX="23.0" layoutY="316.0" text="Pick the first Date" />

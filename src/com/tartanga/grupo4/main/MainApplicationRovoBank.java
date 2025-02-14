@@ -4,6 +4,7 @@ package com.tartanga.grupo4.main;
 
 import com.tartanga.grupo4.controller.RovoBankMainController;
 import com.tartanga.grupo4.controller.RovoBankSignInController;
+import com.tartanga.grupo4.controller.TransferController;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -18,12 +19,11 @@ public class MainApplicationRovoBank extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/RovoBankSignInView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tartanga/grupo4/views/Transfer.fxml"));
         Parent root = (Parent)loader.load();
         
-        RovoBankSignInController controller = (RovoBankSignInController)loader.getController();
+        TransferController controller = (TransferController)loader.getController();
 
-        controller.setStage(stage);
         controller.initStage(root);
     }
 
