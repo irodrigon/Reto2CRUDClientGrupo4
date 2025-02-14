@@ -9,7 +9,7 @@ package CRUDTest;
  *
  * @author Alin
  */
-import com.tartanga.grupo4.main.Aplication;
+import com.tartanga.grupo4.main.MainApplicationRovoBank;
 import com.tartanga.grupo4.main.MainApplicationRovoBank;
 import com.tartanga.grupo4.models.Transfers;
 import java.text.SimpleDateFormat;

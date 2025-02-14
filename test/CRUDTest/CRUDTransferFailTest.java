@@ -5,7 +5,7 @@
  */
 package CRUDTest;
 
-import com.tartanga.grupo4.main.Aplication;
+import com.tartanga.grupo4.main.MainApplicationRovoBank;
 import com.tartanga.grupo4.main.MainApplicationRovoBank;
 import com.tartanga.grupo4.models.AccountBean;
 import com.tartanga.grupo4.models.Currency;
@@ -53,7 +53,7 @@ public class CRUDTransferFailTest extends ApplicationTest {
 
     }
     
-    //@Test
+    @Test
     public void testA_addTransfer() {
         sleep(10000);
                 
@@ -63,7 +63,7 @@ public class CRUDTransferFailTest extends ApplicationTest {
     }
     
     
-    //@Test
+    @Test
     public void testB_modifyTransfer() {
         int lastTransfer = table.getItems().size() - 1;
         Node row = lookup(".table-row-cell").nth(lastTransfer).query();
