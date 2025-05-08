@@ -29,7 +29,7 @@ import javax.ws.rs.core.GenericType;
  *
  * @author egure
  */
-public class LoanRESTFull implements ILoan{
+public class LoanRESTFull implements ILoan {
 
     private WebTarget webTarget;
     private Client client;
@@ -41,7 +41,7 @@ public class LoanRESTFull implements ILoan{
     }
 
     @Override
-    public List <Loan> findByRemainingBalance(GenericType<List <Loan>> responseType, String balance) throws WebApplicationException {
+    public List<Loan> findByRemainingBalance(GenericType<List<Loan>> responseType, String balance) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("balance/{0}", new Object[]{balance}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -59,67 +59,76 @@ public class LoanRESTFull implements ILoan{
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), Loan.class);
     }
 
-    /**public void edit_JSON(Object requestEntity, String id) throws WebApplicationException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
-    }**/
-
-
-    /**public List <Loan> find_JSON(GenericType<List <Loan>> responseType, String id) throws WebApplicationException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
-    }**/
-
+    /**
+     * public void edit_JSON(Object requestEntity, String id) throws
+     * WebApplicationException {
+     * webTarget.path(java.text.MessageFormat.format("{0}", new
+     * Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity,
+     * javax.ws.rs.core.MediaType.APPLICATION_JSON));
+    }*
+     */
+    /**
+     * public List <Loan> find_JSON(GenericType<List <Loan>> responseType,
+     * String id) throws WebApplicationException { WebTarget resource =
+     * webTarget; resource = resource.path(java.text.MessageFormat.format("{0}",
+     * new Object[]{id})); return
+     * resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }*
+     */
     @Override
-    public List <Loan> findRange_XML(GenericType<List <Loan>> responseType, String from, String to) throws WebApplicationException {
+    public List<Loan> findRange_XML(GenericType<List<Loan>> responseType, String from, String to) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    /**public List <Loan> findRange_JSON(GenericType<List <Loan>> responseType, String from, String to) throws WebApplicationException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
-    }**/
-
+    /**
+     * public List <Loan> findRange_JSON(GenericType<List <Loan>> responseType,
+     * String from, String to) throws WebApplicationException { WebTarget
+     * resource = webTarget; resource =
+     * resource.path(java.text.MessageFormat.format("{0}/{1}", new
+     * Object[]{from, to})); return
+     * resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }*
+     */
     @Override
-    public List <Loan> findByDates(GenericType<List <Loan>> responseType, String startDate, String endDate) throws WebApplicationException {
+    public List<Loan> findByDates(GenericType<List<Loan>> responseType, String startDate, String endDate) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("byDates/{0}/{1}", new Object[]{startDate, endDate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    
     @Override
     public void create_XML(Object requestEntity) throws WebApplicationException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), Loan.class);
     }
 
-    /**public void create_JSON(Object requestEntity) throws WebApplicationException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
-    }**/
-
+    /**
+     * public void create_JSON(Object requestEntity) throws
+     * WebApplicationException {
+     * webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity,
+     * javax.ws.rs.core.MediaType.APPLICATION_JSON));
+    }*
+     */
     @Override
-    public List <Loan> findByInterestRate(GenericType<List <Loan>> responseType, String interestRate) throws WebApplicationException {
+    public List<Loan> findByInterestRate(GenericType<List<Loan>> responseType, String interestRate) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("interestRate/{0}", new Object[]{interestRate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     @Override
-    public List <Loan> findAll_XML(GenericType<List <Loan>> responseType) throws WebApplicationException {
+    public List<Loan> findAll_XML(GenericType<List<Loan>> responseType) throws WebApplicationException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    /**public List <Loan> findAll_JSON(GenericType<List <Loan>> responseType) throws WebApplicationException {
-        WebTarget resource = webTarget;
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);**/
-    
-    
+    /**
+     * public List <Loan> findAll_JSON(GenericType<List <Loan>> responseType)
+     * throws WebApplicationException { WebTarget resource = webTarget; return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);*
+     */
     @Override
-    public List <Loan> findByUser(GenericType<List <Loan>> responseType, String logIn) throws WebApplicationException {
+    public List<Loan> findByUser(GenericType<List<Loan>> responseType, String logIn) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("logIn/{0}", new Object[]{logIn}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -136,24 +145,23 @@ public class LoanRESTFull implements ILoan{
     }
 
     @Override
-    public List<Loan> getLoansByDate(GenericType<List<Loan>> genericType, LocalDate value, LocalDate value0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public List<Loan> getAllLoans(GenericType<List<Loan>> genericType) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        WebTarget resource = webTarget;
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(genericType);
     }
 
     @Override
     public List<Loan> find_XML(GenericType<List<Loan>> responseType, Integer id) throws WebApplicationException {
-         WebTarget resource = webTarget;
+        WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-   
-   
-   
-    
+    @Override
+    public List<Loan> getLoansByDate(GenericType<List<Loan>> genericType, LocalDate value, LocalDate value0) {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("byDates/{0}/{1}", new Object[]{value, value0}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(genericType);
+    }
+
 }

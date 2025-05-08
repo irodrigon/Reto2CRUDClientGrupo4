@@ -40,18 +40,17 @@
                 <Region fx:id="regionEspacioTop2121" prefHeight="28.0" prefWidth="38.0" />
                 <TextField fx:id="tfSearch" prefHeight="26.0" prefWidth="322.0" />
                 <Region fx:id="regionEspacioTop2" prefHeight="28.0" prefWidth="17.0" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
-                <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="86.0" styleClass="lblDates" text="From:" />
                 <Region fx:id="regionEspacioTop211" prefHeight="28.0" prefWidth="10.0" />
                 <DatePicker fx:id="fromDate" />
                 <Region fx:id="regionEspacioTop22" prefHeight="28.0" prefWidth="32.0" />
-                <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="28.0" prefWidth="64.0" styleClass="#lblDates" text="To:" />
                 <Region fx:id="regionEspacioTop2111" prefHeight="28.0" prefWidth="10.0" />
                 <DatePicker fx:id="toDate" />
                 <Region fx:id="regionEspacioTop221" prefHeight="28.0" prefWidth="32.0" />
-                <Button fx:id="btnSearch1" mnemonicParsing="false" text="Filter" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
             </children>
         </HBox>
+
+
         <TableView fx:id="loanTable" prefHeight="534.0" prefWidth="1306" styleClass="table-view">
             <columns>
                 

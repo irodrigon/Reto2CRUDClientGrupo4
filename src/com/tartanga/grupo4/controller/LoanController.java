@@ -30,9 +30,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
 /**
- * The LoanController class is responsible for managing the user interface
- * for loan operations. It handles the display, editing, searching, and deletion
- * of loans, as well as generating reports.
+ * The LoanController class is responsible for managing the user interface for
+ * loan operations. It handles the display, editing, searching, and deletion of
+ * loans, as well as generating reports.
  */
 public class LoanController {
 
@@ -79,17 +79,16 @@ public class LoanController {
 
     private Stage stage;
 
-
-
     /**
-     * Initializes the controller. This method is automatically called after the FXML file has been loaded.
-     * It sets up the table columns, configures editable cells, and loads all loans into the table.
+     * Initializes the controller. This method is automatically called after the
+     * FXML file has been loaded. It sets up the table columns, configures
+     * editable cells, and loads all loans into the table.
      */
     @FXML
     private void initialize() {
         loanTable.setEditable(true);
-        choiceSearch.getItems().addAll("Search by ID", "Search by Date", "Search by interest rate", "Search by Amount");
-        
+        choiceSearch.getItems().addAll("Search by Date", "Search by interest rate", "Search by Amount");
+
         // Configure table columns
         tcLoanId.setCellValueFactory(new PropertyValueFactory<>("loanId"));
         tcStartingDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -184,14 +183,30 @@ public class LoanController {
             }
         });
 
+        choiceSearch.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if ("Search by Date".equals(newValue)) {
+                mostrarPorFecha();
+            } else {
+                mostrarPorTexto();
+            }
+        });
+         tfSearch.setVisible(false);
+        tfSearch.setManaged(false);
+
+        fromDate.setVisible(false);
+        fromDate.setManaged(false);
+        fromDate.setPromptText("Fecha desde:");
+        toDate.setVisible(false);
+        toDate.setManaged(false);
+        toDate.setPromptText("Fecha hasta:");
         // Configure editable columns
         configureEditableColumns();
 
         // Load all loans into the table
         mostrarTodosLosPrestamos();
     }
-    
-        public void initStage(Parent root) {
+
+    public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage = new Stage();
         stage.setScene(scene);
@@ -203,8 +218,8 @@ public class LoanController {
     }
 
     /**
-     * Configures the editable columns for interest rate, period, and total amount.
-     * Ensures that the input values are within valid ranges.
+     * Configures the editable columns for interest rate, period, and total
+     * amount. Ensures that the input values are within valid ranges.
      */
     private void configureEditableColumns() {
         tcInterestRate.setOnEditCommit((TableColumn.CellEditEvent<Loan, Integer> event) -> {
@@ -278,7 +293,7 @@ public class LoanController {
     /**
      * Displays an error alert with the specified title and message.
      *
-     * @param title   The title of the alert.
+     * @param title The title of the alert.
      * @param message The message to be displayed.
      */
     private void showErrorAlert(String title, String message) {
@@ -326,20 +341,20 @@ public class LoanController {
             }
         });
     }
-    
-       @FXML
+
+    @FXML
     private void nuevoPrestamo(ActionEvent event) {
         addNewLoan(event);
     }
-    
-        @FXML
+
+    @FXML
     private void imprimirPrestamo(ActionEvent event) {
-       Print(event);
+        Print(event);
     }
 
     @FXML
     private void eliminarPrestamo(ActionEvent event) {
-       DeleteLoan(event);
+        DeleteLoan(event);
     }
 
     /**
@@ -394,6 +409,7 @@ public class LoanController {
         ObservableList<Loan> data = FXCollections.observableArrayList(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
         }));
         loanTable.setItems(data);
+
     }
 
     /**
@@ -401,89 +417,76 @@ public class LoanController {
      *
      * @param event The action event triggered by the search button.
      */
-    @FXML
     private void onSearch(ActionEvent event) {
+
         String selectedOption = choiceSearch.getValue();
         ObservableList<Loan> filteredLoans = FXCollections.observableArrayList();
 
         if (selectedOption != null) {
-            // Filter by ID
-            if (selectedOption.equals("Search by ID")) {
-                String loanIdText = tfSearch.getText().trim();
-                if (!loanIdText.isEmpty()) {
-                    try {
-                        Integer loanId = Integer.parseInt(loanIdText);
-                        Loan loan = LoanFactory.getInstance().getILoans().find_XML(new GenericType<List<Loan>>() {
-                        }, loanId).stream().findFirst().orElse(null);
-                        if (loan != null) {
-                            filteredLoans.add(loan);
-                        } else {
-                            showErrorAlert("No Loan Found", "No loan found with the given ID.");
-                        }
-                    } catch (NumberFormatException e) {
-                        showErrorAlert("Invalid ID", "Please enter a valid loan ID.");
-                        return;
-                    }
-                }
-            } 
-            // Filter by date
-            else if (selectedOption.equals("Search by Date")) {
-                LocalDate startDate = fromDate.getValue();
-                LocalDate endDate = toDate.getValue();
+            switch (selectedOption) {
 
-                if (startDate != null && endDate != null && startDate.isBefore(endDate)) {
-                    filteredLoans = FXCollections.observableArrayList(
-                            LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-                            }).stream()
-                                    .filter(loan -> {
-                                        Date loanStartDate = loan.getStartDate();
-                                        Date loanEndDate = loan.getEndDate();
-                                        return loanStartDate != null && loanEndDate != null
-                                                && !loanStartDate.before(java.sql.Date.valueOf(startDate))
-                                                && !loanEndDate.after(java.sql.Date.valueOf(endDate));
-                                    })
-                                    .collect(Collectors.toList())
-                    );
-                } else {
-                    showErrorAlert("Invalid Date Range", "Please select a valid date range.");
+                case "Search by Date":
+                    LocalDate startDate = fromDate.getValue();
+                    LocalDate endDate = toDate.getValue();
+
+                    if (startDate != null && endDate != null && startDate.isBefore(endDate)) {
+                        filteredLoans = FXCollections.observableArrayList(
+                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                }).stream()
+                                        .filter(loan -> {
+                                            Date loanStartDate = loan.getStartDate();
+                                            Date loanEndDate = loan.getEndDate();
+                                            return loanStartDate != null && loanEndDate != null
+                                                    && !loanStartDate.before(java.sql.Date.valueOf(startDate))
+                                                    && !loanEndDate.after(java.sql.Date.valueOf(endDate));
+                                        })
+                                        .collect(Collectors.toList())
+                        );
+                    } else {
+                        showErrorAlert("Invalid Date Range", "Please select a valid date range.");
+                        return;
+                    }
+                    break;
+
+                case "Search by interest rate":
+                    String interestRateText = tfSearch.getText();
+                    if (!interestRateText.isEmpty()) {
+                        try {
+                            int interestRate = Integer.parseInt(interestRateText);
+                            filteredLoans = FXCollections.observableArrayList(
+                                    LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                    }).stream()
+                                            .filter(loan -> loan.getInterest() == interestRate)
+                                            .collect(Collectors.toList())
+                            );
+                        } catch (NumberFormatException e) {
+                            showErrorAlert("Invalid Interest Rate", "Please enter a valid interest rate.");
+                            return;
+                        }
+                    }
+                    break;
+
+                case "Search by Amount":
+                    String amountText = tfSearch.getText();
+                    if (!amountText.isEmpty()) {
+                        try {
+                            double amount = Double.parseDouble(amountText);
+                            filteredLoans = FXCollections.observableArrayList(
+                                    LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                    }).stream()
+                                            .filter(loan -> loan.getAmount() == amount)
+                                            .collect(Collectors.toList())
+                            );
+                        } catch (NumberFormatException e) {
+                            showErrorAlert("Invalid Amount", "Please enter a valid amount.");
+                            return;
+                        }
+                    }
+                    break;
+
+                default:
+                    showErrorAlert("Invalid Option", "Please select a valid search option.");
                     return;
-                }
-            } 
-            // Filter by interest rate
-            else if (selectedOption.equals("Search by interest rate")) {
-                String interestRateText = tfSearch.getText();
-                if (!interestRateText.isEmpty()) {
-                    try {
-                        int interestRate = Integer.parseInt(interestRateText);
-                        filteredLoans = FXCollections.observableArrayList(
-                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-                                }).stream()
-                                        .filter(loan -> loan.getInterest() == interestRate)
-                                        .collect(Collectors.toList())
-                        );
-                    } catch (NumberFormatException e) {
-                        showErrorAlert("Invalid Interest Rate", "Please enter a valid interest rate.");
-                        return;
-                    }
-                }
-            } 
-            // Filter by amount
-            else if (selectedOption.equals("Search by Amount")) {
-                String amountText = tfSearch.getText();
-                if (!amountText.isEmpty()) {
-                    try {
-                        double amount = Double.parseDouble(amountText);
-                        filteredLoans = FXCollections.observableArrayList(
-                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-                                }).stream()
-                                        .filter(loan -> loan.getAmount() == amount)
-                                        .collect(Collectors.toList())
-                        );
-                    } catch (NumberFormatException e) {
-                        showErrorAlert("Invalid Amount", "Please enter a valid amount.");
-                        return;
-                    }
-                }
             }
         }
 
@@ -492,7 +495,8 @@ public class LoanController {
     }
 
     /**
-     * Generates and displays a report of the loans currently displayed in the table.
+     * Generates and displays a report of the loans currently displayed in the
+     * table.
      *
      * @param event The action event triggered by the print button.
      */
@@ -511,5 +515,28 @@ public class LoanController {
         } catch (Exception error) {
             LOGGER.log(Level.SEVERE, "AccountController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
         }
+    }
+
+    private void mostrarPorFecha() {
+        tfSearch.setVisible(false);
+        tfSearch.setManaged(false);
+
+        fromDate.setVisible(true);
+        fromDate.setManaged(true);
+        fromDate.setPromptText("Fecha desde:");
+        toDate.setVisible(true);
+        toDate.setManaged(true);
+        toDate.setPromptText("Fecha hasta:");
+
+    }
+
+    private void mostrarPorTexto() {
+        tfSearch.setVisible(true);
+        tfSearch.setManaged(true);
+
+        fromDate.setVisible(false);
+        fromDate.setManaged(false);
+        toDate.setVisible(false);
+        toDate.setManaged(false);
     }
 }
