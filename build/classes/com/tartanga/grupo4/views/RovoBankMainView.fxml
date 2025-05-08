@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" fx:id="signInPane" prefHeight="768.0" prefWidth="1366.0" stylesheets="/com/tartanga/grupo4/resources/styles/RovoBankStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tartanga.grupo4.controller.RovoBankMainController">
+    <VBox fx:id="vBoxTop" prefHeight="158.0" prefWidth="1366.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <HBox fx:id="hBoxHeader" alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="1366.0" spacing="10" styleClass="header">
+            <Region fx:id="region1" prefHeight="119.0" prefWidth="11.0" />
+              <Label fx:id="lblRovoBank" prefHeight="47.0" prefWidth="230.0" styleClass="label" text="RovoBank" />
+              <Region fx:id="regionEspacioTop" prefHeight="98.0" prefWidth="991.0" />
+          </HBox>
+                                  <!-- MenuBar -->
+             <fx:include fx:id="hBoxMenuBar" source="MenuBar.fxml"/>
+          
+      </children>
+   </VBox>
+
+    <TableView fx:id="customersTable" layoutX="14.0" layoutY="175.0" prefHeight="534.0" prefWidth="1343.0" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="columnDni" prefWidth="211.0" text="DNI" />
+            <TableColumn fx:id="columnName" prefWidth="172.0" text="Name" />
+            <TableColumn fx:id="columnSurname" prefWidth="154.0" text="Surname" />
+            <TableColumn fx:id="columnUsername" prefWidth="170.0" text="Username" />
+            <TableColumn fx:id="columnCity" prefWidth="169.0" text="City" />
+            <TableColumn fx:id="columnStreet" prefWidth="157.0" text="Street" />
+            <TableColumn fx:id="columnZip" minWidth="0.0" prefWidth="156.0" text="Zip" />
+         <TableColumn fx:id="columnTelephone" minWidth="0.0" prefWidth="159.0" text="Telephone" />
+        </columns>
+     </TableView>
+</AnchorPane>

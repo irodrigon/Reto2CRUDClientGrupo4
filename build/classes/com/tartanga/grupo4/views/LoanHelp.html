@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href=".././resources/styles/HelpAccountStyle.css">
+    <title>Help - Loan Management Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h4 {
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .image-container {
+            display: block;
+            width: 80%; /* Ajusta el tamaño de la imagen según lo que necesites */
+            margin: 0 auto;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+                <a href="IndexHelp.html">Go back to index</a>
+    <h3>Help - Loan Management Interface</h3>
+
+    <div class="section">
+        <h4>View</h4>
+        <p>This window displays the following information about the loans:</p>
+        <ul>
+            <li><strong>Loan ID</strong>: This column shows the identifying number of each loan.</li>
+            <div class="image-container">
+                <img src=".././resources/images/LoanID.png" alt="Loan ID Image">
+            </div>
+            <li><strong>Starting Date</strong>: This column shows the date from which the loan is active.</li>
+            <div class="image-container">
+                <img src=".././resources/images/StartingDate.png" alt="Starting Date Image">
+            </div>
+            <li><strong>Ending Date</strong>: This column shows the date until which the loan is active.</li>
+            <div class="image-container">
+                <img src=".././resources/images/EndingDate.png" alt="Ending Date Image">
+            </div>
+            <li><strong>Total Amount</strong>: This column shows the total amount of the loan that the client has requested.</li>
+            <div class="image-container">
+                <img src=".././resources/images/TotalAmount.png" alt="Total Amount Image">
+            </div>
+            <li><strong>Remaining Amount</strong>: This column shows the total amount the customer has yet to pay.</li>
+            <div class="image-container">
+                <img src=".././resources/images/RemainingAmount.png" alt="Remaining Amount Image">
+            </div>
+            <li><strong>Interest Rate</strong>: This column shows the interest that will be applied to the loan.</li>
+            <div class="image-container">
+                <img src=".././resources/images/InterestRate.png" alt="Interest Rate Image">
+            </div>
+            <li><strong>Period</strong>: This column indicates the frequency at which the customer makes loan payments.</li>
+            <div class="image-container">
+                <img src=".././resources/images/Period.png" alt="Payment Frequency Image">
+            </div>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h4>Searching for Loans</h4>
+        <p>Use the search bar to find specific loans. The search functionality allows filtering loans.</p>
+        <div class="image-container">
+            <img src=".././resources/images/Search.png" alt="Search Filter Image">
+        </div>
+        <ul>
+            <li>This element allows you to select the parameter by which you wish to apply the filter.</li>
+            <li><strong>Search Field</strong>: Type a keyword related to a loan (e.g., Loan ID, borrower name).</li>
+            <li><strong>From Date</strong>: Choose the start date to filter loans from.</li>
+            <li><strong>To Date</strong>: Choose the end date to filter loans until.</li>
+            <li><strong>Search & Filter Buttons</strong>: Click "Search" to apply filters and update the loan table.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h4>Actions</h4>
+        <p>The controller allows the following actions within the loan management system:</p>
+        <ul>
+            <li><strong>New Loan</strong>: Click "New" to create a default loan.</li>
+            <div class="image-container">
+                <img src=".././resources/images/New.png" alt="New Loan Image">
+            </div>
+            <li><strong>Modify</strong>: Double-click on an editable cell (Start date, End date, Total amount, Interest rate, or Period) to modify it. Press Enter to save the changes.</li>
+            <li> <hr style="border: none; height: 0px; background-color: white; margin: 10px 0;">
+            </li>
+            <li><strong>Delete</strong>: Click "Delete" to remove a selected loan from the database. A confirmation prompt will appear before deletion.</li>
+            <div class="image-container">
+                <img src=".././resources/images/Delete.png" alt="Delete Image">
+            </div>
+        </ul>
+    </div>
+            <a href="IndexHelp.html">Go back to index</a>
+</body>
+</html>

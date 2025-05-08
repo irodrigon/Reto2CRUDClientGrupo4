@@ -326,6 +326,21 @@ public class LoanController {
             }
         });
     }
+    
+       @FXML
+    private void nuevoPrestamo(ActionEvent event) {
+        addNewLoan(event);
+    }
+    
+        @FXML
+    private void imprimirPrestamo(ActionEvent event) {
+       Print(event);
+    }
+
+    @FXML
+    private void eliminarPrestamo(ActionEvent event) {
+       DeleteLoan(event);
+    }
 
     /**
      * Adds a new loan to the database and refreshes the table.
