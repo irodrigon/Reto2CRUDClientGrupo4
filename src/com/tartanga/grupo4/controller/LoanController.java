@@ -190,9 +190,9 @@ public class LoanController {
                 mostrarPorTexto();
             }
         });
-         tfSearch.setVisible(false);
+        tfSearch.setVisible(false);
         tfSearch.setManaged(false);
-
+        btnSearch.setVisible(false);
         fromDate.setVisible(false);
         fromDate.setManaged(false);
         fromDate.setPromptText("Fecha desde:");
@@ -405,6 +405,7 @@ public class LoanController {
     /**
      * Loads all loans into the table.
      */
+    @FXML
     private void mostrarTodosLosPrestamos() {
         ObservableList<Loan> data = FXCollections.observableArrayList(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
         }));
@@ -520,7 +521,7 @@ public class LoanController {
     private void mostrarPorFecha() {
         tfSearch.setVisible(false);
         tfSearch.setManaged(false);
-
+        btnSearch.setVisible(true);
         fromDate.setVisible(true);
         fromDate.setManaged(true);
         fromDate.setPromptText("Fecha desde:");
@@ -533,7 +534,7 @@ public class LoanController {
     private void mostrarPorTexto() {
         tfSearch.setVisible(true);
         tfSearch.setManaged(true);
-
+        btnSearch.setVisible(true);
         fromDate.setVisible(false);
         fromDate.setManaged(false);
         toDate.setVisible(false);

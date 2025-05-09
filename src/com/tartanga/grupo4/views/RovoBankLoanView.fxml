@@ -36,14 +36,13 @@
         <HBox prefHeight="100.0" prefWidth="200.0">
             <children>
                 <Region fx:id="regionEspacioTop212" prefHeight="28.0" prefWidth="38.0" />
-                <ChoiceBox fx:id="choiceSearch" prefHeight="6.0" prefWidth="111.0" />
-                <Region fx:id="regionEspacioTop2121" prefHeight="28.0" prefWidth="38.0" />
+                <Label fx:id="lblFilterBy" text="Filter by: " layoutX="50" layoutY="30" />
+                <ChoiceBox fx:id="choiceSearch" prefHeight="6.0" prefWidth="175.0" />
+                <Region fx:id="regionEspacioTop2121" prefHeight="28.0" prefWidth="15.0" />
                 <TextField fx:id="tfSearch" prefHeight="26.0" prefWidth="322.0" />
-                <Region fx:id="regionEspacioTop2" prefHeight="28.0" prefWidth="17.0" />
-                <Region fx:id="regionEspacioTop211" prefHeight="28.0" prefWidth="10.0" />
                 <DatePicker fx:id="fromDate" />
-                <Region fx:id="regionEspacioTop22" prefHeight="28.0" prefWidth="32.0" />
-                <Region fx:id="regionEspacioTop2111" prefHeight="28.0" prefWidth="10.0" />
+            
+                <Region fx:id="regionEspacioTop2111" prefHeight="28.0" prefWidth="20.0" />
                 <DatePicker fx:id="toDate" />
                 <Region fx:id="regionEspacioTop221" prefHeight="28.0" prefWidth="32.0" />
                 <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
@@ -56,11 +55,11 @@
                 
                 <!-- <TableColumn fx:id="tcBorrower" prefWidth="250" text="Borrower" /> -->
                 <TableColumn fx:id="tcLoanId" prefWidth="174.14" text="Loan ID" />
-                <TableColumn fx:id="tcStartingDate" prefWidth="174.14" text="Starting Date" />
-                <TableColumn fx:id="tcEndingDate" prefWidth="348.27" text="Ending Date" />
+                <TableColumn fx:id="tcStartingDate" prefWidth="200" text="Starting Date" />
+                <TableColumn fx:id="tcEndingDate" prefWidth="200" text="Ending Date" />
                 <TableColumn fx:id="tcTotalAmount" prefWidth="174.14" text="Total Amount" />
-                <TableColumn fx:id="tcRemainingAmount" prefWidth="174.14" text="Remaining Amount" />
-                <TableColumn fx:id="tcInterestRate" prefWidth="87" text="Interest Rate" />
+                <TableColumn fx:id="tcRemainingAmount" prefWidth="230" text="Remaining Amount" />
+                <TableColumn fx:id="tcInterestRate" prefWidth="155" text="Interest Rate" />
                 <TableColumn fx:id="tcPeriod" prefWidth="174.14" text="Period" />
             </columns>
             <contextMenu>
@@ -76,9 +75,11 @@
         </TableView>
         <HBox fx:id="hBoxMenu" alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="1154.0">
             <children>
-                <Button fx:id="btnNew" onAction="#addNewLoan" styleClass="button new-button" text="New" />
-                <Region fx:id="regionEspacioTop12" prefHeight="26.0" prefWidth="20.0" />
+                <Button fx:id="btnShow" onAction="#mostrarTodosLosPrestamos" styleClass="button print-button" text="Show all" />
+                <Region fx:id="regionEspacioTop10" prefHeight="26.0" prefWidth="20.0" />
                 <Button fx:id="btnPrint" onAction="#PrintLoan" styleClass="button print-button" text="Print" />
+                <Region fx:id="regionEspacioTop12" prefHeight="26.0" prefWidth="20.0" />
+                <Button fx:id="btnNew" onAction="#addNewLoan" styleClass="button new-button" text="New" />
                 <Region fx:id="regionEspacioTop11" prefHeight="26.0" prefWidth="20.0" />
                 <Button fx:id="btnDelete" alignment="TOP_CENTER" onAction="#DeleteLoan" styleClass="button delete-button" text="Delete" />
                 <Region fx:id="regionEspacioTop13" prefHeight="26.0" prefWidth="30.0" />

@@ -256,20 +256,47 @@
     -fx-font-size: 20px;
 }
 
-.choice-box .label{
+#lblFilterBy{
+    -fx-text-fill: #006048;
+}
+/* Estilo para el texto dentro de ChoiceBox */
+.choice-box .label {
     -fx-font-size: 12px;
     -fx-font-weight: normal;
-    -fx-text-fill: #000000;
+    -fx-text-fill: #0dbf93; /* Verde suave */
 }
 
-.context-menu .menu-item .label {
+/* Estilo para el contorno del ChoiceBox */
+#choiceSearch {
+    -fx-background-color: whitesmoke;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+    -fx-border-color: #006048; /* Color del borde */
+    -fx-border-width: 2px; /* Grosor del borde */
+}
+
+#choiceSearch .label {
     -fx-text-fill: #006048;
 }
 
-.context-menu .menu-item:hover{
-    -fx-background-color: #006048;
+/* Opciones del menú desplegable */
+.choice-box .context-menu {
+    -fx-background-color: white;
 }
 
-.context-menu .menu-item:hover .label{
-    -fx-text-fill: #ffffff;
+.choice-box .menu-item > .label {
+    -fx-text-fill: #0dbf93; /* Verde suave para las opciones */
+}
+
+/* Estilo para las opciones al pasar el mouse */
+.choice-box .menu-item:hover {
+    -fx-background-color: #0dbf93;
+    -fx-text-fill: white;
+}
+
+
+.choice-box .arrow-button {
+    -fx-text-fill: #0dbf93; /* Texto verde en el botón desplegable */
 }
