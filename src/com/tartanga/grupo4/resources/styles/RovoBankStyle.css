@@ -261,7 +261,7 @@
 }
 /* Estilo para el texto dentro de ChoiceBox */
 .choice-box .label {
-    -fx-font-size: 12px;
+    -fx-font-size: 16px;
     -fx-font-weight: normal;
     -fx-text-fill: #0dbf93; /* Verde suave */
 }

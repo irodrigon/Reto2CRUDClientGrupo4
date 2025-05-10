@@ -168,27 +168,46 @@ public class Loan extends Product implements Serializable {
      *
      * @return The remaining amount of the loan, rounded to two decimal places.
      */
-    public Double getRAmount() {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+public Double getRAmount() {
+    LocalDate currentDate = LocalDate.now();
+    LocalDate start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    LocalDate end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        if (currentDate.isBefore(start)) {
-            return amount;
-        } else if (currentDate.isAfter(end)) {
+    if (currentDate.isBefore(start)) {
+        return 0.0; // No se ha pagado nada aún
+    } else if (currentDate.isAfter(end)) {
+        return amount * (1 + interest.doubleValue() / 100.0); // Ya se pagó todo (monto + interés completo)
+    } else {
+        long totalDays = ChronoUnit.DAYS.between(start, end);
+        long elapsedDays = ChronoUnit.DAYS.between(start, currentDate);
+
+        // Número total de pagos (redondeado hacia arriba para cubrir todo el plazo)
+        long totalPayments = (totalDays + period - 1) / period; // Asegura que cubra días extras
+        
+        // Número de pagos ya vencidos (sin redondear, solo completos)
+        long elapsedPayments = elapsedDays / period;
+
+        // Si no hay pagos vencidos aún, devolver 0
+        if (elapsedPayments == 0) {
             return 0.0;
-        } else {
-            long totalPeriods = ChronoUnit.DAYS.between(start, end) / this.period;
-            long elapsedPeriods = ChronoUnit.DAYS.between(start, currentDate) / this.period;
-
-            // Calculate the interest factor
-            double interestFactor = 1 + (interest.doubleValue() / 100.0) * (elapsedPeriods / (double) totalPeriods);
-
-            // Calculate the result and round to two decimal places
-            double result = amount * interestFactor;
-            return Math.round(result * 100.0) / 100.0;  // Round to 2 decimal places
         }
+
+        // Monto por pago (sin interés)
+        double paymentAmount = amount / totalPayments;
+
+        // Interés total (amount * interés%)
+        double totalInterest = amount * (interest.doubleValue() / 100.0);
+
+        // Interés por pago (proporcional al plazo)
+        double interestPerPayment = totalInterest / totalPayments;
+
+        // Monto total pagado hasta ahora (pagos completos * (monto + interés))
+        double totalPaid = elapsedPayments * (paymentAmount + interestPerPayment);
+
+        // Redondear a 2 decimales
+        return Math.round(totalPaid * 100.0) / 100.0;
     }
+}
 
     public void setStartDate(String string) {
         throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose Tools | Templates.

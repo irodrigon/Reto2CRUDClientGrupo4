@@ -407,10 +407,14 @@ public class LoanController {
      */
     @FXML
     private void mostrarTodosLosPrestamos() {
-        ObservableList<Loan> data = FXCollections.observableArrayList(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-        }));
-        loanTable.setItems(data);
-
+        try {
+            ObservableList<Loan> data = FXCollections.observableArrayList(LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+            }));
+            loanTable.setItems(data);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "LoanController: Exception while retrieveing loan data from the server: ", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -419,80 +423,96 @@ public class LoanController {
      * @param event The action event triggered by the search button.
      */
     private void onSearch(ActionEvent event) {
+        try {
+            String selectedOption = choiceSearch.getValue();
+            ObservableList<Loan> filteredLoans = FXCollections.observableArrayList();
 
-        String selectedOption = choiceSearch.getValue();
-        ObservableList<Loan> filteredLoans = FXCollections.observableArrayList();
+            if (selectedOption != null) {
+                switch (selectedOption) {
 
-        if (selectedOption != null) {
-            switch (selectedOption) {
+                    case "Search by Date":
+                        LocalDate startDate = fromDate.getValue();
+                        LocalDate endDate = toDate.getValue();
 
-                case "Search by Date":
-                    LocalDate startDate = fromDate.getValue();
-                    LocalDate endDate = toDate.getValue();
-
-                    if (startDate != null && endDate != null && startDate.isBefore(endDate)) {
-                        filteredLoans = FXCollections.observableArrayList(
-                                LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-                                }).stream()
-                                        .filter(loan -> {
-                                            Date loanStartDate = loan.getStartDate();
-                                            Date loanEndDate = loan.getEndDate();
-                                            return loanStartDate != null && loanEndDate != null
-                                                    && !loanStartDate.before(java.sql.Date.valueOf(startDate))
-                                                    && !loanEndDate.after(java.sql.Date.valueOf(endDate));
-                                        })
-                                        .collect(Collectors.toList())
-                        );
-                    } else {
-                        showErrorAlert("Invalid Date Range", "Please select a valid date range.");
-                        return;
-                    }
-                    break;
-
-                case "Search by interest rate":
-                    String interestRateText = tfSearch.getText();
-                    if (!interestRateText.isEmpty()) {
-                        try {
-                            int interestRate = Integer.parseInt(interestRateText);
+                        if (startDate != null && endDate != null && startDate.isBefore(endDate)) {
                             filteredLoans = FXCollections.observableArrayList(
                                     LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
                                     }).stream()
-                                            .filter(loan -> loan.getInterest() == interestRate)
+                                            .filter(loan -> {
+                                                Date loanStartDate = loan.getStartDate();
+                                                Date loanEndDate = loan.getEndDate();
+                                                return loanStartDate != null && loanEndDate != null
+                                                        && !loanStartDate.before(java.sql.Date.valueOf(startDate))
+                                                        && !loanEndDate.after(java.sql.Date.valueOf(endDate));
+                                            })
                                             .collect(Collectors.toList())
                             );
-                        } catch (NumberFormatException e) {
-                            showErrorAlert("Invalid Interest Rate", "Please enter a valid interest rate.");
+                        } else {
+                            showErrorAlert("Invalid Date Range", "Please select a valid date range.");
                             return;
                         }
-                    }
-                    break;
+                        break;
 
-                case "Search by Amount":
-                    String amountText = tfSearch.getText();
-                    if (!amountText.isEmpty()) {
-                        try {
-                            double amount = Double.parseDouble(amountText);
-                            filteredLoans = FXCollections.observableArrayList(
-                                    LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
-                                    }).stream()
-                                            .filter(loan -> loan.getAmount() == amount)
-                                            .collect(Collectors.toList())
-                            );
-                        } catch (NumberFormatException e) {
+                    case "Search by interest rate":
+                        String interestRateText = tfSearch.getText();
+                        if (!interestRateText.isEmpty()) {
+
+                            try {
+                                int interestRate = Integer.parseInt(interestRateText);
+                                filteredLoans = FXCollections.observableArrayList(
+                                        LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                        }).stream()
+                                                .filter(loan -> loan.getInterest() == interestRate)
+                                                .collect(Collectors.toList())
+                                );
+                            } catch (NumberFormatException e) {
+                                showErrorAlert("Invalid Interest Rate", "Please enter a valid interest rate.");
+                                LOGGER.log(Level.SEVERE, "Error on LoanController: Exception while searching by interest rate", e.getMessage());
+                                return;
+                            }
+                        } else {
+                            showErrorAlert("Invalid interest rate", "Please select a valid value.");
+                            return;
+                        }
+                        break;
+
+                    case "Search by Amount":
+                        String amountText = tfSearch.getText();
+                        if (!amountText.isEmpty()) {
+                            try {
+                                double amount = Double.parseDouble(amountText);
+                                filteredLoans = FXCollections.observableArrayList(
+                                        LoanFactory.getInstance().getILoans().findAll_XML(new GenericType<List<Loan>>() {
+                                        }).stream()
+                                                .filter(loan -> loan.getAmount() == amount)
+                                                .collect(Collectors.toList())
+                                );
+                            } catch (NumberFormatException e) {
+                                showErrorAlert("Invalid Amount", "Please enter a valid amount.");
+                                LOGGER.log(Level.SEVERE, "Error on LoanController: Exception while searching by amount", e.getMessage());
+                                return;
+                            }
+                        } else {
                             showErrorAlert("Invalid Amount", "Please enter a valid amount.");
                             return;
                         }
-                    }
-                    break;
+                        break;
 
-                default:
-                    showErrorAlert("Invalid Option", "Please select a valid search option.");
-                    return;
+                    default:
+                        showErrorAlert("Invalid Option", "Please select a valid search option.");
+                        return;
+                }
+            } else {
+                showErrorAlert("Not filter selected.", "Please select a filtering option.");
             }
-        }
 
-        // Update the table with the filtered loans
-        loanTable.setItems(filteredLoans);
+            // Update the table with the filtered loans
+            loanTable.setItems(filteredLoans);
+        }catch(Exception e){
+            LOGGER.log(Level.SEVERE, "Error while filtering: ", e.getMessage());
+              showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -513,8 +533,9 @@ public class LoanController {
 
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setVisible(true);
+            LOGGER.log(Level.INFO, "Printed succesfully");
         } catch (Exception error) {
-            LOGGER.log(Level.SEVERE, "AccountController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
+            LOGGER.log(Level.SEVERE, "LoanController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
         }
     }
 
