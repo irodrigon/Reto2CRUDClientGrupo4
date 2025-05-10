@@ -80,9 +80,10 @@ public class LoanController {
     private Stage stage;
 
     /**
-     * Initializes the controller. This method is automatically called after the
-     * FXML file has been loaded. It sets up the table columns, configures
-     * editable cells, and loads all loans into the table.
+     * Initializes the controller after the FXML components are loaded. Sets up
+     * the table view, editable cells, listeners for user interaction, and
+     * populates the table with existing loan records. It also configures the
+     * search options and input fields based on the selected criteria.
      */
     @FXML
     private void initialize() {
@@ -94,13 +95,14 @@ public class LoanController {
         tcStartingDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         tcEndingDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
         tcTotalAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        tcRemainingAmount.setCellValueFactory(new PropertyValueFactory<>("rAmount"));
         tcInterestRate.setCellValueFactory(new PropertyValueFactory<>("interest"));
         tcPeriod.setCellValueFactory(new PropertyValueFactory<>("period"));
+        tcTotalAmount.setStyle("-fx-alignment: CENTER-RIGHT;");
+        tcRemainingAmount.setCellValueFactory(new PropertyValueFactory<>("rAmount"));
+        tcRemainingAmount.setStyle("-fx-alignment: CENTER-RIGHT;");
 
         btnSearch.setOnAction(this::onSearch);
 
-        // Configure editable cells for total amount
         tcTotalAmount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter() {
             private Double previousAmount;
 
@@ -116,7 +118,6 @@ public class LoanController {
             }
         }));
 
-        // Configure editable cells for interest rate
         tcInterestRate.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter() {
             private Integer previousValue;
 
@@ -132,7 +133,6 @@ public class LoanController {
             }
         }));
 
-        // Configure editable cells for period
         tcPeriod.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter() {
             private Integer previousValue;
 
@@ -148,7 +148,6 @@ public class LoanController {
             }
         }));
 
-        // Configure date picker cells for start and end dates
         tcStartingDate.setCellFactory(column -> new LoanCellDatePicker());
         tcStartingDate.setOnEditCommit(event -> {
             Loan loan = event.getRowValue();
@@ -160,7 +159,8 @@ public class LoanController {
                 }
                 updateLoan(loan);
             } catch (Exception e) {
- LOGGER.severe("Invalid Date, end date cannot be before start date.");                showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
+                LOGGER.severe("Invalid Date, end date cannot be before start date.");
+                showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
                 loan.setStartDate(oldStartDate);
                 loanTable.refresh();
             }
@@ -200,13 +200,15 @@ public class LoanController {
         toDate.setVisible(false);
         toDate.setManaged(false);
         toDate.setPromptText("Fecha hasta:");
-        // Configure editable columns
         configureEditableColumns();
-
-        // Load all loans into the table
         mostrarTodosLosPrestamos();
     }
 
+    /**
+     * Initializes and displays the stage (window) for this controller.
+     *
+     * @param root The root node of the scene graph loaded from the FXML file.
+     */
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage = new Stage();
@@ -219,8 +221,13 @@ public class LoanController {
     }
 
     /**
-     * Configures the editable columns for interest rate, period, and total
-     * amount. Ensures that the input values are within valid ranges.
+     * Configures editable columns for loan properties: interest rate, period,
+     * and total amount.
+     * <p>
+     * Validates user input to ensure values fall within defined acceptable
+     * ranges: - Interest rate: 0–50 - Period: 0–1000 - Amount: 0–100,000,000
+     * <p>
+     * If input is invalid, shows an error alert and reverts the value.
      */
     private void configureEditableColumns() {
         tcInterestRate.setOnEditCommit((TableColumn.CellEditEvent<Loan, Integer> event) -> {
@@ -254,6 +261,7 @@ public class LoanController {
                 loan.setPeriod(newPeriod);
                 updateLoan(loan);
             } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error : Period should be greater than 0 and lower than 1000!", e.getMessage());
                 showErrorAlert("Invalid Input", "Period should be greater than 0 and lower than 1000!.");
                 loan.setPeriod(oldPeriod);
                 loanTable.refresh();
@@ -271,6 +279,7 @@ public class LoanController {
                 loan.setAmount(newAmount);
                 updateLoan(loan);
             } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error, invalid input: Exception while ", e.getMessage());
                 showErrorAlert("Invalid Input", "Amount should be greater than 0 and lower than 100 million!");
                 loan.setAmount(loan.getAmount());
                 loanTable.refresh();
@@ -279,24 +288,28 @@ public class LoanController {
     }
 
     /**
-     * Updates the loan in the database.
+     * Updates the given loan record in the backend system via the business
+     * logic layer.
+     * <p>
+     * After updating, the table is refreshed to reflect the latest data.
      *
-     * @param loan The loan to be updated.
+     * @param loan The {@link Loan} object containing updated information.
      */
     private void updateLoan(Loan loan) {
         try {
             LoanFactory.getInstance().getILoans().edit_XML(loan, loan.getIDProduct());
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error :updateLoan ", e.getMessage());
             showErrorAlert("Error Updating Loan", "Error updating loan: " + e.getMessage());
         }
         loanTable.refresh();
     }
 
     /**
-     * Displays an error alert with the specified title and message.
+     * Displays an error alert dialog with the specified title and message.
      *
-     * @param title The title of the alert.
-     * @param message The message to be displayed.
+     * @param title The title of the alert dialog.
+     * @param message The message content to be shown in the alert dialog.
      */
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -409,7 +422,10 @@ public class LoanController {
     }
 
     /**
-     * Loads all loans into the table.
+     * Displays all loans currently stored in the system.
+     * <p>
+     * This method loads all loan records from the database and populates the
+     * loan table with the retrieved data.
      */
     @FXML
     private void mostrarTodosLosPrestamos() {
@@ -425,9 +441,12 @@ public class LoanController {
     }
 
     /**
-     * Handles the search functionality based on the selected search option.
+     * Handles the search action when the user clicks the search button.
+     * <p>
+     * Based on the selected search type (date, amount, or user), this method
+     * filters and displays the loans matching the search criteria in the table.
      *
-     * @param event The action event triggered by the search button.
+     * @param event The event triggered by clicking the search button.
      */
     private void onSearch(ActionEvent event) {
         try {
@@ -570,5 +589,3 @@ public class LoanController {
         toDate.setManaged(false);
     }
 }
-
-

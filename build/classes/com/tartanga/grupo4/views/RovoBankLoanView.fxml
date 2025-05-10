@@ -57,13 +57,13 @@
                 <TableColumn fx:id="tcLoanId" prefWidth="174.14" text="Loan ID" />
                 <TableColumn fx:id="tcStartingDate" prefWidth="200" text="Starting Date" />
                 <TableColumn fx:id="tcEndingDate" prefWidth="200" text="Ending Date" />
-                <TableColumn fx:id="tcTotalAmount" prefWidth="174.14" text="Total Amount" />
-                <TableColumn fx:id="tcRemainingAmount" prefWidth="230" text="Remaining Amount" />
                 <TableColumn fx:id="tcInterestRate" prefWidth="155" text="Interest Rate" />
                 <TableColumn fx:id="tcPeriod" prefWidth="174.14" text="Period" />
+                <TableColumn fx:id="tcTotalAmount" prefWidth="174.14" text="Total Amount" />
+                <TableColumn fx:id="tcRemainingAmount" prefWidth="230" text="Remaining Amount" />
             </columns>
             <contextMenu>
-                <ContextMenu>
+                <ContextMenu >
                     <items>
                         <MenuItem text="Delete" onAction="#eliminarPrestamo"/>
                         <MenuItem text="New" onAction="#nuevoPrestamo"/>

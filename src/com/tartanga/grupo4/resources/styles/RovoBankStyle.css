@@ -259,15 +259,10 @@
 #lblFilterBy{
     -fx-text-fill: #006048;
 }
-/* Estilo para el texto dentro de ChoiceBox */
-.choice-box .label {
-    -fx-font-size: 16px;
-    -fx-font-weight: normal;
-    -fx-text-fill: #0dbf93; /* Verde suave */
-}
 
 /* Estilo para el contorno del ChoiceBox */
 #choiceSearch {
+    -fx-font-size: 10px;
     -fx-background-color: whitesmoke;
     -fx-font-weight: bold;
     -fx-border-radius: 5;
@@ -279,24 +274,111 @@
 
 #choiceSearch .label {
     -fx-text-fill: #006048;
+    
+    -fx-font-size: 15px;
 }
 
-/* Opciones del menú desplegable */
-.choice-box .context-menu {
-    -fx-background-color: white;
-}
 
-.choice-box .menu-item > .label {
-    -fx-text-fill: #0dbf93; /* Verde suave para las opciones */
+
+#choiceSearch .menu-item > .label {
+    -fx-text-fill: #006048; /* Verde suave para las opciones */
 }
 
 /* Estilo para las opciones al pasar el mouse */
-.choice-box .menu-item:hover {
-    -fx-background-color: #0dbf93;
+#choiceSearch .menu-item:hover {
+    -fx-background-color: #006048;
+}
+
+
+#choiceSearch .arrow-button {
+    -fx-text-fill: #0dbf93; /* Texto verde en el botón desplegable */
+}
+#choiceSearch .menu-item:hover .label{
     -fx-text-fill: white;
 }
 
-
-.choice-box .arrow-button {
-    -fx-text-fill: #0dbf93; /* Texto verde en el botón desplegable */
+.context-menu .menu-item .label {
+    -fx-text-fill: #006048;
 }
+
+.context-menu .menu-item:hover{
+    -fx-background-color: #006048;
+}
+
+.context-menu .menu-item:hover .label{
+    -fx-text-fill: #ffffff;
+}
+
+/* Estilo base del DatePicker */
+.date-picker {
+    -fx-background-color: whitesmoke;
+    -fx-border-color: #006048;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-text-fill: #006048;
+    -fx-font-weight: bold;
+}
+
+/* Texto del campo de entrada */
+.date-picker .text-field {
+    -fx-text-fill: #006048;
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+}
+
+/* Botón del calendario */
+.date-picker .arrow-button {
+    -fx-background-color: #006048;
+    -fx-background-radius: 0 5 5 0;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-base: #006048 ;
+    -fx-mark-highlight-color: white ;
+}
+
+
+
+/* Flecha izquierda para navegar al mes anterior */
+.date-picker .popup .left-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #006048;  /* Verde oscuro */
+}
+
+/* Flecha derecha para navegar al mes siguiente */
+.date-picker .popup .right-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #006048;  /* Verde oscuro */
+}
+
+/* Hover sobre las flechas de navegación */
+.date-picker .popup .left-button:hover,
+.date-picker .popup .right-button:hover {
+    -fx-background-color: #147879;  /* Verde más claro */
+    -fx-text-fill: white;
+}
+
+/* Flecha izquierda para navegar al mes anterior */
+.date-picker .popup-content .left-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #006048;  /* Verde oscuro */
+}
+
+/* Flecha derecha para navegar al mes siguiente */
+.date-picker .popup-content .right-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #006048;  /* Verde oscuro */
+}
+
+/* Hover sobre las flechas de navegación */
+.date-picker .popup-content .left-button:hover,
+.date-picker .popup-content .right-button:hover {
+    -fx-background-color: #147879;  /* Verde más claro */
+    -fx-text-fill: white;
+}
+
