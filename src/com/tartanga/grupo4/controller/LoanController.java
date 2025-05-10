@@ -160,7 +160,7 @@ public class LoanController {
                 }
                 updateLoan(loan);
             } catch (Exception e) {
-                showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
+ LOGGER.severe("Invalid Date, end date cannot be before start date.");                showErrorAlert("Invalid Date", "Start date cannot be later than end date.");
                 loan.setStartDate(oldStartDate);
                 loanTable.refresh();
             }
@@ -177,6 +177,7 @@ public class LoanController {
                 }
                 updateLoan(loan);
             } catch (Exception e) {
+                LOGGER.severe("Invalid Date, end date cannot be before start date.");
                 showErrorAlert("Invalid Date", "End date cannot be before start date.");
                 loan.setEndDate(oldEndDate);
                 loanTable.refresh();
@@ -234,6 +235,7 @@ public class LoanController {
                 loan.setInterest(newInterestRate);
                 updateLoan(loan);
             } catch (Exception e) {
+                LOGGER.severe("The interest rate should be an integer greater than 0 and less than 50!");
                 showErrorAlert("Invalid Input", "The interest rate should be an integer greater than 0 and less than 50!");
                 loan.setInterest(oldInterestRate);
                 loanTable.refresh();
@@ -336,8 +338,10 @@ public class LoanController {
                     LoanFactory.getInstance().getILoans().remove(selectedLoan.getIDProduct());
                     mostrarTodosLosPrestamos();
                 } catch (Exception e) {
-                    showErrorAlert("Error Deleting Loan", "Error deleting loan: " + e.getMessage());
+                    showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
+                    LOGGER.severe("Error Deleting Loan: " + e.getMessage());
                 }
+
             }
         });
     }
@@ -375,6 +379,7 @@ public class LoanController {
             LoanFactory.getInstance().getILoans().edit_XML(mLoan, mId);
             mostrarTodosLosPrestamos();
         } catch (Exception e) {
+            showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
             LOGGER.severe("Error adding loan: " + e.getMessage());
             e.printStackTrace();
         }
@@ -397,6 +402,7 @@ public class LoanController {
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
             JasperViewer.viewReport(jasperPrint, false);
         } catch (JRException e) {
+            showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
             LOGGER.severe("Error generating report: " + e.getMessage());
             e.printStackTrace();
         }
@@ -412,6 +418,7 @@ public class LoanController {
             }));
             loanTable.setItems(data);
         } catch (Exception e) {
+            showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
             LOGGER.log(Level.SEVERE, "LoanController: Exception while retrieveing loan data from the server: ", e.getMessage());
             e.printStackTrace();
         }
@@ -508,9 +515,9 @@ public class LoanController {
 
             // Update the table with the filtered loans
             loanTable.setItems(filteredLoans);
-        }catch(Exception e){
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error while filtering: ", e.getMessage());
-              showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
+            showErrorAlert("Unexpected error.", "Please try again or contact support if the problem persists.");
             e.printStackTrace();
         }
     }
@@ -535,6 +542,7 @@ public class LoanController {
             jasperViewer.setVisible(true);
             LOGGER.log(Level.INFO, "Printed succesfully");
         } catch (Exception error) {
+            showErrorAlert("Unexpected error printing.", "Please try again or contact support if the problem persists.");
             LOGGER.log(Level.SEVERE, "LoanController(handlePrintReport): Exception while creating the report {0}", error.getMessage());
         }
     }
@@ -562,3 +570,5 @@ public class LoanController {
         toDate.setManaged(false);
     }
 }
+
+
