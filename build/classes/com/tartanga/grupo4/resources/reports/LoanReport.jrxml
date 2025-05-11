@@ -123,17 +123,12 @@
 	<pageFooter>
 		<band height="40">
 			<staticText>
-				<reportElement x="434" y="9" width="121" height="30" uuid="0025c53b-11ac-4aaf-a735-11de90c652da"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="106" y="0" width="80" height="30" uuid="88c62775-9cf8-4c94-bdfd-d7789dc80af5"/>
+				<reportElement x="486" y="9" width="69" height="30" uuid="0025c53b-11ac-4aaf-a735-11de90c652da"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="455" y="20" width="100" height="20" uuid="9421e7f7-0d8c-46f7-bd49-7a054f3efc8d"/>
+				<reportElement x="510" y="20" width="45" height="20" uuid="9421e7f7-0d8c-46f7-bd49-7a054f3efc8d"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>

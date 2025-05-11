@@ -38,7 +38,6 @@ public class LoanController {
 
     private static Logger LOGGER = Logger.getLogger(LoanController.class.getName());
 
-    // FXML elements
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -196,10 +195,10 @@ public class LoanController {
         btnSearch.setVisible(false);
         fromDate.setVisible(false);
         fromDate.setManaged(false);
-        fromDate.setPromptText("Fecha desde:");
+        fromDate.setPromptText("From Date:");
         toDate.setVisible(false);
         toDate.setManaged(false);
-        toDate.setPromptText("Fecha hasta:");
+        toDate.setPromptText("To Date:");
         configureEditableColumns();
         mostrarTodosLosPrestamos();
     }
@@ -224,10 +223,18 @@ public class LoanController {
      * Configures editable columns for loan properties: interest rate, period,
      * and total amount.
      * <p>
-     * Validates user input to ensure values fall within defined acceptable
-     * ranges: - Interest rate: 0–50 - Period: 0–1000 - Amount: 0–100,000,000
+     * Validates user input to ensure that values fall within the following
+     * acceptable ranges:
+     * </p>
+     * <ul>
+     * <li><strong>Interest rate:</strong> 0–50</li>
+     * <li><strong>Period:</strong> 0–1000</li>
+     * <li><strong>Amount:</strong> 0–100,000,000</li>
+     * </ul>
      * <p>
-     * If input is invalid, shows an error alert and reverts the value.
+     * If the input is invalid, an error alert is displayed and the previous
+     * value is restored.
+     * </p>
      */
     private void configureEditableColumns() {
         tcInterestRate.setOnEditCommit((TableColumn.CellEditEvent<Loan, Integer> event) -> {
@@ -293,7 +300,6 @@ public class LoanController {
      * <p>
      * After updating, the table is refreshed to reflect the latest data.
      *
-     * @param loan The {@link Loan} object containing updated information.
      */
     private void updateLoan(Loan loan) {
         try {
@@ -337,7 +343,6 @@ public class LoanController {
     /**
      * Confirms and deletes the selected loan.
      *
-     * @param selectedLoan The loan to be deleted.
      */
     private void confirmAndDeleteLoan(Loan selectedLoan) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -426,6 +431,8 @@ public class LoanController {
      * <p>
      * This method loads all loan records from the database and populates the
      * loan table with the retrieved data.
+     * </p>
+
      */
     @FXML
     private void mostrarTodosLosPrestamos() {
@@ -445,7 +452,7 @@ public class LoanController {
      * <p>
      * Based on the selected search type (date, amount, or user), this method
      * filters and displays the loans matching the search criteria in the table.
-     *
+     * </p>
      * @param event The event triggered by clicking the search button.
      */
     private void onSearch(ActionEvent event) {
@@ -572,10 +579,10 @@ public class LoanController {
         btnSearch.setVisible(true);
         fromDate.setVisible(true);
         fromDate.setManaged(true);
-        fromDate.setPromptText("Fecha desde:");
+        fromDate.setPromptText("From Date:");
         toDate.setVisible(true);
         toDate.setManaged(true);
-        toDate.setPromptText("Fecha hasta:");
+        toDate.setPromptText("To Date:");
 
     }
 

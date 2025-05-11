@@ -1,146 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Help - Loan Management</title>
-  <link rel="stylesheet" href="../resources/styles/HelpAccountStyle.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Help - Loan Management</title>
+        <link rel="stylesheet" href="../resources/styles/HelpAccountStyle.css" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+                max-width: 900px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
 
-    h1, h3, h4 {
-      color: #333;
-    }
+            h1, h3, h4 {
+                color: #333;
+            }
 
-    a {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #007BFF;
-      text-decoration: none;
-    }
+            a {
+                display: inline-block;
+                margin-bottom: 20px;
+                color: #007BFF;
+                text-decoration: none;
+            }
 
-    .section {
-      background-color: #fff;
-      padding: 20px;
-      margin-bottom: 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+            .section {
+                background-color: #fff;
+                padding: 20px;
+                margin-bottom: 25px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
 
-    ul {
-      padding-left: 20px;
-    }
+            ul {
+                padding-left: 20px;
+            }
 
-    .image-container {
-      text-align: center;
-      margin-top: 15px;
-      margin-bottom: 15px;
-    }
+            .image-container {
+                text-align: center;
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
 
-    .image-container img {
-      max-width: 90%;
-      height: auto;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-  </style>
-</head>
-<body>
+            .image-container img {
+                max-width: 90%;
+                height: auto;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
 
-  <a href="IndexHelp.html">← Back to Help Index</a>
-  <h3>Help: Loan Management</h3>
+        <a href="IndexHelp.html">← Back to Help Index</a>
+        <h3>Help: Loan Management</h3>
 
-  <div class="section">
-    <h4>What is this screen for?</h4>
-    <p>Here you can view, search, and manage your loans. You can filter them, add new ones, or delete them when needed.</p>
-  </div>
+        <div class="section">
+            <h4>What is this screen for?</h4>
+            <p>Here you can view, search, and manage your loans. You can filter them, add new ones, modify or delete them when needed.</p>
+        </div>
 
-  <div class="section">
-    <h4>How to search loans</h4>
-    <p>Use the dropdown menu at the top of the screen to choose how you want to search:</p>
-    <ul>
-      <li><strong>By Date:</strong> Choose a start and end date, then click "Search".</li>
-      <li><strong>By Interest Rate:</strong> Type a number (like 3.5) and click "Search".</li>
-      <li><strong>By Amount:</strong> Enter the total amount you are looking for and press "Search".</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/Search.png" alt="Search Options">
-    </div>
-  </div>
+        <div class="section">
+            <h4>How to search loans:</h4>
+            <p>Use the dropdown menu at the top of the screen to choose how you want to search:</p>
+            <p></p>
+            <p><strong>By Date:</strong></p>
+            <ul>
+                <li>By selecting or writing a start date and an end date and clicking the search button, the table will filter and display only those loans whose dates fall within the selected interval.</li>
+                <li>Each date cell has a button on the right that expands a calendar where a date can be selected.</li>
+                <li>The date format must be dd/MM/yyyy (day/month/year), and the end date must be later than the start date.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/LoanSearchByDate.png" alt="Search Options">
+            </div>
+            <p></p>
+            <p><strong>By Interest Rate:</strong></p>
+            <ul>
+                <li>By entering an integer in the text box and clicking the search button, the table will filter and display only the loans whose interest rate matches the desired value.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/LoanSearchByInterest.png" alt="Search Options">
+            </div>
+            <p></p>
+            <p><strong>By Amount:</strong></p>
+            <ul>
+                <li>By entering a real number in the text box and clicking the search button, the table will filter and display only those loans whose total amount exactly matches the entered number.</li>
+                <li>The number must be positive, and if it includes decimals, a dot '.' should be used as the decimal separator.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/LoanSearchByAmount.png" alt="Search Options">
+            </div>
+        </div>
 
-  <div class="section">
-    <h4>What does the table show?</h4>
-    <p>The table shows the following loan details:</p>
-    <ul>
-      <li><strong>Loan ID:</strong> Unique number for the loan. (Can't be changed)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/LoanID.png" alt="Loan ID">
-    </div>
-    <ul>
-      <li><strong>Start Date:</strong> When the loan begins. (You can change it)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/StartingDate.png" alt="Starting Date">
-    </div>
-    <ul>
-      <li><strong>End Date:</strong> When the loan ends. (You can change it)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/EndingDate.png" alt="Ending Date">
-    </div>
-    <ul>
-      <li><strong>Total Amount:</strong> The full amount of the loan. (You can change it)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/TotalAmount.png" alt="Total Amount">
-    </div>
-    <ul>
-      <li><strong>Remaining Amount:</strong> What’s left to pay. (Can't be changed)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/RemainingAmount.png" alt="Remaining Amount">
-    </div>
-    <ul>
-      <li><strong>Interest Rate:</strong> Percentage applied to the loan. (You can change it)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/InterestRate.png" alt="Interest Rate">
-    </div>
-    <ul>
-      <li><strong>Payment Period:</strong> How often you pay (e.g., monthly). (You can change it)</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/Period.png" alt="Payment Period">
-    </div>
-    <p><strong>To edit:</strong> Double-click on the field you want to change. Press Enter to save.</p>
-  </div>
+        <div class="section">
+            <h4>What does the table show?</h4>
+            <p>The table shows the following loan details:</p>
+            <p></p>
+            <p><strong>Loan ID:</strong></p>
+            <ul>
+                <li>A unique number for each loan, used to identify them. This cell cannot be edited.</li>
+                <li>This cell cannot be edited.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/LoanID.png" alt="Loan ID">
+            </div>
+            <p></p>
 
-  <div class="section">
-    <h4>What can you do?</h4>
-    <p>At the bottom of the screen, you have these buttons:</p>
-    <ul>
-      <li><strong>New:</strong> Adds a new loan. You can edit its details in the table.</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/New.png" alt="New Loan Button">
-    </div>
-    <ul>
-      <li><strong>Delete:</strong> Select a loan in the table, then click "Delete". You’ll be asked to confirm.</li>
-    </ul>
-    <div class="image-container">
-      <img src="../resources/images/Delete.png" alt="Delete Loan Button">
-    </div>
-  </div>
+            <p><strong>Start Date:</strong></p>
+            <ul>
+                <li>This column displays the loan contract date.</li>
+                <li>It can be edited by double-clicking on the date you wish to modify.</li>
+                <li>If you prefer to enter the date manually, it must follow the format dd/MM/yyyy and will be registered upon pressing the Enter key. Alternatively, you can select the desired date from the pop-up calendar.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/StartingDate.png" alt="Starting Date">
+            </div>
+            <p></p>
 
-  <a href="IndexHelp.html">← Back to Help Index</a>
+            <p><strong>End Date:</strong></p>
+            <ul>
+                <li>This column displays the loan contract date.</li>
+                <li>It can be edited by double-clicking on the date you wish to modify.</li>
+                <li>If you prefer to enter the date manually, it must follow the format dd/MM/yyyy and will be registered upon pressing the Enter key. Alternatively, you can select the desired date from the pop-up calendar.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/EndingDate.png" alt="Ending Date">
+            </div>
+            <p></p>
 
-</body>
+
+            <p><strong>Total Amount:</strong></p>
+            <ul>
+                <li>This column shows the total amount contracted by the client.</li>
+                <li>It can be edited by double-clicking on the amount you wish to change. The new value will be saved by pressing Enter. </li>
+                <li>Only positive real numbers less than 100,000,000 are allowed in this field.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/TotalAmount.png" alt="Total Amount">
+            </div>
+            <p></p>
+
+            <p><strong>Remaining Amount:</strong></p>
+            <ul>
+                <li>This column displays the remaining amount to be paid, calculated based on the time elapsed since the loan start date, the loan end date, and the frequency of the payment period.</li>
+                <li>This field is read-only and cannot be modified.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/RemainingAmount.png" alt="Remaining Amount">
+            </div>
+            <p></p>
+
+            <p><strong>Interest Rate</strong></p>
+            <ul>
+                <li>This column displays the interest rate applied to the corresponding loan.</li>
+                <li>It can be edited by double-clicking the desired field. The new value will be saved upon pressing Enter. </li>
+                <li>Only integer values below 50 are allowed.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/InterestRate.png" alt="Interest Rate">
+            </div>
+            <p></p>
+
+            <p><strong>Payment Period:</strong></p>
+            <ul>
+                <li>This column indicates the interval, in days, at which payments are scheduled to be made.</li>
+                <li>It can be edited by double-clicking the desired field. The new value will be saved upon pressing Enter. </li>
+                <li>Only integer values below 1000 are allowed.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/Period.png" alt="Payment Period">
+            </div>
+        </div>
+
+        <div class="section">
+            <h4>What can you do?</h4>
+            <p>At the bottom of the screen, you have these buttons:</p>
+
+            <p></p>
+            <p><strong>New:</strong></p>
+            <ul>
+                <li>New loans with default data can be created either by using the button at the bottom or by selecting the corresponding option from the menu that appears when right-clicking on the table.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/New.png" alt="New Loan Button">
+            </div>
+            <p></p>
+
+            <p><strong>Delete:</strong></p>
+            <ul>
+                <li>The selected loan can be deleted via the button at the bottom or through the context menu accessed by right-clicking over the selected loan.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/Delete.png" alt="Delete Loan Button">
+            </div>
+            <p></p>
+
+            <p><strong>Print:</strong></p>
+            <ul>
+                <li>A report is generated based on the data displayed in the table, either by clicking the button or via the context menu that appears when right-clicking on the table.</li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/LoanPrint.png" alt="Print Loan Button">
+            </div>
+            <p></p>
+
+            <p><strong>Show all:</strong></p>
+            <ul>
+                <li>This button loads all the loans from the database and is used to undo the effect of a filter.
+                </li>
+            </ul>
+            <div class="image-container">
+                <img src="../resources/images/ShowAllLoan.png" alt="Show all Loan Button">
+            </div>
+            <p></p>
+
+
+        </div>
+
+        <a href="IndexHelp.html">← Back to Help Index</a>
+
+    </body>
 </html>
