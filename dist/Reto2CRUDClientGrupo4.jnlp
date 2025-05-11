@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Reto2CRUDClientGrupo4.jar" size="3082715" download="eager" />
+    <jar href="Reto2CRUDClientGrupo4.jar" size="3084580" download="eager" />
     <jar href="lib\asm-all-repackaged-2.2.0-b21.jar" size="318566" download="eager" />
     <jar href="lib\bcprov-jdk15to18-1.80.jar" size="6918159" download="eager" />
     <jar href="lib\cglib-2.2.0-b21.jar" size="282554" download="eager" />
@@ -21,6 +21,7 @@
     <jar href="lib\eclipselink.jar" size="8478776" download="eager" />
     <jar href="lib\groovy-all-2.4.3.jar" size="6969675" download="eager" />
     <jar href="lib\guava-14.0.1.jar" size="2168920" download="eager" />
+    <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
     <jar href="lib\hibernate-core-3.3.2.GA.jar" size="2309955" download="eager" />
     <jar href="lib\hk2-api-2.2.0-b21.jar" size="130695" download="eager" />
     <jar href="lib\hk2-locator-2.2.0-b21.jar" size="146252" download="eager" />
@@ -35,6 +36,7 @@
     <jar href="lib\jasperreports-6.2.0.jar" size="5300024" download="eager" />
     <jar href="lib\jasperreports-fonts-6.2.0.jar" size="2478098" download="eager" />
     <jar href="lib\jasperreports-javaflow-6.2.0.jar" size="5344915" download="eager" />
+    <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
     <jar href="lib\javax.annotation-api-1.2.jar" size="26671" download="eager" />
     <jar href="lib\javax.inject-2.2.0-b21.jar" size="6134" download="eager" />
     <jar href="lib\javax.mail.jar" size="659033" download="eager" />
@@ -52,6 +54,7 @@
     <jar href="lib\jersey-server.jar" size="818487" download="eager" />
     <jar href="lib\jfreechart-1.0.19.jar" size="1565065" download="eager" />
     <jar href="lib\jpa.jar" size="48045" download="eager" />
+    <jar href="lib\junit-4.12.jar" size="316791" download="eager" />
     <jar href="lib\jxl-2.6.10.jar" size="743361" download="eager" />
     <jar href="lib\log4j-1.2.15.jar" size="391834" download="eager" />
     <jar href="lib\lucene-analyzers-common-4.5.1.jar" size="1586103" download="eager" />
@@ -72,6 +75,8 @@
     <jar href="lib\servlet-api-2.4.jar" size="97693" download="eager" />
     <jar href="lib\spring-beans-2.5.5.jar" size="486031" download="eager" />
     <jar href="lib\spring-core-2.5.5.jar" size="287235" download="eager" />
+    <jar href="lib\testfx-core-4.0.13-alpha.jar" size="202932" download="eager" />
+    <jar href="lib\testfx-junit-4.0.13-alpha.jar" size="9871" download="eager" />
     <jar href="lib\validation-api-1.1.0.Final.jar" size="65320" download="eager" />
     <jar href="lib\velocity-1.7-dep.jar" size="806736" download="eager" />
     <jar href="lib\xalan-2.7.1.jar" size="3176148" download="eager" />

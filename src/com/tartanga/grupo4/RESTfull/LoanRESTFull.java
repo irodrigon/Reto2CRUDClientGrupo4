@@ -68,11 +68,9 @@ public class LoanRESTFull implements ILoan {
     }*
      */
     /**
-     * public List <Loan> find_JSON(GenericType<List <Loan>> responseType,
-     * String id) throws WebApplicationException { WebTarget resource =
+     * public List Loan throws WebApplicationException { WebTarget resource =
      * webTarget; resource = resource.path(java.text.MessageFormat.format("{0}",
-     * new Object[]{id})); return
-     * resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+     * new Object[]{id})); 
     }*
      */
     @Override
@@ -83,7 +81,7 @@ public class LoanRESTFull implements ILoan {
     }
 
     /**
-     * public List <Loan> findRange_JSON(GenericType<List <Loan>> responseType,
+     * public List Loan,
      * String from, String to) throws WebApplicationException { WebTarget
      * resource = webTarget; resource =
      * resource.path(java.text.MessageFormat.format("{0}/{1}", new
@@ -124,7 +122,7 @@ public class LoanRESTFull implements ILoan {
     }
 
     /**
-     * public List <Loan> findAll_JSON(GenericType<List <Loan>> responseType)
+     * public List Loan 
      * throws WebApplicationException { WebTarget resource = webTarget; return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);*
      */
     @Override

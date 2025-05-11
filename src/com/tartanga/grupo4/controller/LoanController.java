@@ -75,8 +75,12 @@ public class LoanController {
     private Button btnSearch;
     @FXML
     private Button btnDelete;
-
+    
     private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     /**
      * Initializes the controller after the FXML components are loaded. Sets up
@@ -306,7 +310,7 @@ public class LoanController {
             LoanFactory.getInstance().getILoans().edit_XML(loan, loan.getIDProduct());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error :updateLoan ", e.getMessage());
-            showErrorAlert("Error Updating Loan", "Error updating loan: " + e.getMessage());
+            showErrorAlert("Error Updating Loan", "Server error, the changes made may not be saved in the database.");
         }
         loanTable.refresh();
     }
@@ -432,7 +436,7 @@ public class LoanController {
      * This method loads all loan records from the database and populates the
      * loan table with the retrieved data.
      * </p>
-
+     *
      */
     @FXML
     private void mostrarTodosLosPrestamos() {
@@ -453,6 +457,7 @@ public class LoanController {
      * Based on the selected search type (date, amount, or user), this method
      * filters and displays the loans matching the search criteria in the table.
      * </p>
+     *
      * @param event The event triggered by clicking the search button.
      */
     private void onSearch(ActionEvent event) {
