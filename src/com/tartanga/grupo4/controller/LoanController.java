@@ -30,9 +30,11 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
 /**
- * The LoanController class is responsible for managing the user interface for
- * loan operations. It handles the display, editing, searching, and deletion of
- * loans, as well as generating reports.
+ * Handles the user interface logic associated with loan management operations.
+ * This controller facilitates the visualization, modification, search, and
+ * deletion of loan records, as well as the generation of related reports. It
+ * serves as the intermediary between the user interface and the underlying loan
+ * service layer.
  */
 public class LoanController {
 
@@ -75,7 +77,7 @@ public class LoanController {
     private Button btnSearch;
     @FXML
     private Button btnDelete;
-    
+
     private Stage stage;
 
     public void setStage(Stage stage) {
@@ -83,10 +85,21 @@ public class LoanController {
     }
 
     /**
-     * Initializes the controller after the FXML components are loaded. Sets up
-     * the table view, editable cells, listeners for user interaction, and
-     * populates the table with existing loan records. It also configures the
-     * search options and input fields based on the selected criteria.
+     * Initializes the controller after the associated FXML file has been
+     * loaded.
+     * <p>
+     * This method performs the setup of UI components, including:
+     * <ul>
+     * <li>Setting the table view as editable.</li>
+     * <li>Populating the choice box for search options.</li>
+     * <li>Binding table columns to loan properties.</li>
+     * <li>Configuring editable cells with input validation for numeric and date
+     * fields.</li>
+     * <li>Adding listeners for user interactions.</li>
+     * <li>Showing all existing loans initially.</li>
+     * </ul>
+     * It also sets up logic for switching between different types of search
+     * inputs based on the user's selection.
      */
     @FXML
     private void initialize() {
@@ -436,7 +449,6 @@ public class LoanController {
      * This method loads all loan records from the database and populates the
      * loan table with the retrieved data.
      * </p>
-     *
      */
     @FXML
     private void mostrarTodosLosPrestamos() {
@@ -454,8 +466,9 @@ public class LoanController {
     /**
      * Handles the search action when the user clicks the search button.
      * <p>
-     * Based on the selected search type (date, amount, or user), this method
-     * filters and displays the loans matching the search criteria in the table.
+     * Based on the selected search type (date, amount, or interest rate), this
+     * method filters and displays the loans matching the search criteria in the
+     * table.
      * </p>
      *
      * @param event The event triggered by clicking the search button.
@@ -578,6 +591,10 @@ public class LoanController {
         }
     }
 
+    /**
+     * Configures the UI to display fields for filtering by date. Hides the text
+     * input and shows the date pickers.
+     */
     private void mostrarPorFecha() {
         tfSearch.setVisible(false);
         tfSearch.setManaged(false);
@@ -591,6 +608,10 @@ public class LoanController {
 
     }
 
+    /**
+     * Configures the UI to display fields for filtering by text. Hides the date
+     * pickers and shows the text input.
+     */
     private void mostrarPorTexto() {
         tfSearch.setVisible(true);
         tfSearch.setManaged(true);
