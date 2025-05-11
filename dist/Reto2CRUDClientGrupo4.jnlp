@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Reto2CRUDClientGrupo4.jar" size="2786129" download="eager" />
+    <jar href="Reto2CRUDClientGrupo4.jar" size="2801549" download="eager" />
     <jar href="lib\asm-all-repackaged-2.2.0-b21.jar" size="318566" download="eager" />
     <jar href="lib\bcprov-jdk15to18-1.80.jar" size="6918159" download="eager" />
     <jar href="lib\cglib-2.2.0-b21.jar" size="282554" download="eager" />
