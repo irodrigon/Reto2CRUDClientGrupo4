@@ -35,8 +35,8 @@ public class CRUDLoanFailTest12 extends ApplicationTest {
         if (!isAppStarted) {
             new LoanWindowMain().start(stage);
             isAppStarted = true;
-            sleep(1000);
-            sleep(1000);
+            sleep(5000);
+            //Hay que apagar el GlashFish.
         }
         loanTable = lookup("#loanTable").queryTableView();
     }
